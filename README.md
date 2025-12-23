@@ -16,7 +16,6 @@ ScriptTimer is a modern web application designed for voiceover artists, content 
 ### Real-Time Analysis
 - **Live Word Count**: Instant calculation of spoken word count as you type
 - **Time Estimation**: Accurate duration estimates based on reading speed
-- **Character Counter**: Track script length with character count
 
 ### Customizable Settings
 - **Adjustable WPM**: Set reading speed from 75 to 160 words per minute
