@@ -17,14 +17,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reset button to clear all data
 - Component architecture refactoring
 - Performance optimizations (debouncing, code splitting)
-- Comprehensive documentation (FOLDER_STRUCTURE.md, PLAN.md)
+- Comprehensive documentation (CHANGELOG.md, FOLDER_STRUCTURE.md, PLAN.md, TEST_COMPARISON.md)
+- CONTRIBUTING.md with development guidelines and code style standards
+- `/docs` folder for organized documentation
+- `/__tests__` folder structure for future testing implementation
+- `/_archive` folder for deprecated code
 
 ### Changed
 - Refactored monolithic ScriptCalculator (1100+ lines → 270 lines)
 - Extracted 8 focused components from main component
 - Created 7 custom hooks for business logic
-- Improved .gitignore with comprehensive exclusions
-- Enhanced folder structure organization
+- Improved .gitignore with comprehensive exclusions (IDE, OS, testing frameworks)
+- Enhanced folder structure organization following best practices
+- Moved all documentation to `/docs` folder
+- Updated README.md with documentation section linking to `/docs`
 
 ### Removed
 - Unsaved changes warning popup (conflicted with reset functionality)

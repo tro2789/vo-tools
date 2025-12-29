@@ -207,6 +207,18 @@ docker-compose up -d --build  # Rebuild
 
 ---
 
+## 📚 Documentation
+
+For detailed information about the project, see the [`/docs`](./docs) folder:
+
+- **[CHANGELOG.md](./docs/CHANGELOG.md)** - Version history and release notes
+- **[CONTRIBUTING.md](./docs/CONTRIBUTING.md)** - Guidelines for contributors
+- **[FOLDER_STRUCTURE.md](./docs/FOLDER_STRUCTURE.md)** - Project organization and architecture
+- **[PLAN.md](./docs/PLAN.md)** - Technical improvement roadmap
+- **[TEST_COMPARISON.md](./docs/TEST_COMPARISON.md)** - Feature testing notes
+
+---
+
 ## 💖 Support
 
 If you find VO Tools helpful, consider supporting development:
