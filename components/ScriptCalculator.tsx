@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, lazy, Suspense, useCallback, useEffect } from 'react';
-import { Mic, GitCompare, FileText, Heart, RotateCcw } from 'lucide-react';
+import { Mic, GitCompare, FileText, Heart, RotateCcw, MessageCircle } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { ScriptEditor } from './editor/ScriptEditor';
 import { AnalysisSidebar } from './analysis/AnalysisSidebar';
@@ -211,15 +211,6 @@ export const ScriptCalculator = () => {
               <RotateCcw size={14} className="md:w-4 md:h-4" />
               <span className="hidden sm:inline">Reset</span>
             </button>
-            <a
-              href="https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-lg shadow-pink-500/20"
-            >
-              <Heart size={14} className="fill-current md:w-4 md:h-4" />
-              <span className="hidden sm:inline">Tip</span>
-            </a>
             <button
               onClick={toggleComparisonMode}
               className={`flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all ${
@@ -232,6 +223,25 @@ export const ScriptCalculator = () => {
               <span className="hidden sm:inline">{comparisonMode ? 'Compare' : 'Single'}</span>
             </button>
             <ThemeToggle />
+            <a
+              href="https://discord.gg/gYg69PbHfR"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
+              title="Join our Discord community"
+            >
+              <MessageCircle size={14} className="md:w-4 md:h-4" />
+              <span className="hidden sm:inline">Discord</span>
+            </a>
+            <a
+              href="https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-lg shadow-pink-500/20"
+            >
+              <Heart size={14} className="fill-current md:w-4 md:h-4" />
+              <span className="hidden sm:inline">Buy Me A Coffee</span>
+            </a>
           </div>
         </div>
       </nav>
@@ -368,6 +378,16 @@ export const ScriptCalculator = () => {
             Built with ❤️ for the voiceover community
           </div>
           <div className="flex items-center gap-4">
+            <a
+              href="https://discord.gg/gYg69PbHfR"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5"
+            >
+              <MessageCircle className="w-4 h-4" />
+              Discord
+            </a>
+            <span className="text-slate-300 dark:text-slate-700">•</span>
             <a
               href="https://gitea.tohareprod.com/tro2789/vo-tools"
               target="_blank"

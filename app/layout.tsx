@@ -6,8 +6,8 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'VoiceOver Script Calculator',
-  description: 'Estimate spoken word count and duration for voice actors.',
+  title: 'VO Tools',
+  description: 'A collection of useful tools for voice actors.',
 };
 
 export default function RootLayout({
