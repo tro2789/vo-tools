@@ -278,8 +278,8 @@ export const ScriptCalculator = () => {
 
                 {/* Word Count */}
                 <div className="mb-8">
-                  <div className="text-xs font-medium text-slate-500 mb-1">Spoken Word Count</div>
-                  <div className="text-6xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">
+                  <div className="text-xs font-medium text-slate-500 mb-2">Spoken Word Count</div>
+                  <div className="text-5xl font-black text-slate-900 dark:text-white tracking-tight tabular-nums">
                     {wordCount}
                   </div>
                 </div>
@@ -288,7 +288,7 @@ export const ScriptCalculator = () => {
 
                 {/* Time Estimate */}
                 <div className="mb-8">
-                  <div className="text-xs font-medium text-slate-500 mb-1 flex items-center gap-1">
+                  <div className="text-xs font-medium text-slate-500 mb-2 flex items-center gap-1">
                     <Clock size={12} />
                     Reading Time (Words Only)
                   </div>
@@ -314,11 +314,11 @@ export const ScriptCalculator = () => {
                     </div>
 
                     <div className="mb-8">
-                      <div className="text-xs font-medium text-slate-500 mb-1 flex items-center gap-1">
+                      <div className="text-xs font-medium text-slate-500 mb-2 flex items-center gap-1">
                         <Clock size={12} />
                         Total Time (with Pauses)
                       </div>
-                      <div className="text-4xl font-bold bg-gradient-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent tracking-tight tabular-nums">
+                      <div className="text-3xl font-bold bg-gradient-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent tracking-tight tabular-nums">
                         {timeWithPauses}
                       </div>
                     </div>
@@ -327,11 +327,11 @@ export const ScriptCalculator = () => {
 
                 {pauseAnalysis.pauseCount === 0 && (
                   <div className="mb-8">
-                    <div className="text-xs font-medium text-slate-500 mb-1 flex items-center gap-1">
+                    <div className="text-xs font-medium text-slate-500 mb-2 flex items-center gap-1">
                       <Clock size={12} />
                       Total Time
                     </div>
-                    <div className="text-4xl font-bold bg-gradient-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent tracking-tight tabular-nums">
+                    <div className="text-3xl font-bold bg-gradient-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent tracking-tight tabular-nums">
                       {timeEstimate}
                     </div>
                   </div>
