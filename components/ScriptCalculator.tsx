@@ -8,7 +8,6 @@ import { AnalysisSidebar } from './analysis/AnalysisSidebar';
 import { SpeedControl } from './analysis/SpeedControl';
 import { ExpansionSettings } from './settings/ExpansionSettings';
 import { PricingSection } from './pricing/PricingSection';
-import AutosaveIndicator from './AutosaveIndicator';
 import { useScriptAnalysis } from '@/hooks/useScriptAnalysis';
 import { useComparison } from '@/hooks/useComparison';
 import { usePricing } from '@/hooks/usePricing';
@@ -199,7 +198,6 @@ export const ScriptCalculator = () => {
             <h1 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
               VO Tools
             </h1>
-            <AutosaveIndicator lastSaved={lastSaved} hasUnsavedChanges={hasUnsavedChanges} />
           </div>
           
           <div className="flex items-center gap-1.5 md:gap-3">
@@ -286,61 +284,16 @@ export const ScriptCalculator = () => {
             </div>
           </div>
         ) : (
-          // Comparison Mode Layout
-          <div className="space-y-6">
-            {/* Stats Row */}
-            <Suspense fallback={
-              <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-8 text-center">
-                <div className="text-slate-500 dark:text-slate-400">Loading comparison stats...</div>
-              </div>
-            }>
-              <ComparisonStats
-                originalWordCount={originalAnalysis.wordCount}
-                revisedWordCount={revisedAnalysis.wordCount}
-                originalTimeEstimate={originalAnalysis.timeEstimate}
-                revisedTimeEstimate={revisedAnalysis.timeEstimate}
-                originalPauseAnalysis={originalAnalysis.pauseAnalysis}
-                revisedPauseAnalysis={revisedAnalysis.pauseAnalysis}
-                originalTimeWithPauses={originalAnalysis.timeWithPauses}
-                revisedTimeWithPauses={revisedAnalysis.timeWithPauses}
-                wpm={wpm}
-              />
-            </Suspense>
-
-            {/* Speed Control */}
-            <SpeedControl wpm={wpm} setWpm={setWpm} minWpm={MIN_WPM} maxWpm={MAX_WPM} />
-
-            {/* Expansion Options */}
-            <ExpansionSettings
-              showExpansionSettings={showExpansionSettings}
-              setShowExpansionSettings={setShowExpansionSettings}
-              expansionOptions={expansionOptions}
-              toggleExpansionOption={toggleExpansionOption}
-            />
-
-            {/* Pricing & Quote Section (Comparison Mode) */}
-            <PricingSection
-              showPricing={showPricing}
-              setShowPricing={setShowPricing}
-              pricingConfig={pricingConfig}
-              updatePricingConfig={updatePricingConfig}
-              quote={quote}
-              clientName={clientName}
-              setClientName={setClientName}
-              projectName={projectName}
-              setProjectName={setProjectName}
-              handleDownloadPDF={handleDownloadPDF}
-              isComparisonMode={true}
-            />
-
-            {/* Side-by-Side Editors */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          // Comparison Mode Layout - Similar to Single Mode
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Left Column: Stacked Editors */}
+            <div className="lg:col-span-8 flex flex-col gap-4">
               <ScriptEditor
                 value={originalScript}
                 onChange={setOriginalScript}
                 placeholder="Paste your original script here..."
                 label="Original Script"
-                height="h-[60vh]"
+                height="h-[45vh]"
               />
 
               <ScriptEditor
@@ -348,25 +301,71 @@ export const ScriptCalculator = () => {
                 onChange={setRevisedScript}
                 placeholder="Paste your revised script here..."
                 label="Revised Script"
-                height="h-[60vh]"
+                height="h-[45vh]"
               />
-            </div>
 
-            {/* Diff Visualization */}
-            {originalScript && revisedScript && comparison.diffSegments.originalSegments.length > 0 && (
-              <Suspense fallback={
-                <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-8 text-center">
-                  <div className="text-slate-500 dark:text-slate-400">Loading diff visualization...</div>
-                </div>
-              }>
-                <div className="space-y-6">
+              {/* Diff Visualization below editors */}
+              {originalScript && revisedScript && comparison.diffSegments.originalSegments.length > 0 && (
+                <Suspense fallback={
+                  <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-8 text-center">
+                    <div className="text-slate-500 dark:text-slate-400">Loading diff visualization...</div>
+                  </div>
+                }>
                   <DiffVisualization
                     originalSegments={comparison.diffSegments.originalSegments}
                     revisedSegments={comparison.diffSegments.revisedSegments}
                   />
+                </Suspense>
+              )}
+            </div>
+
+            {/* Right Column: Stats and Controls */}
+            <div className="lg:col-span-4 space-y-6">
+              {/* Comparison Stats */}
+              <Suspense fallback={
+                <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-8 text-center">
+                  <div className="text-slate-500 dark:text-slate-400">Loading stats...</div>
                 </div>
+              }>
+                <ComparisonStats
+                  originalWordCount={originalAnalysis.wordCount}
+                  revisedWordCount={revisedAnalysis.wordCount}
+                  originalTimeEstimate={originalAnalysis.timeEstimate}
+                  revisedTimeEstimate={revisedAnalysis.timeEstimate}
+                  originalPauseAnalysis={originalAnalysis.pauseAnalysis}
+                  revisedPauseAnalysis={revisedAnalysis.pauseAnalysis}
+                  originalTimeWithPauses={originalAnalysis.timeWithPauses}
+                  revisedTimeWithPauses={revisedAnalysis.timeWithPauses}
+                  wpm={wpm}
+                />
               </Suspense>
-            )}
+
+              {/* Speed Control */}
+              <SpeedControl wpm={wpm} setWpm={setWpm} minWpm={MIN_WPM} maxWpm={MAX_WPM} />
+
+              {/* Expansion Settings */}
+              <ExpansionSettings
+                showExpansionSettings={showExpansionSettings}
+                setShowExpansionSettings={setShowExpansionSettings}
+                expansionOptions={expansionOptions}
+                toggleExpansionOption={toggleExpansionOption}
+              />
+
+              {/* Pricing Section */}
+              <PricingSection
+                showPricing={showPricing}
+                setShowPricing={setShowPricing}
+                pricingConfig={pricingConfig}
+                updatePricingConfig={updatePricingConfig}
+                quote={quote}
+                clientName={clientName}
+                setClientName={setClientName}
+                projectName={projectName}
+                setProjectName={setProjectName}
+                handleDownloadPDF={handleDownloadPDF}
+                isComparisonMode={true}
+              />
+            </div>
           </div>
         )}
       </main>
