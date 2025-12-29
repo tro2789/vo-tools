@@ -12,6 +12,12 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-inter)", "sans-serif"],
       },
+      colors: {
+        brand: {
+          gold: '#d3a967',
+          dark: '#151515',
+        },
+      },
     },
   },
   plugins: [],

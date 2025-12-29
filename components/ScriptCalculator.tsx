@@ -186,10 +186,10 @@ export const ScriptCalculator = () => {
   }, []);
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <div className="min-h-screen w-full flex flex-col items-center bg-white dark:bg-brand-dark transition-colors duration-300">
       
       {/* Navbar */}
-      <nav className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-20 px-4 md:px-6 py-3">
+      <nav className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-brand-dark/80 backdrop-blur-md sticky top-0 z-20 px-4 md:px-6 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 md:gap-3">
             <div className="bg-blue-600 rounded-lg p-1.5 md:p-2 text-white shadow-lg shadow-blue-500/20">
@@ -371,7 +371,7 @@ export const ScriptCalculator = () => {
       </main>
 
       {/* Footer */}
-      <footer className="w-full border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md mt-8 px-4 md:px-6 py-4">
+      <footer className="w-full border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-brand-dark/80 backdrop-blur-md mt-8 px-4 md:px-6 py-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
           <div>
             Built with ❤️ for the voiceover community
@@ -381,7 +381,7 @@ export const ScriptCalculator = () => {
               href="https://discord.gg/gYg69PbHfR"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5"
+              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5"
             >
               <MessageCircle className="w-4 h-4" />
               Discord
