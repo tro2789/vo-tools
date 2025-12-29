@@ -214,13 +214,6 @@ export const ScriptCalculator = () => {
           </div>
           
           <div className="flex items-center gap-1.5 md:gap-3">
-            <Link
-              href="/pricing"
-              className="flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 shadow-lg shadow-emerald-500/20"
-            >
-              <DollarSign size={14} className="md:w-4 md:h-4" />
-              <span className="hidden sm:inline">Pricing</span>
-            </Link>
             <a
               href="https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02"
               target="_blank"
