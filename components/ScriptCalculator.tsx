@@ -5,8 +5,11 @@ import { calculateSpokenWordCount, formatDuration, analyzePauses, calculateTotal
 import { compareTexts, DiffSegment } from '@/utils/textComparison';
 import { PauseAnalysis } from '@/utils/pauseDetection';
 import { ExpansionOptions, DEFAULT_EXPANSION_OPTIONS, EXPANSION_LABELS, EXPANSION_DESCRIPTIONS } from '@/utils/expansionOptions';
-import { Clock, Type, Settings2, Info, Mic, GitCompare, FileText, Pause, Sparkles } from 'lucide-react';
+import { PricingConfig, DEFAULT_PRICING_CONFIG, QuoteResult, calculateQuote, formatCurrency, getPricingModelName, PricingModel } from '@/utils/pricingTypes';
+import { generateQuotePDF } from '@/utils/pdfGenerator';
+import { Clock, Type, Settings2, Info, Mic, GitCompare, FileText, Pause, Sparkles, Heart, DollarSign, Download } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
+import Link from 'next/link';
 
 const DEFAULT_WPM = 150;
 const MIN_WPM = 75;
@@ -20,6 +23,14 @@ export const ScriptCalculator = () => {
   const [wpm, setWpm] = useState<number>(DEFAULT_WPM);
   const [expansionOptions, setExpansionOptions] = useState<ExpansionOptions>(DEFAULT_EXPANSION_OPTIONS);
   const [showExpansionSettings, setShowExpansionSettings] = useState<boolean>(false);
+  
+  // Pricing state
+  const [pricingConfig, setPricingConfig] = useState<PricingConfig>(DEFAULT_PRICING_CONFIG);
+  const [showPricing, setShowPricing] = useState<boolean>(false);
+  const [clientName, setClientName] = useState<string>('');
+  const [projectName, setProjectName] = useState<string>('');
+  const [quote, setQuote] = useState<QuoteResult | null>(null);
+  
   const [wordCount, setWordCount] = useState<number>(0);
   const [timeEstimate, setTimeEstimate] = useState<string>('0 sec');
   const [pauseAnalysis, setPauseAnalysis] = useState<PauseAnalysis>({ pauses: [], totalPauseTime: 0, pauseCount: 0 });
@@ -90,11 +101,56 @@ export const ScriptCalculator = () => {
     }
   }, [originalScript, revisedScript, wpm, comparisonMode, expansionOptions]);
 
+  // Calculate quote when pricing config or stats change
+  useEffect(() => {
+    if (!comparisonMode && wordCount > 0) {
+      const readingMinutes = wordCount / (wpm || 1);
+      const calculatedQuote = calculateQuote(
+        wordCount,
+        readingMinutes,
+        timeEstimate,
+        pricingConfig
+      );
+      setQuote(calculatedQuote);
+    } else if (comparisonMode && revisedWordCount > 0) {
+      // Use revised script stats for comparison mode
+      const readingMinutes = revisedWordCount / (wpm || 1);
+      const calculatedQuote = calculateQuote(
+        revisedWordCount,
+        readingMinutes,
+        revisedTimeEstimate,
+        pricingConfig
+      );
+      setQuote(calculatedQuote);
+    } else {
+      setQuote(null);
+    }
+  }, [wordCount, timeEstimate, revisedWordCount, revisedTimeEstimate, pricingConfig, comparisonMode, wpm]);
+
   const toggleExpansionOption = (key: keyof ExpansionOptions) => {
     setExpansionOptions(prev => ({
       ...prev,
       [key]: !prev[key]
     }));
+  };
+
+  const updatePricingConfig = <K extends keyof PricingConfig>(
+    key: K,
+    value: PricingConfig[K]
+  ) => {
+    setPricingConfig(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const handleDownloadPDF = () => {
+    if (!quote) return;
+    generateQuotePDF(
+      quote,
+      clientName || 'Client',
+      projectName || 'Voiceover Project'
+    );
   };
 
   const toggleComparisonMode = () => {
@@ -146,33 +202,44 @@ export const ScriptCalculator = () => {
     <div className="min-h-screen w-full flex flex-col items-center bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       
       {/* Navbar */}
-      <nav className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-20 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-blue-600 rounded-lg p-2 text-white shadow-lg shadow-blue-500/20">
-              <Mic size={20} />
+      <nav className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-20 px-4 md:px-6 py-3">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 md:gap-3">
+            <div className="bg-blue-600 rounded-lg p-1.5 md:p-2 text-white shadow-lg shadow-blue-500/20">
+              <Mic size={18} className="md:w-5 md:h-5" />
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight leading-none">
-                ScriptTimer
-              </h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-                Voiceover Estimator
-              </p>
-            </div>
+            <h1 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+              VO Tools
+            </h1>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 md:gap-3">
+            <Link
+              href="/pricing"
+              className="flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 shadow-lg shadow-emerald-500/20"
+            >
+              <DollarSign size={14} className="md:w-4 md:h-4" />
+              <span className="hidden sm:inline">Pricing</span>
+            </Link>
+            <a
+              href="https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-lg shadow-pink-500/20"
+            >
+              <Heart size={14} className="fill-current md:w-4 md:h-4" />
+              <span className="hidden sm:inline">Tip</span>
+            </a>
             <button
               onClick={toggleComparisonMode}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all ${
                 comparisonMode
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
               }`}
             >
-              {comparisonMode ? <GitCompare size={16} /> : <FileText size={16} />}
-              {comparisonMode ? 'Compare Mode' : 'Single Mode'}
+              {comparisonMode ? <GitCompare size={14} className="md:w-4 md:h-4" /> : <FileText size={14} className="md:w-4 md:h-4" />}
+              <span className="hidden sm:inline">{comparisonMode ? 'Compare' : 'Single'}</span>
             </button>
             <ThemeToggle />
           </div>
@@ -185,7 +252,7 @@ export const ScriptCalculator = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Left Column: Editor */}
             <div className="lg:col-span-8 flex flex-col gap-4">
-              <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800/60 flex flex-col h-[70vh] lg:h-[80vh] overflow-hidden transition-all focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500/50">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800/60 flex flex-col h-[50vh] lg:h-[80vh] overflow-hidden transition-all focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500/50">
                 {/* Toolbar */}
                 <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
                   <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
@@ -209,7 +276,7 @@ export const ScriptCalculator = () => {
 
             {/* Right Column: Stats Sidebar */}
             <div className="lg:col-span-4 space-y-6">
-              <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800/60 p-6 sticky top-24">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800/60 p-6 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto scrollbar-thin">
                 
                 <h2 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-6 flex items-center gap-2">
                   <Info size={14} />
@@ -337,6 +404,207 @@ export const ScriptCalculator = () => {
                           </div>
                         </label>
                       ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Pricing & Quote Section */}
+                <div className="bg-slate-50 dark:bg-slate-950/30 rounded-xl border border-slate-100 dark:border-slate-800 overflow-hidden mt-6">
+                  <button
+                    onClick={() => setShowPricing(!showPricing)}
+                    className="w-full px-5 py-4 flex items-center justify-between text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900/50 transition-colors"
+                  >
+                    <span className="flex items-center gap-2">
+                      <DollarSign size={16} />
+                      Pricing & Quote
+                    </span>
+                    <span className={`text-slate-400 transition-transform ${showPricing ? 'rotate-180' : ''}`}>▼</span>
+                  </button>
+                  
+                  {showPricing && (
+                    <div className="px-5 pb-4 space-y-4 border-t border-slate-100 dark:border-slate-800 pt-4">
+                      {/* Pricing Model Selection */}
+                      <div>
+                        <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                          Pricing Model
+                        </label>
+                        <select
+                          value={pricingConfig.model}
+                          onChange={(e) => updatePricingConfig('model', e.target.value as PricingModel)}
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                          <option value="per_word">Per Word</option>
+                          <option value="per_minute">Per Minute</option>
+                          <option value="per_project">Per Project</option>
+                        </select>
+                      </div>
+
+                      {/* Rate Input (conditional based on model) */}
+                      {pricingConfig.model === 'per_word' && (
+                        <div>
+                          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                            Rate Per Word ($)
+                          </label>
+                          <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={pricingConfig.ratePerWord}
+                            onChange={(e) => updatePricingConfig('ratePerWord', parseFloat(e.target.value) || 0)}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="0.10"
+                          />
+                        </div>
+                      )}
+
+                      {pricingConfig.model === 'per_minute' && (
+                        <div>
+                          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                            Rate Per Minute ($)
+                          </label>
+                          <input
+                            type="number"
+                            step="1"
+                            min="0"
+                            value={pricingConfig.ratePerMinute}
+                            onChange={(e) => updatePricingConfig('ratePerMinute', parseFloat(e.target.value) || 0)}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="50"
+                          />
+                        </div>
+                      )}
+
+                      {pricingConfig.model === 'per_project' && (
+                        <div>
+                          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                            Project Rate ($)
+                          </label>
+                          <input
+                            type="number"
+                            step="1"
+                            min="0"
+                            value={pricingConfig.projectRate}
+                            onChange={(e) => updatePricingConfig('projectRate', parseFloat(e.target.value) || 0)}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="100"
+                          />
+                        </div>
+                      )}
+
+                      {/* Minimum Fee */}
+                      <div>
+                        <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                          Minimum Session Fee ($)
+                        </label>
+                        <input
+                          type="number"
+                          step="1"
+                          min="0"
+                          value={pricingConfig.minimumFee}
+                          onChange={(e) => updatePricingConfig('minimumFee', parseFloat(e.target.value) || 0)}
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="50"
+                        />
+                      </div>
+
+                      {/* Revision Surcharge */}
+                      <div>
+                        <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                          Revision Surcharge (%)
+                        </label>
+                        <input
+                          type="number"
+                          step="1"
+                          min="0"
+                          max="200"
+                          value={pricingConfig.revisionSurcharge}
+                          onChange={(e) => updatePricingConfig('revisionSurcharge', parseFloat(e.target.value) || 0)}
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="50"
+                        />
+                      </div>
+
+                      {/* Quote Display */}
+                      {quote && (
+                        <>
+                          <div className="h-px bg-slate-200 dark:bg-slate-700 my-4" />
+                          
+                          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800 rounded-xl p-4 border border-blue-200 dark:border-slate-700">
+                            <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-3">
+                              Suggested Quote
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <div className="flex justify-between items-baseline">
+                                <span className="text-sm text-slate-600 dark:text-slate-400">Base Price:</span>
+                                <span className="text-lg font-bold text-slate-900 dark:text-white">
+                                  {formatCurrency(quote.basePrice)}
+                                </span>
+                              </div>
+                              
+                              {quote.includesMinimumFee && (
+                                <div className="text-xs text-slate-500 dark:text-slate-400 italic">
+                                  Minimum fee applied
+                                </div>
+                              )}
+                              
+                              <div className="h-px bg-blue-200 dark:bg-slate-700 my-2" />
+                              
+                              <div className="flex justify-between items-baseline">
+                                <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Initial Recording:</span>
+                                <span className="text-2xl font-black bg-gradient-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent">
+                                  {formatCurrency(quote.finalPrice)}
+                                </span>
+                              </div>
+                              
+                              <div className="flex justify-between items-baseline pt-2 border-t border-blue-200 dark:border-slate-700">
+                                <span className="text-xs text-slate-600 dark:text-slate-400">Revision/Pickup:</span>
+                                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                  {formatCurrency(quote.revisionPrice)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Client/Project Info for PDF */}
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                                Client Name (for PDF)
+                              </label>
+                              <input
+                                type="text"
+                                value={clientName}
+                                onChange={(e) => setClientName(e.target.value)}
+                                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="Client Name"
+                              />
+                            </div>
+                            
+                            <div>
+                              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                                Project Name (for PDF)
+                              </label>
+                              <input
+                                type="text"
+                                value={projectName}
+                                onChange={(e) => setProjectName(e.target.value)}
+                                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="Voiceover Project"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Download PDF Button */}
+                          <button
+                            onClick={handleDownloadPDF}
+                            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-sm transition-all bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/20"
+                          >
+                            <Download size={16} />
+                            Download Quote PDF
+                          </button>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
@@ -507,6 +775,207 @@ export const ScriptCalculator = () => {
                       </div>
                     </label>
                   ))}
+                </div>
+              )}
+            </div>
+
+            {/* Pricing & Quote Section (Comparison Mode) */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 overflow-hidden">
+              <button
+                onClick={() => setShowPricing(!showPricing)}
+                className="w-full px-5 py-4 flex items-center justify-between text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+              >
+                <span className="flex items-center gap-2">
+                  <DollarSign size={16} />
+                  Pricing & Quote
+                </span>
+                <span className={`text-slate-400 transition-transform ${showPricing ? 'rotate-180' : ''}`}>▼</span>
+              </button>
+              
+              {showPricing && (
+                <div className="px-5 pb-4 space-y-4 border-t border-slate-100 dark:border-slate-800 pt-4">
+                  {/* Pricing Model Selection */}
+                  <div>
+                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                      Pricing Model
+                    </label>
+                    <select
+                      value={pricingConfig.model}
+                      onChange={(e) => updatePricingConfig('model', e.target.value as PricingModel)}
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="per_word">Per Word</option>
+                      <option value="per_minute">Per Minute</option>
+                      <option value="per_project">Per Project</option>
+                    </select>
+                  </div>
+
+                  {/* Rate Input (conditional based on model) */}
+                  {pricingConfig.model === 'per_word' && (
+                    <div>
+                      <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                        Rate Per Word ($)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={pricingConfig.ratePerWord}
+                        onChange={(e) => updatePricingConfig('ratePerWord', parseFloat(e.target.value) || 0)}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="0.10"
+                      />
+                    </div>
+                  )}
+
+                  {pricingConfig.model === 'per_minute' && (
+                    <div>
+                      <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                        Rate Per Minute ($)
+                      </label>
+                      <input
+                        type="number"
+                        step="1"
+                        min="0"
+                        value={pricingConfig.ratePerMinute}
+                        onChange={(e) => updatePricingConfig('ratePerMinute', parseFloat(e.target.value) || 0)}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="50"
+                      />
+                    </div>
+                  )}
+
+                  {pricingConfig.model === 'per_project' && (
+                    <div>
+                      <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                        Project Rate ($)
+                      </label>
+                      <input
+                        type="number"
+                        step="1"
+                        min="0"
+                        value={pricingConfig.projectRate}
+                        onChange={(e) => updatePricingConfig('projectRate', parseFloat(e.target.value) || 0)}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="100"
+                      />
+                    </div>
+                  )}
+
+                  {/* Minimum Fee */}
+                  <div>
+                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                      Minimum Session Fee ($)
+                    </label>
+                    <input
+                      type="number"
+                      step="1"
+                      min="0"
+                      value={pricingConfig.minimumFee}
+                      onChange={(e) => updatePricingConfig('minimumFee', parseFloat(e.target.value) || 0)}
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="50"
+                    />
+                  </div>
+
+                  {/* Revision Surcharge */}
+                  <div>
+                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                      Revision Surcharge (%)
+                    </label>
+                    <input
+                      type="number"
+                      step="1"
+                      min="0"
+                      max="200"
+                      value={pricingConfig.revisionSurcharge}
+                      onChange={(e) => updatePricingConfig('revisionSurcharge', parseFloat(e.target.value) || 0)}
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="50"
+                    />
+                  </div>
+
+                  {/* Quote Display */}
+                  {quote && (
+                    <>
+                      <div className="h-px bg-slate-200 dark:bg-slate-700 my-4" />
+                      
+                      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800 rounded-xl p-4 border border-blue-200 dark:border-slate-700">
+                        <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-3">
+                          Suggested Quote (Revised Script)
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Base Price:</span>
+                            <span className="text-lg font-bold text-slate-900 dark:text-white">
+                              {formatCurrency(quote.basePrice)}
+                            </span>
+                          </div>
+                          
+                          {quote.includesMinimumFee && (
+                            <div className="text-xs text-slate-500 dark:text-slate-400 italic">
+                              Minimum fee applied
+                            </div>
+                          )}
+                          
+                          <div className="h-px bg-blue-200 dark:bg-slate-700 my-2" />
+                          
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Initial Recording:</span>
+                            <span className="text-2xl font-black bg-gradient-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent">
+                              {formatCurrency(quote.finalPrice)}
+                            </span>
+                          </div>
+                          
+                          <div className="flex justify-between items-baseline pt-2 border-t border-blue-200 dark:border-slate-700">
+                            <span className="text-xs text-slate-600 dark:text-slate-400">Revision/Pickup:</span>
+                            <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                              {formatCurrency(quote.revisionPrice)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Client/Project Info for PDF */}
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                            Client Name (for PDF)
+                          </label>
+                          <input
+                            type="text"
+                            value={clientName}
+                            onChange={(e) => setClientName(e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Client Name"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                            Project Name (for PDF)
+                          </label>
+                          <input
+                            type="text"
+                            value={projectName}
+                            onChange={(e) => setProjectName(e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Voiceover Project"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Download PDF Button */}
+                      <button
+                        onClick={handleDownloadPDF}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-sm transition-all bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/20"
+                      >
+                        <Download size={16} />
+                        Download Quote PDF
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
             </div>
