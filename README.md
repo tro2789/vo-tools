@@ -2,7 +2,7 @@
 
 **Professional voiceover script calculator with intelligent analysis, comparison, and pricing tools**
 
-VO Tools is a comprehensive web application designed for voiceover artists to analyze scripts, compare revisions, calculate reading times, and generate professional quotes for clients.
+VO Tools is a comprehensive web application designed for voiceover artists to analyze scripts, compare revisions, calculate reading times, and generate professional quotes for clients. Try it out right now at https://script.tohareprod.com.
 
 ---
 
