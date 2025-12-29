@@ -67,9 +67,14 @@ export function useAutosave<T>(
     };
   }, [data, saveFunction, intervalMs]);
 
-  // Save on unmount if there are unsaved changes
+  // Save on unmount if there are unsaved changes (but not if we're resetting)
   useEffect(() => {
     return () => {
+      // Don't save if we're resetting
+      if (typeof window !== 'undefined' && sessionStorage.getItem('vo-tools-resetting') === 'true') {
+        return;
+      }
+      
       const dataChanged = JSON.stringify(data) !== JSON.stringify(previousDataRef.current);
       if (dataChanged) {
         saveFunction(data);

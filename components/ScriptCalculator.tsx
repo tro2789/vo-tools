@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, lazy, Suspense, useCallback, useRef } from 'react';
+import React, { useState, lazy, Suspense, useCallback, useEffect } from 'react';
 import { Mic, GitCompare, FileText, Heart, RotateCcw } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { ScriptEditor } from './editor/ScriptEditor';
@@ -9,7 +9,6 @@ import { SpeedControl } from './analysis/SpeedControl';
 import { ExpansionSettings } from './settings/ExpansionSettings';
 import { PricingSection } from './pricing/PricingSection';
 import AutosaveIndicator from './AutosaveIndicator';
-import UnsavedChangesWarning from './UnsavedChangesWarning';
 import { useScriptAnalysis } from '@/hooks/useScriptAnalysis';
 import { useComparison } from '@/hooks/useComparison';
 import { usePricing } from '@/hooks/usePricing';
@@ -44,14 +43,21 @@ interface PersistedState {
 }
 
 export const ScriptCalculator = () => {
+  // Clear localStorage BEFORE any state initialization if resetting flag is set
+  // This must happen synchronously before useState runs
+  if (typeof window !== 'undefined') {
+    const isResetting = sessionStorage.getItem('vo-tools-resetting');
+    if (isResetting === 'true') {
+      sessionStorage.removeItem('vo-tools-resetting');
+      localStorage.clear();
+    }
+  }
+
   // Load persisted state from localStorage
   const [persistedState, setPersistedState, clearPersistedState] = useLocalStorage<PersistedState | null>(
     'vo-tools-state',
     null
   );
-
-  // Flag to bypass unsaved changes warning during reset
-  const isResetting = useRef(false);
 
   // Mode state
   const [comparisonMode, setComparisonMode] = useState<boolean>(
@@ -171,29 +177,17 @@ export const ScriptCalculator = () => {
     setComparisonMode(!comparisonMode);
   };
 
-  // Reset all data to defaults
+  // Reset all data to defaults - immediate reset with no confirmation
   const handleReset = useCallback(() => {
-    const confirmReset = window.confirm(
-      'Are you sure you want to reset all data? This will clear all scripts, settings, and pricing information. This action cannot be undone.'
-    );
+    // Set a flag in sessionStorage to indicate we're resetting
+    sessionStorage.setItem('vo-tools-resetting', 'true');
     
-    if (confirmReset) {
-      // Set flag to bypass unsaved changes warning
-      isResetting.current = true;
-      
-      // Clear localStorage
-      clearPersistedState();
-      
-      // Reload the page
-      window.location.reload();
-    }
-  }, [clearPersistedState]);
+    // Reload the page - the useEffect on mount will handle clearing localStorage
+    window.location.reload();
+  }, []);
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      
-      {/* Unsaved Changes Warning */}
-      <UnsavedChangesWarning hasUnsavedChanges={hasUnsavedChanges} isResetting={isResetting} />
       
       {/* Navbar */}
       <nav className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-20 px-4 md:px-6 py-3">
