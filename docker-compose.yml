@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   app:
-    container_name: script-timer
-    image: script-timer:latest
+    container_name: vo-tools
+    image: vo-tools:latest
     build:
       context: .
       dockerfile: Dockerfile
