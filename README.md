@@ -1,116 +1,183 @@
-# ScriptTimer ⏱️
+# VO Tools 🎙️
 
-**Professional voiceover script timing calculator with intelligent text analysis**
+**Professional voiceover script calculator with intelligent analysis, comparison, and pricing tools**
 
-ScriptTimer is a modern web application designed for voiceover artists, content creators, and media professionals who need accurate time estimates for spoken scripts. Unlike simple word counters, ScriptTimer intelligently expands numbers and currency into their spoken equivalents for precise timing calculations.
+VO Tools is a comprehensive web application designed for voiceover artists to analyze scripts, compare revisions, calculate reading times, and generate professional quotes for clients.
 
 ---
 
 ## ✨ Features
 
-### Intelligent Text Processing
-- **Number Expansion**: Automatically converts numbers to spoken words (e.g., "10,000" → "ten thousand")
-- **Currency Formatting**: Handles currency symbols (e.g., "$100" → "one hundred dollars")
-- **Decimal Support**: Properly expands decimal numbers (e.g., "3.5" → "three point five")
+### 📊 Script Analysis
+- **Word Count**: Real-time calculation of total words
+- **Reading Time Estimation**: Accurate duration based on adjustable WPM (75-160)
+- **Pause Detection**: Automatic detection and timing of pauses (commas, periods, ellipses)
+- **Intelligent Text Expansion**: 
+  - Numbers to spoken words (e.g., "10,000" → "ten thousand")
+  - Currency formatting (e.g., "$100" → "one hundred dollars")
+  - Decimals (e.g., "3.5" → "three point five")
+  - Percentages, ordinals, and measurements
 
-### Real-Time Analysis
-- **Live Word Count**: Instant calculation of spoken word count as you type
-- **Time Estimation**: Accurate duration estimates based on reading speed
+### 🔄 Script Comparison
+- **Side-by-Side View**: Compare original and revised scripts
+- **Diff Highlighting**: Visual highlighting of changes
+  - Green: Added text
+  - Red: Removed text
+  - Yellow: Modified text
+- **Word Count Difference**: See exact changes in word count
 
-### Customizable Settings
-- **Adjustable WPM**: Set reading speed from 75 to 160 words per minute
-- **Default 150 WPM**: Industry-standard conversational pace
-- **Visual Slider**: Easy-to-use speed adjustment interface
+### 💰 Pricing & Quotes
+- **Multiple Pricing Models**:
+  - Per Word pricing
+  - Per Minute pricing
+  - Per Project (flat rate)
+- **Automatic Quote Calculation**: Based on word count and reading time
+- **Minimum Session Fees**: Set minimum rates for small projects
+- **Revision Pricing**: Configure separate rates for pickups/revisions
+- **PDF Export**: Generate professional quote PDFs for clients
+- **Client & Project Info**: Customize quotes with client and project names
 
-### Modern Interface
-- **Dark/Light Theme**: Toggle between themes for comfortable viewing
-- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
+### 🎨 Modern Interface
+- **Dark/Light Theme**: Comfortable viewing in any environment
+- **Responsive Design**: Works on desktop, tablet, and mobile
 - **Clean Layout**: Distraction-free editor with sidebar analytics
-- **Professional UI**: Built with Tailwind CSS for a polished look
+- **Professional UI**: Built with modern design principles
 
 ---
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- **Node.js** 20.x or higher
-- **npm** or **yarn** package manager
+### Docker Deployment (Recommended)
 
-### Installation
+The easiest way to run VO Tools:
 
-1. **Clone or navigate to the project directory**
+```bash
+# Navigate to project directory
+cd script-calc
+
+# Start with Docker Compose
+docker-compose up -d
+
+# Access the app at http://localhost:3010
+```
+
+To rebuild after changes:
+```bash
+docker-compose up -d --build
+```
+
+To stop:
+```bash
+docker-compose down
+```
+
+### Local Development
+
+**Prerequisites:**
+- Node.js 20.x or higher
+- npm package manager
+
+**Steps:**
+
+1. **Install dependencies**
    ```bash
    cd script-calc
-   ```
-
-2. **Install dependencies**
-   ```bash
    npm install
    ```
 
-3. **Run the development server**
+2. **Run development server**
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**
+3. **Open browser**
    
    Navigate to [http://localhost:3000](http://localhost:3000)
 
-### Docker Deployment
-
-Run with Docker for easy deployment:
+### Production Build
 
 ```bash
-# Build the image
-docker build -t script-timer .
+# Build for production
+npm run build
 
-# Run the container
-docker run -p 3000:3000 script-timer
-```
-
-Or use Docker Compose:
-
-```bash
-docker-compose up
+# Start production server
+npm start
 ```
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **[Next.js 16](https://nextjs.org/)** - React framework with App Router
-- **[React 19](https://react.dev/)** - UI library with latest features
+- **[Next.js 16](https://nextjs.org/)** - React framework with App Router and Turbopack
+- **[React 19](https://react.dev/)** - Latest React features
 - **[TypeScript](https://www.typescriptlang.org/)** - Type-safe development
-- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first styling
-- **[Lucide React](https://lucide.dev/)** - Beautiful icon library
+- **[Tailwind CSS](https://tailwindcss.com/)** - Modern styling
+- **[Lucide React](https://lucide.dev/)** - Icon library
+- **[jsPDF](https://github.com/parallax/jsPDF)** - PDF generation
 - **[next-themes](https://github.com/pacocoursey/next-themes)** - Theme management
 - **[number-to-words](https://www.npmjs.com/package/number-to-words)** - Number conversion
 
 ---
 
-## 💡 How It Works
+## 💡 How to Use
 
-ScriptTimer uses a sophisticated text analysis algorithm to provide accurate spoken word counts:
+### Single Script Mode
 
-1. **Text Preprocessing**: Identifies numbers, currency, and special formats
-2. **Number Expansion**: Converts all numeric values to their spoken equivalents
-3. **Word Counting**: Counts actual spoken words after expansion
-4. **Time Calculation**: Divides word count by WPM to estimate duration
+1. Enter or paste your script into the editor
+2. Adjust WPM slider to match your reading speed
+3. Toggle expansion options as needed (numbers, currency, etc.)
+4. View real-time word count and reading time in sidebar
+5. Optional: Configure pricing and generate a PDF quote
 
-### Example Transformations
+### Comparison Mode
 
-| Input | Spoken Output | Word Count |
-|-------|---------------|------------|
-| `"Call 911"` | "Call nine one one" | 4 words |
-| `"$1,500"` | "one thousand five hundred dollars" | 5 words |
-| `"3.14"` | "three point fourteen" | 3 words |
+1. Click "Compare Scripts" toggle
+2. Enter original script on the left
+3. Enter revised script on the right
+4. View highlighted differences and word count changes
+5. Both scripts are analyzed independently
 
-This ensures your time estimates match actual speaking duration, not just raw word count.
+### Generating Quotes
+
+1. Configure your pricing in the sidebar:
+   - Choose pricing model (per word, per minute, or per project)
+   - Set your rates
+   - Optional: Set minimum session fee
+   - Configure revision pricing
+2. Enter client and project name
+3. Click "Download Quote PDF"
+4. Professional PDF is generated with all project details
 
 ---
 
-## 📝 Available Scripts
+## 📝 Pause Detection
+
+VO Tools automatically detects and times pauses in your script:
+
+- **Commas** (`,`) - 0.3 seconds
+- **Periods** (`.`) - 0.5 seconds
+- **Question marks** (`?`) - 0.5 seconds
+- **Exclamation marks** (`!`) - 0.5 seconds
+- **Semicolons** (`;`) - 0.4 seconds
+- **Colons** (`:`) - 0.4 seconds
+- **Ellipses** (`...`) - 0.7 seconds
+- **Em dashes** (`—`) - 0.3 seconds
+
+Pause time is added to total reading time for more accurate estimates.
+
+---
+
+## 🎯 Use Cases
+
+- **Voiceover Artists**: Calculate script durations, generate client quotes, and compare script revisions
+- **Producers**: Budget recording sessions and estimate costs
+- **Copywriters**: Time commercial and ad scripts
+- **Content Creators**: Plan video narration timing
+- **Audiobook Narrators**: Estimate chapter and book duration
+
+---
+
+## 🔧 Available Scripts
 
 ```bash
 # Development server with hot reload
@@ -120,21 +187,24 @@ npm run dev
 npm run build
 
 # Start production server
-npm run start
+npm start
 
 # Run linter
 npm run lint
+
+# Docker commands
+docker-compose up -d          # Start
+docker-compose down           # Stop
+docker-compose up -d --build  # Rebuild
 ```
 
 ---
 
-## 🎯 Use Cases
+## 💖 Support
 
-- **Voiceover Artists**: Calculate exact script duration for recording sessions
-- **Content Creators**: Plan video narration and podcast segments
-- **Copywriters**: Estimate commercial and ad read times
-- **Educators**: Time instructional content and presentations
-- **Media Producers**: Budget recording time and studio sessions
+If you find VO Tools helpful, consider supporting development:
+
+**[Buy me a coffee ☕](https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02)**
 
 ---
 
@@ -144,4 +214,4 @@ This project is available for personal and commercial use.
 
 ---
 
-**Built with ❤️ using Next.js and React**
+**Built with ❤️ for the voiceover community**
