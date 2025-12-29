@@ -37,6 +37,13 @@ VO Tools is a comprehensive web application designed for voiceover artists to an
 - **PDF Export**: Generate professional quote PDFs for clients
 - **Client & Project Info**: Customize quotes with client and project names
 
+### 💾 Auto-Save & Persistence
+- **Automatic Saving**: Your work is automatically saved every 30 seconds
+- **Session Recovery**: Resume where you left off after page refresh
+- **Unsaved Changes Warning**: Get notified before leaving with unsaved work
+- **Save Indicator**: See save status in real-time (saved/unsaved)
+- **Local Storage**: All data persists in your browser
+
 ### 🎨 Modern Interface
 - **Dark/Light Theme**: Comfortable viewing in any environment
 - **Responsive Design**: Works on desktop, tablet, and mobile

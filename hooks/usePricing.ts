@@ -15,12 +15,18 @@ import { generateQuotePDF } from '@/utils/pdfGenerator';
 export const usePricing = (
   wordCount: number,
   wpm: number,
-  readingTime: string
+  readingTime: string,
+  initialConfig?: PricingConfig,
+  initialClientName?: string,
+  initialProjectName?: string,
+  initialShowPricing?: boolean
 ) => {
-  const [pricingConfig, setPricingConfig] = useState<PricingConfig>(DEFAULT_PRICING_CONFIG);
-  const [showPricing, setShowPricing] = useState<boolean>(false);
-  const [clientName, setClientName] = useState<string>('');
-  const [projectName, setProjectName] = useState<string>('');
+  const [pricingConfig, setPricingConfig] = useState<PricingConfig>(
+    initialConfig ?? DEFAULT_PRICING_CONFIG
+  );
+  const [showPricing, setShowPricing] = useState<boolean>(initialShowPricing ?? false);
+  const [clientName, setClientName] = useState<string>(initialClientName ?? '');
+  const [projectName, setProjectName] = useState<string>(initialProjectName ?? '');
   const [quote, setQuote] = useState<QuoteResult | null>(null);
 
   // Update specific pricing config field

@@ -1,18 +1,24 @@
 'use client';
 
-import React, { useState, lazy, Suspense } from 'react';
-import { Mic, GitCompare, FileText, Heart } from 'lucide-react';
+import React, { useState, lazy, Suspense, useCallback, useRef } from 'react';
+import { Mic, GitCompare, FileText, Heart, RotateCcw } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { ScriptEditor } from './editor/ScriptEditor';
 import { AnalysisSidebar } from './analysis/AnalysisSidebar';
 import { SpeedControl } from './analysis/SpeedControl';
 import { ExpansionSettings } from './settings/ExpansionSettings';
 import { PricingSection } from './pricing/PricingSection';
+import AutosaveIndicator from './AutosaveIndicator';
+import UnsavedChangesWarning from './UnsavedChangesWarning';
 import { useScriptAnalysis } from '@/hooks/useScriptAnalysis';
 import { useComparison } from '@/hooks/useComparison';
 import { usePricing } from '@/hooks/usePricing';
 import { useExpansionOptions } from '@/hooks/useExpansionOptions';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useAutosave } from '@/hooks/useAutosave';
+import { ExpansionOptions } from '@/utils/expansionOptions';
+import { PricingConfig } from '@/utils/pricingTypes';
 
 // Lazy load comparison components (only loaded when comparison mode is activated)
 const ComparisonStats = lazy(() => import('./comparison/ComparisonStats').then(m => ({ default: m.ComparisonStats })));
@@ -22,15 +28,45 @@ const DEFAULT_WPM = 150;
 const MIN_WPM = 75;
 const MAX_WPM = 160;
 
+// Interface for persisted state
+interface PersistedState {
+  script: string;
+  originalScript: string;
+  revisedScript: string;
+  comparisonMode: boolean;
+  wpm: number;
+  expansionOptions: ExpansionOptions;
+  pricingConfig: PricingConfig;
+  clientName: string;
+  projectName: string;
+  showPricing: boolean;
+  showExpansionSettings: boolean;
+}
+
 export const ScriptCalculator = () => {
+  // Load persisted state from localStorage
+  const [persistedState, setPersistedState, clearPersistedState] = useLocalStorage<PersistedState | null>(
+    'vo-tools-state',
+    null
+  );
+
+  // Flag to bypass unsaved changes warning during reset
+  const isResetting = useRef(false);
+
   // Mode state
-  const [comparisonMode, setComparisonMode] = useState<boolean>(false);
+  const [comparisonMode, setComparisonMode] = useState<boolean>(
+    persistedState?.comparisonMode ?? false
+  );
   
   // Script content state (immediate for responsive typing)
-  const [script, setScript] = useState<string>('');
-  const [originalScript, setOriginalScript] = useState<string>('');
-  const [revisedScript, setRevisedScript] = useState<string>('');
-  const [wpm, setWpm] = useState<number>(DEFAULT_WPM);
+  const [script, setScript] = useState<string>(persistedState?.script ?? '');
+  const [originalScript, setOriginalScript] = useState<string>(
+    persistedState?.originalScript ?? ''
+  );
+  const [revisedScript, setRevisedScript] = useState<string>(
+    persistedState?.revisedScript ?? ''
+  );
+  const [wpm, setWpm] = useState<number>(persistedState?.wpm ?? DEFAULT_WPM);
 
   // Debounced versions for expensive calculations (300ms delay)
   const debouncedScript = useDebounce(script, 300);
@@ -38,7 +74,7 @@ export const ScriptCalculator = () => {
   const debouncedRevisedScript = useDebounce(revisedScript, 300);
 
   // Custom hooks for business logic
-  const expansionHook = useExpansionOptions();
+  const expansionHook = useExpansionOptions(persistedState?.expansionOptions);
   const { expansionOptions, showExpansionSettings, setShowExpansionSettings, toggleExpansionOption } = expansionHook;
 
   // Single mode analysis (using debounced text)
@@ -53,7 +89,15 @@ export const ScriptCalculator = () => {
   const activeWordCount = comparisonMode ? revisedAnalysis.wordCount : singleAnalysis.wordCount;
   const activeTimeEstimate = comparisonMode ? revisedAnalysis.timeEstimate : singleAnalysis.timeEstimate;
   
-  const pricingHook = usePricing(activeWordCount, wpm, activeTimeEstimate);
+  const pricingHook = usePricing(
+    activeWordCount,
+    wpm,
+    activeTimeEstimate,
+    persistedState?.pricingConfig,
+    persistedState?.clientName,
+    persistedState?.projectName,
+    persistedState?.showPricing
+  );
   const {
     pricingConfig,
     updatePricingConfig,
@@ -67,6 +111,56 @@ export const ScriptCalculator = () => {
     handleDownloadPDF
   } = pricingHook;
 
+  // Autosave function - saves current state to localStorage
+  const saveState = useCallback(() => {
+    const currentState: PersistedState = {
+      script,
+      originalScript,
+      revisedScript,
+      comparisonMode,
+      wpm,
+      expansionOptions,
+      pricingConfig,
+      clientName,
+      projectName,
+      showPricing,
+      showExpansionSettings,
+    };
+    setPersistedState(currentState);
+  }, [
+    script,
+    originalScript,
+    revisedScript,
+    comparisonMode,
+    wpm,
+    expansionOptions,
+    pricingConfig,
+    clientName,
+    projectName,
+    showPricing,
+    showExpansionSettings,
+    setPersistedState,
+  ]);
+
+  // Autosave hook - saves every 30 seconds when changes are detected
+  const { lastSaved, saveNow, hasUnsavedChanges } = useAutosave(
+    {
+      script,
+      originalScript,
+      revisedScript,
+      comparisonMode,
+      wpm,
+      expansionOptions,
+      pricingConfig,
+      clientName,
+      projectName,
+      showPricing,
+      showExpansionSettings,
+    },
+    saveState,
+    30000 // 30 seconds
+  );
+
   // Toggle comparison mode
   const toggleComparisonMode = () => {
     if (!comparisonMode) {
@@ -77,8 +171,29 @@ export const ScriptCalculator = () => {
     setComparisonMode(!comparisonMode);
   };
 
+  // Reset all data to defaults
+  const handleReset = useCallback(() => {
+    const confirmReset = window.confirm(
+      'Are you sure you want to reset all data? This will clear all scripts, settings, and pricing information. This action cannot be undone.'
+    );
+    
+    if (confirmReset) {
+      // Set flag to bypass unsaved changes warning
+      isResetting.current = true;
+      
+      // Clear localStorage
+      clearPersistedState();
+      
+      // Reload the page
+      window.location.reload();
+    }
+  }, [clearPersistedState]);
+
   return (
     <div className="min-h-screen w-full flex flex-col items-center bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+      
+      {/* Unsaved Changes Warning */}
+      <UnsavedChangesWarning hasUnsavedChanges={hasUnsavedChanges} isResetting={isResetting} />
       
       {/* Navbar */}
       <nav className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-20 px-4 md:px-6 py-3">
@@ -90,9 +205,18 @@ export const ScriptCalculator = () => {
             <h1 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
               VO Tools
             </h1>
+            <AutosaveIndicator lastSaved={lastSaved} hasUnsavedChanges={hasUnsavedChanges} />
           </div>
           
           <div className="flex items-center gap-1.5 md:gap-3">
+            <button
+              onClick={handleReset}
+              className="flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
+              title="Reset all data to defaults"
+            >
+              <RotateCcw size={14} className="md:w-4 md:h-4" />
+              <span className="hidden sm:inline">Reset</span>
+            </button>
             <a
               href="https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02"
               target="_blank"

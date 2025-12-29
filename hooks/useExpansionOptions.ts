@@ -5,9 +5,9 @@ import { ExpansionOptions, DEFAULT_EXPANSION_OPTIONS } from '@/utils/expansionOp
  * Custom hook for managing text expansion options
  * Handles state for which text features to expand (numbers, currencies, etc.)
  */
-export const useExpansionOptions = () => {
+export const useExpansionOptions = (initialOptions?: ExpansionOptions) => {
   const [expansionOptions, setExpansionOptions] = useState<ExpansionOptions>(
-    DEFAULT_EXPANSION_OPTIONS
+    initialOptions ?? DEFAULT_EXPANSION_OPTIONS
   );
   const [showExpansionSettings, setShowExpansionSettings] = useState<boolean>(false);
 
