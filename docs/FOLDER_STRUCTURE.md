@@ -9,7 +9,7 @@ The project currently follows a clean Next.js 13+ App Router architecture with g
 ## ✅ Current Structure (Good)
 
 ```
-script-calc/
+vo-tools/
 ├── app/                      # Next.js 13+ App Router
 │   ├── favicon.ico
 │   ├── globals.css          # Global styles

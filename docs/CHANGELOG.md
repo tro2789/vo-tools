@@ -31,7 +31,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced folder structure organization following best practices
 - Moved all documentation to `/docs` folder
 - Updated README.md with documentation section linking to `/docs`
+- Renamed project from "script-calc" to "vo-tools" across all files
 - Renamed Docker container and image from "script-timer" to "vo-tools"
+- Updated package.json name field to "vo-tools"
 
 ### Removed
 - Unsaved changes warning popup (conflicted with reset functionality)

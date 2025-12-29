@@ -60,7 +60,7 @@ The easiest way to run VO Tools:
 
 ```bash
 # Navigate to project directory
-cd script-calc
+cd vo-tools
 
 # Start with Docker Compose
 docker-compose up -d
@@ -88,7 +88,7 @@ docker-compose down
 
 1. **Install dependencies**
    ```bash
-   cd script-calc
+   cd vo-tools
    npm install
    ```
 

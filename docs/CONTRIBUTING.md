@@ -39,7 +39,7 @@ Thank you for your interest in contributing to VO Tools! This document provides 
 1. **Clone the repository**
    ```bash
    git clone https://gitea.tohareprod.com/tro2789/vo-tools.git
-   cd vo-tools/script-calc
+   cd vo-tools
    ```
 
 2. **Install dependencies**
