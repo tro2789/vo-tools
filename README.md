@@ -21,32 +21,69 @@ A comprehensive suite of professional tools designed for voice actors and audio 
 ## Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
-- npm or yarn
+- Docker and Docker Compose
 
-### Installation
+### Installation (Recommended: Docker)
 
-1. Clone the repository:
+1. Navigate to the project directory:
 ```bash
 cd vo-tools
 ```
 
-2. Install dependencies:
+2. Build and start the container:
+```bash
+docker-compose up -d --build
+```
+
+3. Open [http://localhost:3010](http://localhost:3010) in your browser.
+
+That's it! The application is now running in a Docker container.
+
+### Managing the Container
+
+**Stop the container:**
+```bash
+docker-compose down
+```
+
+**View logs:**
+```bash
+docker-compose logs -f
+```
+
+**Rebuild after changes:**
+```bash
+docker-compose up -d --build
+```
+
+## Alternative: Local Development
+
+If you prefer to run without Docker:
+
+### Prerequisites
+- Node.js 20+
+- npm or yarn
+
+### Setup
+
+1. Install dependencies:
 ```bash
 npm install
 ```
 
-3. (Optional) Configure environment variables:
-```bash
-cp .env.example .env.local
-```
-
-4. Run the development server:
+2. Run the development server:
 ```bash
 npm run dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+3. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Building for Production
+
+```bash
+npm run build
+npm start
+```
 
 ## Project Structure
 
@@ -62,6 +99,7 @@ vo-tools/
 │   └── globals.css
 ├── components/
 │   ├── Navigation.tsx              # Global navigation component
+│   ├── Footer.tsx                  # Global footer component
 │   ├── ScriptCalculator.tsx        # Script analysis main component
 │   ├── ThemeProvider.tsx           # Dark/light theme provider
 │   ├── ThemeToggle.tsx             # Theme toggle button
@@ -79,35 +117,43 @@ vo-tools/
 │   └── types/
 │       └── converter.ts            # Telephony converter types
 ├── hooks/                          # Additional custom hooks
-└── docs/                           # Documentation
-
+├── docs/                           # Documentation
+├── docker-compose.yml              # Docker Compose configuration
+└── Dockerfile                      # Docker build configuration
 ```
 
-## Environment Variables
+## Configuration
 
-### Telephony Converter
+### Environment Variables
 
-If you're running the telephony converter backend separately, configure the API URL:
+The application uses environment variables for configuration. Create a `.env.local` file if you need to customize settings:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000
 ```
 
-Leave empty to use same-origin API (when backend serves both static files and API).
+> **Note:** When using Docker, the default configuration works out of the box. Environment variables are only needed for advanced customization.
 
-## Development
+## Deployment
 
-### Building for Production
+### Production Deployment with Docker
 
+The included Docker configuration is production-ready:
+
+1. Build the production image:
 ```bash
-npm run build
-npm start
+docker-compose up -d --build
 ```
 
-### Linting
+2. The application will be available on port 3010
 
-```bash
-npm run lint
+### Port Configuration
+
+To change the port, edit `docker-compose.yml`:
+
+```yaml
+ports:
+  - "YOUR_PORT:3000"
 ```
 
 ## Features Roadmap
@@ -116,6 +162,7 @@ npm run lint
 - ✅ Telephony audio converter
 - ✅ Dark/light mode support
 - ✅ Responsive design
+- ✅ Docker deployment
 - 🚀 Additional tools coming soon!
 
 ## Tech Stack
@@ -125,6 +172,7 @@ npm run lint
 - **Styling:** Tailwind CSS
 - **UI Components:** Custom components with Lucide icons
 - **Theme:** next-themes for dark/light mode
+- **Deployment:** Docker with Alpine Linux base image
 
 ## Contributing
 
@@ -134,6 +182,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 - Join our [Discord community](https://discord.gg/gYg69PbHfR)
 - [Support development](https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02)
+- [View source code](https://gitea.tohareprod.com/tro2789/vo-tools)
 
 ## License
 
