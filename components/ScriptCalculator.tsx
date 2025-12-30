@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, lazy, Suspense, useCallback, useEffect } from 'react';
-import { Mic, GitCompare, FileText, Heart, RotateCcw, MessageCircle } from 'lucide-react';
+import { GitCompare, FileText, Heart, RotateCcw, MessageCircle } from 'lucide-react';
+import Image from 'next/image';
 import { ThemeToggle } from './ThemeToggle';
 import { ScriptEditor } from './editor/ScriptEditor';
 import { AnalysisSidebar } from './analysis/AnalysisSidebar';
@@ -48,7 +49,8 @@ export const ScriptCalculator = () => {
     const isResetting = sessionStorage.getItem('vo-tools-resetting');
     if (isResetting === 'true') {
       sessionStorage.removeItem('vo-tools-resetting');
-      localStorage.clear();
+      // Only remove app-specific localStorage items, preserve theme preference
+      localStorage.removeItem('vo-tools-state');
     }
   }
 
@@ -178,22 +180,28 @@ export const ScriptCalculator = () => {
 
   // Reset all data to defaults - immediate reset with no confirmation
   const handleReset = useCallback(() => {
-    // Set a flag in sessionStorage to indicate we're resetting
-    sessionStorage.setItem('vo-tools-resetting', 'true');
+    // Clear only app-specific state, preserve theme preference
+    localStorage.removeItem('vo-tools-state');
     
-    // Reload the page - the useEffect on mount will handle clearing localStorage
+    // Reload the page to reset all state
     window.location.reload();
   }, []);
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center bg-white dark:bg-brand-dark transition-colors duration-300">
+    <div className="min-h-screen w-full flex flex-col items-center bg-white dark:bg-slate-900 transition-colors duration-300">
       
       {/* Navbar */}
-      <nav className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-brand-dark/80 backdrop-blur-md sticky top-0 z-20 px-4 md:px-6 py-3">
+      <nav className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-20 px-4 md:px-6 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 md:gap-3">
-            <div className="bg-blue-600 rounded-lg p-1.5 md:p-2 text-white shadow-lg shadow-blue-500/20">
-              <Mic size={18} className="md:w-5 md:h-5" />
+            <div className="relative w-8 h-8 md:w-10 md:h-10">
+              <Image
+                src="/logo.png"
+                alt="VO Tools Logo"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
             <h1 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
               VO Tools
@@ -371,7 +379,7 @@ export const ScriptCalculator = () => {
       </main>
 
       {/* Footer */}
-      <footer className="w-full border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-brand-dark/80 backdrop-blur-md mt-8 px-4 md:px-6 py-4">
+      <footer className="w-full border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md mt-8 px-4 md:px-6 py-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
           <div>
             Built with ❤️ for the voiceover community
