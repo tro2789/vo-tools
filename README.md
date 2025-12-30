@@ -18,19 +18,14 @@ Handy tools designed for voice actors and audio engineers.
 
 ## Quick Start
 
-### Using Docker (Recommended)
+### Production Deployment
 
-1. Navigate to the project directory:
 ```bash
 cd vo-tools
-```
-
-2. Start the application:
-```bash
 docker-compose up -d --build
 ```
 
-3. Open http://localhost:3010
+Access at http://localhost:3010
 
 **Useful commands:**
 ```bash
@@ -39,16 +34,33 @@ docker-compose logs -f           # View logs
 docker-compose up -d --build     # Rebuild
 ```
 
-### Local Development
+### Development Environment
 
-For development without Docker:
+For active development, use the separate dev environment on different ports:
+
+```bash
+# Start development container (ports 3011/5001)
+docker-compose -f docker-compose.dev.yml up -d --build
+
+# Access dev site
+http://localhost:3011
+
+# View dev logs
+docker logs -f vo-tools-dev
+```
+
+**📖 See [`DEVELOPMENT.md`](DEVELOPMENT.md) for:**
+- Complete development workflow
+- Git branching strategy (dev → main)
+- Testing procedures
+- Troubleshooting guide
+
+### Local Development (No Docker)
 
 ```bash
 npm install
-npm run dev
+npm run dev  # Port 3000
 ```
-
-Open http://localhost:3000
 
 ## Project Structure
 
@@ -64,12 +76,18 @@ vo-tools/
 └── docs/                  # Documentation
 ```
 
+## Documentation
+
+- **[DEVELOPMENT.md](DEVELOPMENT.md)** - Development workflow, Git strategy, testing
+- **[INTEGRATION.md](INTEGRATION.md)** - Architecture and technical details
+
 ## Tech Stack
 
 - Next.js 16 (App Router)
 - TypeScript
 - Tailwind CSS
-- Docker
+- Python Flask (API backend)
+- Docker with Supervisord
 
 ## Support
 

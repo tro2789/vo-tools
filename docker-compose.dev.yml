@@ -1,0 +1,20 @@
+services:
+  app:
+    container_name: vo-tools-dev
+    image: vo-tools:dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    restart: unless-stopped
+    ports:
+      - "3011:3000"  # Next.js frontend (dev port)
+      - "5001:5000"  # Python API backend (dev port)
+    environment:
+      - NODE_ENV=production
+      - FLASK_API_URL=http://localhost:5000
+      - ALLOWED_ORIGINS=*
+      - LOG_LEVEL=DEBUG  # More verbose logging for development
+    labels:
+      - "app.environment=development"
+      - "app.version=dev"

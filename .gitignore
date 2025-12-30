@@ -1,46 +1,32 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # Dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+node_modules/
+.pnp
+.pnp.js
 
 # Testing
-/coverage
-*.test.ts.snap
-/test-results/
-/playwright-report/
-/playwright/.cache/
+coverage/
 
 # Next.js
-/.next/
-/out/
-.next
+.next/
+out/
+build/
+dist/
 
 # Production
-/build
-/dist
+*.production.js
 
 # Misc
 .DS_Store
 *.pem
-Thumbs.db
 
 # Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
-lerna-debug.log*
 
 # Local env files
 .env
-.env*.local
+.env.local
 .env.development.local
 .env.test.local
 .env.production.local
@@ -48,48 +34,34 @@ lerna-debug.log*
 # Vercel
 .vercel
 
-# TypeScript
+# Typescript
 *.tsbuildinfo
 next-env.d.ts
 
-# IDEs and Editors
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+.venv
+
+# Flask uploads (temporary files)
+uploads/
+/tmp/
+
+# Docker
+.dockerignore
+
+# IDE
+.vscode/
 .idea/
 *.swp
 *.swo
 *~
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-.vs/
 
-# OS Files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
+# OS
 Thumbs.db
-desktop.ini
-
-# Docker
-.dockerignore
-docker-compose.override.yml
-*.log
-
-# Temporary files
-*.tmp
-*.temp
-.cache/
-.parcel-cache/
-
-# Archive/Deprecated
-archive/
-deprecated/
-_archive/
-_deprecated/
