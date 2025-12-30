@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     container_name: vo-tools
@@ -9,6 +7,9 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "3010:3000"
+      - "3010:3000"  # Next.js frontend
+      - "5000:5000"  # Python API backend
     environment:
       - NODE_ENV=production
+      - FLASK_API_URL=http://localhost:5000
+      - ALLOWED_ORIGINS=*

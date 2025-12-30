@@ -1,13 +1,7 @@
 import type { ConversionOptions, ErrorResponse, HealthCheckResponse } from '../types/converter'
 
-// Get API URL from environment or use default
-function getAPIUrl(): string {
-  // In Next.js, NEXT_PUBLIC_ env vars are replaced at build time
-  // Empty string means same origin (Flask serves both static files and API)
-  return process.env.NEXT_PUBLIC_API_URL || ''
-}
-
-const API_URL = getAPIUrl()
+// Use same-origin API routes (Next.js proxies to Flask backend)
+const API_URL = ''
 
 export class ConverterAPIError extends Error {
   constructor(
