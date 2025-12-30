@@ -25,7 +25,7 @@ export default function Home() {
             className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-lg shadow-pink-500/20"
           >
             <Heart size={16} className="fill-current" />
-            <span className="hidden sm:inline">Support</span>
+            <span className="hidden sm:inline">Buy Me A Coffee</span>
           </a>
         </div>
       </div>
@@ -38,7 +38,7 @@ export default function Home() {
             VO Tools
           </h1>
           <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-            Professional voiceover tools designed for voice actors and audio engineers
+            Handy tools designed for voice actors and audio engineers
           </p>
         </div>
 
@@ -113,7 +113,7 @@ export default function Home() {
                   Telephony Converter
                 </h2>
                 <p className="text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
-                  Convert audio files to telephony-compatible formats for IVR systems, VoIP applications, and phone systems.
+                  Convert audio files to telephony-compatible formats for IVR systems, VoIP applications, and phone systems. Adjust loudness and apply bandpass filter.
                 </p>
 
                 {/* Features List */}

@@ -2,6 +2,7 @@
 
 import React, { useState, lazy, Suspense, useCallback, useEffect } from 'react';
 import { GitCompare, FileText, RotateCcw } from 'lucide-react';
+import { Footer } from './Footer';
 import { ScriptEditor } from './editor/ScriptEditor';
 import { AnalysisSidebar } from './analysis/AnalysisSidebar';
 import { SpeedControl } from './analysis/SpeedControl';
@@ -186,7 +187,7 @@ export const ScriptCalculator = () => {
   }, []);
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+    <div className="min-h-screen w-full bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
       
       {/* Page Header - Secondary controls specific to Script Analysis */}
       <div className="w-full border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 px-4 md:px-6 py-4">
@@ -226,10 +227,10 @@ export const ScriptCalculator = () => {
         </div>
       </div>
 
-      <main className="w-full max-w-7xl mx-auto p-4 md:p-8">
+      <main className="w-full max-w-7xl mx-auto px-4 md:px-6 py-4">
         {!comparisonMode ? (
           // Single Mode Layout
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* Left Column: Editor */}
             <div className="lg:col-span-8 flex flex-col gap-4">
               <ScriptEditor
@@ -240,7 +241,7 @@ export const ScriptCalculator = () => {
             </div>
 
             {/* Right Column: Analysis Sidebar */}
-            <div className="lg:col-span-4 space-y-6">
+            <div className="lg:col-span-4 space-y-4">
               <AnalysisSidebar
                 wordCount={singleAnalysis.wordCount}
                 timeEstimate={singleAnalysis.timeEstimate}
@@ -267,7 +268,7 @@ export const ScriptCalculator = () => {
           </div>
         ) : (
           // Comparison Mode Layout - Similar to Single Mode
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* Left Column: Stacked Editors */}
             <div className="lg:col-span-8 flex flex-col gap-4">
               <ScriptEditor
@@ -275,7 +276,7 @@ export const ScriptCalculator = () => {
                 onChange={setOriginalScript}
                 placeholder="Paste your original script here..."
                 label="Original Script"
-                height="h-[45vh]"
+                height="h-[32vh]"
               />
 
               <ScriptEditor
@@ -283,7 +284,7 @@ export const ScriptCalculator = () => {
                 onChange={setRevisedScript}
                 placeholder="Paste your revised script here..."
                 label="Revised Script"
-                height="h-[45vh]"
+                height="h-[32vh]"
               />
 
               {/* Diff Visualization below editors */}
@@ -302,7 +303,7 @@ export const ScriptCalculator = () => {
             </div>
 
             {/* Right Column: Stats and Controls */}
-            <div className="lg:col-span-4 space-y-6">
+            <div className="lg:col-span-4 space-y-4">
               {/* Comparison Stats */}
               <Suspense fallback={
                 <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-8 text-center">
@@ -352,12 +353,7 @@ export const ScriptCalculator = () => {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="w-full border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md mt-8 px-4 md:px-6 py-4">
-        <div className="max-w-7xl mx-auto text-center text-xs text-slate-500 dark:text-slate-400">
-          Built with ❤️ for the voiceover community
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

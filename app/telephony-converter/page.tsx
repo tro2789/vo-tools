@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Upload, Volume2, Settings, Download, RotateCcw } from 'lucide-react'
+import { Footer } from '@/components/Footer'
 import { convertAudioFiles, ConverterAPIError } from '@/lib/api/converter'
 import { FORMATS, VOLUME_LEVELS, ALLOWED_FILE_TYPES } from '@/lib/types/converter'
 import type { Format, VolumeLevel } from '@/lib/types/converter'
@@ -80,7 +81,7 @@ export default function TelephonyConverterPage() {
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+    <div className="min-h-screen w-full bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
       
       {/* Page Header - Secondary controls specific to Telephony Converter */}
       <div className="w-full border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 px-4 md:px-6 py-4">
@@ -239,6 +240,8 @@ export default function TelephonyConverterPage() {
           </form>
         </div>
       </main>
+
+      <Footer />
     </div>
   )
 }

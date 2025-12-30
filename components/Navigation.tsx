@@ -1,6 +1,5 @@
 "use client"
 
-import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -17,9 +16,9 @@ export function Navigation() {
   }
 
   return (
-    <nav className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-20 px-4 md:px-6 py-3">
+    <nav className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 px-4 md:px-6 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
-        <Link
+        <a
           href="/"
           className="flex items-center gap-2 md:gap-3 hover:opacity-80 transition-opacity"
         >
@@ -35,7 +34,7 @@ export function Navigation() {
           <div className="text-lg md:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
             VO Tools
           </div>
-        </Link>
+        </a>
         
         <div className="flex items-center gap-1.5 md:gap-3">
           <ThemeToggle />
