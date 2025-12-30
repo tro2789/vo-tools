@@ -1,9 +1,7 @@
 'use client';
 
 import React, { useState, lazy, Suspense, useCallback, useEffect } from 'react';
-import { GitCompare, FileText, Heart, RotateCcw, MessageCircle } from 'lucide-react';
-import Image from 'next/image';
-import { ThemeToggle } from './ThemeToggle';
+import { GitCompare, FileText, RotateCcw } from 'lucide-react';
 import { ScriptEditor } from './editor/ScriptEditor';
 import { AnalysisSidebar } from './analysis/AnalysisSidebar';
 import { SpeedControl } from './analysis/SpeedControl';
@@ -188,69 +186,45 @@ export const ScriptCalculator = () => {
   }, []);
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center bg-white dark:bg-slate-900 transition-colors duration-300">
+    <div className="min-h-screen w-full flex flex-col items-center bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
       
-      {/* Navbar */}
-      <nav className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-20 px-4 md:px-6 py-3">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 md:gap-3">
-            <div className="relative w-8 h-8 md:w-10 md:h-10">
-              <Image
-                src="/logo.png"
-                alt="VO Tools Logo"
-                fill
-                className="object-contain"
-                priority
-              />
+      {/* Page Header - Secondary controls specific to Script Analysis */}
+      <div className="w-full border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 px-4 md:px-6 py-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+                Script Analysis
+              </h1>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                Analyze scripts for word count, timing, and pricing
+              </p>
             </div>
-            <h1 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
-              VO Tools
-            </h1>
-          </div>
-          
-          <div className="flex items-center gap-1.5 md:gap-3">
-            <button
-              onClick={handleReset}
-              className="flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
-              title="Reset all data to defaults"
-            >
-              <RotateCcw size={14} className="md:w-4 md:h-4" />
-              <span className="hidden sm:inline">Reset</span>
-            </button>
-            <button
-              onClick={toggleComparisonMode}
-              className={`flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all ${
-                comparisonMode
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-              }`}
-            >
-              {comparisonMode ? <GitCompare size={14} className="md:w-4 md:h-4" /> : <FileText size={14} className="md:w-4 md:h-4" />}
-              <span className="hidden sm:inline">{comparisonMode ? 'Compare' : 'Single'}</span>
-            </button>
-            <ThemeToggle />
-            <a
-              href="https://discord.gg/gYg69PbHfR"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
-              title="Join our Discord community"
-            >
-              <MessageCircle size={14} className="md:w-4 md:h-4" />
-              <span className="hidden sm:inline">Discord</span>
-            </a>
-            <a
-              href="https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-lg shadow-pink-500/20"
-            >
-              <Heart size={14} className="fill-current md:w-4 md:h-4" />
-              <span className="hidden sm:inline">Buy Me A Coffee</span>
-            </a>
+            
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleReset}
+                className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
+                title="Reset all data to defaults"
+              >
+                <RotateCcw size={16} />
+                <span className="hidden sm:inline">Reset</span>
+              </button>
+              <button
+                onClick={toggleComparisonMode}
+                className={`flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all ${
+                  comparisonMode
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
+              >
+                {comparisonMode ? <GitCompare size={16} /> : <FileText size={16} />}
+                <span className="hidden sm:inline">{comparisonMode ? 'Compare' : 'Single'}</span>
+              </button>
+            </div>
           </div>
         </div>
-      </nav>
+      </div>
 
       <main className="w-full max-w-7xl mx-auto p-4 md:p-8">
         {!comparisonMode ? (
@@ -380,42 +354,8 @@ export const ScriptCalculator = () => {
 
       {/* Footer */}
       <footer className="w-full border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md mt-8 px-4 md:px-6 py-4">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
-          <div>
-            Built with ❤️ for the voiceover community
-          </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="https://discord.gg/gYg69PbHfR"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5"
-            >
-              <MessageCircle className="w-4 h-4" />
-              Discord
-            </a>
-            <span className="text-slate-300 dark:text-slate-700">•</span>
-            <a
-              href="https://gitea.tohareprod.com/tro2789/vo-tools"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"/>
-              </svg>
-              Source Code
-            </a>
-            <span className="text-slate-300 dark:text-slate-700">•</span>
-            <a
-              href="https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors"
-            >
-              Support Development
-            </a>
-          </div>
+        <div className="max-w-7xl mx-auto text-center text-xs text-slate-500 dark:text-slate-400">
+          Built with ❤️ for the voiceover community
         </div>
       </footer>
     </div>
