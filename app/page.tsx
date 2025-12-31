@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Calculator, AudioWaveform, ArrowRight, MessageCircle, Heart } from 'lucide-react';
+import { Calculator, AudioWaveform, ScrollText, ArrowRight, MessageCircle, Heart } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Home() {
@@ -43,7 +43,7 @@ export default function Home() {
         </div>
 
         {/* Feature Cards */}
-        <div className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto">
           
           {/* Script Analysis Card */}
           <Link href="/script-analysis">
@@ -138,6 +138,56 @@ export default function Home() {
 
                 {/* CTA */}
                 <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-medium group-hover:gap-3 transition-all">
+                  <span>Open Tool</span>
+                  <ArrowRight className="w-5 h-5" />
+                </div>
+              </div>
+            </div>
+          </Link>
+
+          {/* Teleprompter Card */}
+          <Link href="/teleprompter">
+            <div className="group relative bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 cursor-pointer h-full">
+              
+              {/* Gradient Accent */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-600"></div>
+              
+              <div className="p-8">
+                {/* Icon */}
+                <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <ScrollText className="w-7 h-7 text-white" />
+                </div>
+
+                {/* Content */}
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
+                  Teleprompter
+                </h2>
+                <p className="text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
+                  Professional teleprompter with auto-scrolling, speed control, and timing display. Perfect for studio recording sessions.
+                </p>
+
+                {/* Features List */}
+                <ul className="space-y-2 mb-6">
+                  <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
+                    <span className="text-emerald-500 mt-0.5">✓</span>
+                    <span>Fullscreen distraction-free mode</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
+                    <span className="text-emerald-500 mt-0.5">✓</span>
+                    <span>Adjustable auto-scroll with live speed control</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
+                    <span className="text-emerald-500 mt-0.5">✓</span>
+                    <span>Elapsed and remaining time display</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
+                    <span className="text-emerald-500 mt-0.5">✓</span>
+                    <span>Keyboard-first operation for studio use</span>
+                  </li>
+                </ul>
+
+                {/* CTA */}
+                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium group-hover:gap-3 transition-all">
                   <span>Open Tool</span>
                   <ArrowRight className="w-5 h-5" />
                 </div>

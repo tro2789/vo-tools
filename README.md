@@ -10,6 +10,14 @@ Handy tools designed for voice actors and audio engineers.
 - Pricing calculator with custom rates
 - Script comparison and diff visualization
 
+### 📜 Teleprompter
+- Professional fullscreen teleprompter for studio recording
+- Auto-scroll with adjustable speed control
+- Elapsed and remaining time display
+- Keyboard-first operation (Space, arrows, Esc, Home)
+- Current line highlighting with fade effects
+- Direct integration from Script Analysis tool
+
 ### 🎙️ Telephony Converter
 - Convert audio files to telephony-compatible formats
 - Batch file conversion
@@ -69,8 +77,11 @@ vo-tools/
 ├── app/                    # Next.js app router pages
 │   ├── page.tsx           # Landing page
 │   ├── script-analysis/   # Script analysis tool
+│   ├── teleprompter/      # Teleprompter tool
 │   └── telephony-converter/ # Telephony converter tool
 ├── components/            # React components
+│   ├── teleprompter/      # Teleprompter components
+│   └── ...                # Other components
 ├── hooks/                 # Custom React hooks
 ├── lib/                   # Utilities and API clients
 └── docs/                  # Documentation
@@ -80,6 +91,7 @@ vo-tools/
 
 - **[DEVELOPMENT.md](DEVELOPMENT.md)** - Development workflow, Git strategy, testing
 - **[INTEGRATION.md](INTEGRATION.md)** - Architecture and technical details
+- **[TELEPROMPTER.md](TELEPROMPTER.md)** - Teleprompter feature guide
 
 ## Tech Stack
 

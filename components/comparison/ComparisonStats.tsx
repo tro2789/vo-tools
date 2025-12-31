@@ -29,7 +29,7 @@ export const ComparisonStats: React.FC<ComparisonStatsProps> = ({
   const pauseTimeDiff = revisedPauseAnalysis.totalPauseTime - originalPauseAnalysis.totalPauseTime;
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 gap-4">
       {/* Original Stats */}
       <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-5">
         <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">

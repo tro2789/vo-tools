@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Force pure white text for teleprompter */
+  .teleprompter-white {
+    color: #FFFFFF !important;
+  }
+  
+  .teleprompter-gray-light {
+    color: #9CA3AF !important;
+  }
+  
+  .teleprompter-gray-dark {
+    color: #6B7280 !important;
+  }
+}
