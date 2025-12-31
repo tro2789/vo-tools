@@ -98,6 +98,10 @@ vo-tools/
 - Python Flask (API backend)
 - Docker with Supervisord
 
+## License
+Apache-2.0
+
+
 ## Support
 
 - [Discord Community](https://discord.gg/gYg69PbHfR)
