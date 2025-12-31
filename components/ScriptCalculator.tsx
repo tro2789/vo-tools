@@ -4,6 +4,7 @@ import React, { useState, lazy, Suspense, useCallback, useEffect } from 'react';
 import { GitCompare, FileText, RotateCcw } from 'lucide-react';
 import { Footer } from './Footer';
 import { ScriptEditor } from './editor/ScriptEditor';
+import { ScriptEditorWithPronunciation } from './editor/ScriptEditorWithPronunciation';
 import { AnalysisSidebar } from './analysis/AnalysisSidebar';
 import { SpeedControl } from './analysis/SpeedControl';
 import { ExpansionSettings } from './settings/ExpansionSettings';
@@ -233,10 +234,11 @@ export const ScriptCalculator = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* Left Column: Editor */}
             <div className="lg:col-span-8 flex flex-col gap-4">
-              <ScriptEditor
+              <ScriptEditorWithPronunciation
                 value={script}
                 onChange={setScript}
                 placeholder="Paste your script here... Numbers like '10,000' will be automatically expanded..."
+                showPronunciationToggle={true}
               />
             </div>
 
@@ -271,20 +273,22 @@ export const ScriptCalculator = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* Left Column: Stacked Editors */}
             <div className="lg:col-span-8 flex flex-col gap-4">
-              <ScriptEditor
+              <ScriptEditorWithPronunciation
                 value={originalScript}
                 onChange={setOriginalScript}
                 placeholder="Paste your original script here..."
                 label="Original Script"
                 height="h-[32vh]"
+                showPronunciationToggle={true}
               />
 
-              <ScriptEditor
+              <ScriptEditorWithPronunciation
                 value={revisedScript}
                 onChange={setRevisedScript}
                 placeholder="Paste your revised script here..."
                 label="Revised Script"
                 height="h-[32vh]"
+                showPronunciationToggle={true}
               />
 
               {/* Diff Visualization below editors */}

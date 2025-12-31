@@ -9,6 +9,7 @@ Handy tools designed for voice actors and audio engineers.
 - Adjustable reading speed calculation
 - Pricing calculator with custom rates
 - Script comparison and diff visualization
+- **Pronunciation lookup** - Click any word to see ARPABET phonetic notation (North American English)
 
 ### 📜 Teleprompter
 - Professional fullscreen teleprompter for studio recording
