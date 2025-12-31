@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { TeleprompterDisplay } from './TeleprompterDisplay';
+import { ScriptEditorWithPronunciation } from '@/components/editor/ScriptEditorWithPronunciation';
 import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { useScriptAnalysis } from '@/hooks/useScriptAnalysis';
 import { DEFAULT_EXPANSION_OPTIONS } from '@/utils/expansionOptions';
@@ -108,17 +109,16 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
           {/* Setup Interface */}
           <div className="space-y-6">
           {/* Script Input */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Script Text
-            </label>
-            <textarea
+          <div className="space-y-2">
+            <ScriptEditorWithPronunciation
               value={script}
-              onChange={(e) => setScript(e.target.value)}
+              onChange={setScript}
               placeholder="Paste your script here..."
-              className="w-full h-64 px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              label="Script Text"
+              height="h-64"
+              showPronunciationToggle={true}
             />
-            <div className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            <div className="text-sm text-slate-500 dark:text-slate-400 px-1">
               {wordCount} words • Estimated {Math.ceil((wordCount / wpm) * 60)} seconds
             </div>
           </div>
