@@ -2,6 +2,8 @@
 
 Handy tools designed for voice actors and audio engineers.
 
+Live demo available at https://voiceover-tools.com
+
 ## Features
 
 ### 🎯 Script Analysis
@@ -106,7 +108,7 @@ Apache-2.0
 
 - [Discord Community](https://discord.gg/gYg69PbHfR)
 - [Buy Me A Coffee](https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02)
-- [Source Code](https://gitea.tohareprod.com/tro2789/vo-tools)
+- [Issue Tracking](https://gitea.tohareprod.com/tro2789/vo-tools)
 
 ---
 
