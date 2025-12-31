@@ -16,8 +16,6 @@ Handy tools designed for voice actors and audio engineers.
 - Auto-scroll with adjustable speed control
 - Elapsed and remaining time display
 - Keyboard-first operation (Space, arrows, Esc, Home)
-- Current line highlighting with fade effects
-- Direct integration from Script Analysis tool
 
 ### 🎙️ Telephony Converter
 - Convert audio files to telephony-compatible formats
