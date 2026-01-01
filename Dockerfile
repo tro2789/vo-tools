@@ -34,6 +34,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy Python API
 COPY app.py ./
+COPY acx_analyzer.py ./
 
 # Setup Next.js
 RUN addgroup --system --gid 1001 nodejs \

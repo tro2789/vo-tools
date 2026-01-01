@@ -25,6 +25,16 @@ Live demo available at https://voiceover-tools.com
 - Volume normalization
 - Phone-optimized audio filtering (300-3400Hz)
 
+### ✅ ACX Compliance Checker
+- Automated ACX audiobook technical requirements validation
+- MP3 format and bitrate verification (192+ kbps CBR)
+- Sample rate checking (44.1 kHz)
+- RMS loudness measurement (-23dB to -18dB)
+- Peak amplitude analysis (≤ -3dB)
+- Noise floor detection (≤ -60dB)
+- Leading/trailing silence measurement
+- Detailed compliance report with actionable guidance
+
 ## Quick Start
 
 ### Production Deployment

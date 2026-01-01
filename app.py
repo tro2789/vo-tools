@@ -13,6 +13,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
+from acx_analyzer import analyze_acx_compliance
 
 # Load environment variables
 load_dotenv()
@@ -357,6 +358,69 @@ def convert():
 
     except Exception as e:
         logger.error(f"Unexpected error in convert endpoint: {str(e)}", exc_info=True)
+        return jsonify({'error': 'An unexpected error occurred'}), 500
+
+@app.route('/api/audio/acx-check', methods=['POST'])
+def acx_check():
+    """ACX Audio Compliance Check endpoint."""
+    try:
+        # Validate request
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file provided'}), 400
+        
+        file = request.files['file']
+        
+        if file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+        
+        # Validate file type (audio files only)
+        if not allowed_file(file.filename):
+            return jsonify({'error': 'Invalid file type. Please upload an audio file.'}), 400
+        
+        # Create job directory
+        job_id = str(uuid.uuid4())
+        job_dir = os.path.join(BASE_UPLOAD_FOLDER, job_id)
+        os.makedirs(job_dir, exist_ok=True)
+        
+        logger.info(f"Starting ACX analysis job {job_id} for {file.filename}")
+        
+        # Save file
+        safe_name = sanitize_filename(file.filename)
+        if not safe_name:
+            shutil.rmtree(job_dir)
+            return jsonify({'error': 'Invalid filename'}), 400
+        
+        filepath = os.path.join(job_dir, safe_name)
+        
+        try:
+            file.save(filepath)
+        except Exception as e:
+            logger.error(f"Error saving {file.filename}: {str(e)}")
+            shutil.rmtree(job_dir)
+            return jsonify({'error': 'Failed to save file'}), 500
+        
+        # Validate audio content
+        if not is_valid_audio(filepath):
+            shutil.rmtree(job_dir)
+            return jsonify({'error': 'Not a valid audio file'}), 400
+        
+        # Analyze for ACX compliance
+        try:
+            result = analyze_acx_compliance(filepath)
+            logger.info(f"ACX analysis complete for job {job_id}: {result['summary']}")
+            
+            # Cleanup job directory
+            shutil.rmtree(job_dir)
+            
+            return jsonify(result), 200
+            
+        except Exception as e:
+            logger.error(f"ACX analysis failed for job {job_id}: {str(e)}", exc_info=True)
+            shutil.rmtree(job_dir)
+            return jsonify({'error': f'Analysis failed: {str(e)}'}), 500
+    
+    except Exception as e:
+        logger.error(f"Unexpected error in ACX check endpoint: {str(e)}", exc_info=True)
         return jsonify({'error': 'An unexpected error occurred'}), 500
 
 # Serve Next.js static files
