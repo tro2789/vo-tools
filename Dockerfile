@@ -60,7 +60,7 @@ RUN echo '[supervisord]' > /etc/supervisor/conf.d/supervisord.conf \
     && echo 'stderr_logfile_maxbytes=0' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo '' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo '[program:flask]' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'command=gunicorn --bind 0.0.0.0:5000 --workers 2 --timeout 120 app:app' >> /etc/supervisor/conf.d/supervisord.conf \
+    && echo 'command=gunicorn --bind 0.0.0.0:5000 --worker-class eventlet --workers 1 --timeout 120 app:app' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo 'directory=/app' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo 'autostart=true' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo 'autorestart=true' >> /etc/supervisor/conf.d/supervisord.conf \

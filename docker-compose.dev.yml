@@ -12,6 +12,7 @@ services:
       - "5001:5000"  # Python API backend (dev port)
     environment:
       - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:5001
       - FLASK_API_URL=http://localhost:5000
       - ALLOWED_ORIGINS=*
       - LOG_LEVEL=DEBUG  # More verbose logging for development

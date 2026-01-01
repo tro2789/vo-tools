@@ -7,8 +7,11 @@ import shutil
 import signal
 import sys
 import logging
+import random
+import string
 from flask import Flask, request, send_file, after_this_request, jsonify, send_from_directory
 from flask_cors import CORS
+from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.utils import secure_filename
@@ -29,6 +32,15 @@ logger = logging.getLogger(__name__)
 # Determine static folder path
 STATIC_FOLDER = os.path.join(os.path.dirname(__file__), 'out')
 app = Flask(__name__, static_folder=STATIC_FOLDER, static_url_path='')
+
+# Initialize SocketIO for real-time communication
+socketio = SocketIO(
+    app,
+    cors_allowed_origins=os.getenv('ALLOWED_ORIGINS', 'http://localhost:3000').split(','),
+    async_mode='eventlet',
+    logger=True,
+    engineio_logger=False
+)
 
 # --- CONFIGURATION ---
 # Environment-based configuration
@@ -94,6 +106,111 @@ SUFFIXES = {
     'pcm16hd': '_hd',
     'sln': '_raw'
 }
+
+# --- TELEPROMPTER REMOTE CONTROL ---
+# Store active rooms: {room_code: {'desktop': sid, 'phone': sid}}
+active_rooms = {}
+
+def generate_room_code():
+    """Generate a 6-character alphanumeric room code."""
+    while True:
+        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        # Avoid confusing characters
+        if code not in active_rooms and 'O' not in code and '0' not in code and 'I' not in code and '1' not in code:
+            return code
+
+@socketio.on('create_room')
+def handle_create_room():
+    """Desktop teleprompter creates a new room."""
+    room_code = generate_room_code()
+    active_rooms[room_code] = {'desktop': request.sid, 'phone': None}
+    join_room(room_code)
+    logger.info(f"Room {room_code} created by desktop {request.sid}")
+    emit('room_created', {'roomCode': room_code})
+
+@socketio.on('join_room')
+def handle_join_room(data):
+    """Phone remote joins an existing room."""
+    room_code = data.get('roomCode', '').upper()
+    
+    if room_code not in active_rooms:
+        emit('error', {'message': 'Invalid room code'})
+        logger.warning(f"Phone {request.sid} tried to join invalid room {room_code}")
+        return
+    
+    if active_rooms[room_code]['phone'] is not None:
+        emit('error', {'message': 'Room already has a phone connected'})
+        logger.warning(f"Phone {request.sid} tried to join room {room_code} but phone already connected")
+        return
+    
+    active_rooms[room_code]['phone'] = request.sid
+    join_room(room_code)
+    logger.info(f"Phone {request.sid} joined room {room_code}")
+    
+    # Notify desktop that phone connected
+    desktop_sid = active_rooms[room_code]['desktop']
+    emit('phone_connected', room=desktop_sid)
+    
+    # Confirm to phone
+    emit('joined_room', {'roomCode': room_code})
+
+@socketio.on('command')
+def handle_command(data):
+    """Phone sends command to desktop."""
+    # Find which room this phone is in
+    room_code = None
+    for code, members in active_rooms.items():
+        if members['phone'] == request.sid:
+            room_code = code
+            break
+    
+    if not room_code:
+        emit('error', {'message': 'Not in a room'})
+        return
+    
+    desktop_sid = active_rooms[room_code]['desktop']
+    action = data.get('action')
+    value = data.get('value')
+    
+    logger.info(f"Command {action} from phone to desktop in room {room_code}")
+    
+    # Send command to desktop
+    emit('command', {'action': action, 'value': value}, room=desktop_sid)
+
+@socketio.on('state_update')
+def handle_state_update(data):
+    """Desktop sends state update to phone."""
+    # Find which room this desktop is in
+    room_code = None
+    for code, members in active_rooms.items():
+        if members['desktop'] == request.sid:
+            room_code = code
+            break
+    
+    if not room_code or not active_rooms[room_code]['phone']:
+        return  # No phone connected, ignore
+    
+    phone_sid = active_rooms[room_code]['phone']
+    
+    # Send state to phone
+    emit('state_update', data, room=phone_sid)
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    """Handle client disconnect."""
+    # Find and clean up any rooms this client was in
+    for room_code, members in list(active_rooms.items()):
+        if members['desktop'] == request.sid:
+            logger.info(f"Desktop {request.sid} disconnected from room {room_code}")
+            # Notify phone if connected
+            if members['phone']:
+                emit('desktop_disconnected', room=members['phone'])
+            del active_rooms[room_code]
+        elif members['phone'] == request.sid:
+            logger.info(f"Phone {request.sid} disconnected from room {room_code}")
+            active_rooms[room_code]['phone'] = None
+            # Notify desktop
+            emit('phone_disconnected', room=members['desktop'])
 
 # --- SECURITY HELPERS ---
 def allowed_file(filename):
@@ -453,8 +570,9 @@ if __name__ == '__main__':
     port = int(os.getenv('FLASK_PORT', 5000))
     debug = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
     
-    logger.info(f"Starting Audio Converter API on {host}:{port}")
+    logger.info(f"Starting VO Tools API with SocketIO on {host}:{port}")
     logger.info(f"Allowed origins: {ALLOWED_ORIGINS}")
     logger.info(f"Max upload size: {app.config['MAX_CONTENT_LENGTH'] // (1024 * 1024)}MB")
     
-    app.run(host=host, port=port, debug=debug)
+    # Use socketio.run instead of app.run to enable WebSocket support
+    socketio.run(app, host=host, port=port, debug=debug, allow_unsafe_werkzeug=True)

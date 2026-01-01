@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Smartphone, Wifi, WifiOff } from 'lucide-react';
+import { QRCodeCanvas } from '@/components/QRCode';
 import { TeleprompterDisplay } from './TeleprompterDisplay';
 import { ScriptEditorWithPronunciation } from '@/components/editor/ScriptEditorWithPronunciation';
 import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { useScriptAnalysis } from '@/hooks/useScriptAnalysis';
+import { useRemoteControl } from '@/hooks/useRemoteControl';
 import { DEFAULT_EXPANSION_OPTIONS } from '@/utils/expansionOptions';
 
 interface TeleprompterContainerProps {
@@ -57,6 +60,65 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
     totalWords: wordCount,
     onExit: handleExit,
   });
+
+  // Handle remote commands
+  const handleRemoteCommand = useCallback((action: string, value?: number) => {
+    switch (action) {
+      case 'play':
+        if (!teleprompter.isPlaying) teleprompter.togglePlayPause();
+        break;
+      case 'pause':
+        if (teleprompter.isPlaying) teleprompter.togglePlayPause();
+        break;
+      case 'toggle':
+        teleprompter.togglePlayPause();
+        break;
+      case 'faster':
+        teleprompter.adjustSpeed(0.1);
+        break;
+      case 'slower':
+        teleprompter.adjustSpeed(-0.1);
+        break;
+      case 'restart':
+        teleprompter.reset();
+        break;
+      case 'setSpeed':
+        if (value !== undefined) {
+          // Set speed directly (would need to add this to teleprompter hook)
+          teleprompter.adjustSpeed(value - teleprompter.speedMultiplier);
+        }
+        break;
+      case 'scrollTo':
+        if (value !== undefined) {
+          // Scroll to position (would need to add this to teleprompter hook)
+          // For now, just log it
+          console.log('Scroll to:', value);
+        }
+        break;
+    }
+  }, [teleprompter]);
+
+  // Remote control hook
+  const remote = useRemoteControl(handleRemoteCommand);
+
+  // Sync state to phone when it changes
+  useEffect(() => {
+    if (remote.phoneConnected && isFullscreen) {
+      const progress = teleprompter.elapsedTime / (teleprompter.estimatedTotalTime || 1);
+      remote.syncState({
+        isPlaying: teleprompter.isPlaying,
+        speed: teleprompter.speedMultiplier,
+        progress: Math.min(progress, 1),
+      });
+    }
+  }, [
+    remote,
+    isFullscreen,
+    teleprompter.isPlaying,
+    teleprompter.speedMultiplier,
+    teleprompter.elapsedTime,
+    teleprompter.estimatedTotalTime,
+  ]);
 
   // Start teleprompter (enter fullscreen mode)
   const handleStart = () => {
@@ -150,6 +212,66 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
               This determines the base scrolling speed. You can adjust it in real-time during playback.
             </div>
           </div>
+
+          {/* Remote Control Panel */}
+          {remote.remoteUrl && (
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <div className="bg-white dark:bg-slate-800 p-3 rounded-lg shadow-md">
+                    <QRCodeCanvas
+                      value={remote.remoteUrl}
+                      size={120}
+                      level="M"
+                      includeMargin={false}
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Smartphone className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                    <h3 className="text-sm font-semibold text-purple-900 dark:text-purple-100">
+                      Phone Remote Control
+                    </h3>
+                  </div>
+                  
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="text-purple-800 dark:text-purple-200">
+                        Room Code:
+                      </span>
+                      <code className="px-2 py-1 bg-white dark:bg-slate-700 rounded font-mono font-bold text-purple-900 dark:text-purple-100 border border-purple-300 dark:border-purple-600">
+                        {remote.roomCode}
+                      </code>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      {remote.phoneConnected ? (
+                        <>
+                          <Wifi className="w-4 h-4 text-green-600 dark:text-green-400" />
+                          <span className="text-green-700 dark:text-green-300 font-medium">
+                            Phone Connected
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <WifiOff className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                          <span className="text-slate-600 dark:text-slate-400">
+                            Waiting for phone...
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    
+                    <p className="text-purple-700 dark:text-purple-300 text-xs pt-1">
+                      Scan the QR code with your phone to use it as a wireless remote control
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Start Button */}
           <button
