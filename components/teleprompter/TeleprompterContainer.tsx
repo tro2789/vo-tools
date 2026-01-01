@@ -82,6 +82,15 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
       case 'restart':
         teleprompter.reset();
         break;
+      case 'textBigger':
+        teleprompter.adjustTextSize(1);
+        break;
+      case 'textSmaller':
+        teleprompter.adjustTextSize(-1);
+        break;
+      case 'toggleMirror':
+        teleprompter.toggleMirror();
+        break;
       case 'setSpeed':
         if (value !== undefined) {
           // Set speed directly (would need to add this to teleprompter hook)
@@ -109,6 +118,8 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
         isPlaying: teleprompter.isPlaying,
         speed: teleprompter.speedMultiplier,
         progress: Math.min(progress, 1),
+        textSize: teleprompter.textSize,
+        isMirrored: teleprompter.isMirrored,
       });
     }
   }, [
@@ -118,6 +129,8 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
     teleprompter.speedMultiplier,
     teleprompter.elapsedTime,
     teleprompter.estimatedTotalTime,
+    teleprompter.textSize,
+    teleprompter.isMirrored,
   ]);
 
   // Start teleprompter (enter fullscreen mode)

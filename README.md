@@ -18,6 +18,7 @@ Live demo available at https://voiceover-tools.com
 - Auto-scroll with adjustable speed control
 - Elapsed and remaining time display
 - Keyboard-first operation (Space, arrows, Esc, Home)
+- Use your smartphone as a remote control via QR code
 
 ### 🎙️ Telephony Converter
 - Convert audio files to telephony-compatible formats

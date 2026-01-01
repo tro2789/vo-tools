@@ -18,6 +18,8 @@ interface TeleprompterState {
   isPlaying: boolean;
   speed: number;
   progress: number; // 0-1
+  textSize: number;
+  isMirrored: boolean;
 }
 
 export function useRemoteControl(
