@@ -31,7 +31,6 @@ Live demo available at https://voiceover-tools.com
 - Sample rate checking (44.1 kHz)
 - RMS loudness measurement (-23dB to -18dB)
 - Peak amplitude analysis (≤ -3dB)
-- Noise floor detection (≤ -60dB)
 - Leading/trailing silence measurement
 - Detailed compliance report with actionable guidance
 
