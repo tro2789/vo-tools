@@ -19,7 +19,7 @@ export function Footer() {
           </a>
           <span className="text-slate-300 dark:text-slate-700">•</span>
           <a
-            href="https://gitea.tohareprod.com/tro2789/vo-tools"
+            href="https://github.com/tro2789/vo-tools"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5"

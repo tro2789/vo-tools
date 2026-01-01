@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Calculator, AudioWaveform, ScrollText, ArrowRight, MessageCircle, Heart, CheckCircle2 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { Footer } from '@/components/Footer';
 
 export default function Home() {
   return (
@@ -255,13 +256,9 @@ export default function Home() {
 
         </div>
 
-        {/* Footer */}
-        <div className="text-center mt-8 text-slate-600 dark:text-slate-400">
-          <p className="text-sm">
-            Built with ❤️ for the voiceover community
-          </p>
-        </div>
       </div>
+      
+      <Footer />
     </main>
   );
 }
