@@ -132,15 +132,58 @@ vo-tools/
 | Audio Processing | FFmpeg, pydub, scipy |
 | Container | Docker, Supervisord |
 
-## Environment Variables
+## Configuration
 
-Copy `.env.example` to `.env` and configure as needed:
+Copy `.env.example` to `.env` and configure:
+
+```bash
+cp .env.example .env
+```
+
+### Security (Required for Production)
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `NODE_ENV` | Environment mode | `production` |
-| `PORT` | Next.js port | `3000` |
-| `FLASK_ENV` | Flask environment | `production` |
+| `API_KEY` | Authentication key - **change this!** | `your-secure-api-key-change-this` |
+| `AUTH_ENABLED` | Enable API authentication | `true` |
+| `ALLOWED_ORIGINS` | CORS origins (comma-separated) | `https://voiceover-tools.com,...` |
+
+> 💡 Generate a secure API key: `openssl rand -hex 32`
+
+### API Settings
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `FLASK_API_URL` | Internal Flask URL | `http://localhost:5000` |
+| `NEXT_PUBLIC_API_URL` | Public API URL (leave empty for same-origin) | `` |
+
+### Upload Limits
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MAX_CONTENT_LENGTH` | Max upload size in bytes | `52428800` (50MB) |
+| `UPLOAD_FOLDER` | Upload directory path | `/tmp/uploads` |
+| `ALLOWED_EXTENSIONS` | Allowed file types | `wav,mp3,ogg,flac,m4a,aiff,wma,aac` |
+| `FFMPEG_TIMEOUT` | Processing timeout (seconds) | `60` |
+
+### Rate Limiting
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `RATE_LIMIT_ENABLED` | Enable rate limiting | `true` |
+| `RATE_LIMIT_PER_MINUTE` | Requests per minute per IP | `10` |
+| `RATE_LIMIT_PER_HOUR` | Requests per hour per IP | `100` |
+| `WS_RATE_LIMIT_PER_MINUTE` | WebSocket requests per minute | `30` |
+
+### Server Settings
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `NODE_ENV` | Node environment | `production` |
+| `FLASK_HOST` | Flask bind address | `0.0.0.0` |
+| `FLASK_PORT` | Flask port | `5000` |
+| `FLASK_DEBUG` | Debug mode (never in prod) | `false` |
+| `LOG_LEVEL` | Logging level | `INFO` |
 
 ## License
 
