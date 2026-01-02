@@ -9,12 +9,17 @@ import sys
 import logging
 import random
 import string
+import secrets
+from functools import wraps
+from collections import defaultdict
+from time import time
 from flask import Flask, request, send_file, after_this_request, jsonify, send_from_directory
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.utils import secure_filename
+from werkzeug.security import safe_join
 from dotenv import load_dotenv
 from acx_analyzer import analyze_acx_compliance
 
@@ -76,6 +81,107 @@ else:
     limiter = None
     logger.warning("Rate limiting disabled")
 
+# API Key Authentication
+API_KEY = os.getenv('API_KEY')
+AUTH_ENABLED = os.getenv('AUTH_ENABLED', 'True').lower() == 'true'
+
+def require_api_key(f):
+    """Decorator to require API key authentication for endpoints."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not AUTH_ENABLED:
+            logger.warning("API authentication is DISABLED - not recommended for production")
+            return f(*args, **kwargs)
+        
+        if not API_KEY:
+            logger.error("API_KEY not configured but AUTH_ENABLED=True")
+            return jsonify({'error': 'Server configuration error'}), 500
+        
+        # Check for API key in header or query parameter
+        provided_key = request.headers.get('X-API-Key') or request.args.get('api_key')
+        
+        if not provided_key:
+            logger.warning(f"API key missing from {get_remote_address()}")
+            return jsonify({'error': 'API key required. Provide X-API-Key header or api_key parameter'}), 401
+        
+        if provided_key != API_KEY:
+            logger.warning(f"Invalid API key attempt from {get_remote_address()}")
+            return jsonify({'error': 'Invalid API key'}), 403
+        
+        return f(*args, **kwargs)
+    return decorated_function
+
+# Security Headers Middleware
+@app.after_request
+def add_security_headers(response):
+    """Add security headers to all responses."""
+    # Prevent clickjacking
+    response.headers['X-Frame-Options'] = 'DENY'
+    
+    # Prevent MIME type sniffing
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    
+    # Enable XSS filter (legacy browsers)
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    
+    # Force HTTPS (only if using HTTPS)
+    if request.is_secure:
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    
+    # Content Security Policy (restrictive for security)
+    response.headers['Content-Security-Policy'] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data: https:; "
+        "font-src 'self' data:; "
+        "connect-src 'self'; "
+        "frame-ancestors 'none'"
+    )
+    
+    # Referrer policy
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    
+    # Permissions policy
+    response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
+    
+    return response
+
+# WebSocket Rate Limiting
+ws_rate_limits = defaultdict(list)
+WS_RATE_LIMIT_WINDOW = 60  # seconds
+WS_MAX_REQUESTS = int(os.getenv('WS_RATE_LIMIT_PER_MINUTE', 30))
+
+def ws_rate_limit(max_requests=None):
+    """Rate limiter decorator for WebSocket events."""
+    if max_requests is None:
+        max_requests = WS_MAX_REQUESTS
+    
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            sid = request.sid
+            now = time()
+            
+            # Clean old timestamps
+            ws_rate_limits[sid] = [
+                ts for ts in ws_rate_limits[sid]
+                if now - ts < WS_RATE_LIMIT_WINDOW
+            ]
+            
+            # Check limit
+            if len(ws_rate_limits[sid]) >= max_requests:
+                logger.warning(f"WebSocket rate limit exceeded for {sid}")
+                emit('error', {'message': 'Rate limit exceeded. Please slow down.'})
+                return
+            
+            # Record this request
+            ws_rate_limits[sid].append(now)
+            
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
+
 # --- FFmpeg Format Mappings ---
 FORMATS = {
     'ulaw':    ['-ar', '8000', '-ac', '1', '-c:a', 'pcm_mulaw'], 
@@ -112,14 +218,19 @@ SUFFIXES = {
 active_rooms = {}
 
 def generate_room_code():
-    """Generate a 6-character alphanumeric room code."""
+    """Generate a secure 8-character alphanumeric room code."""
+    # Use character set excluding confusing characters
+    charset = string.ascii_uppercase + string.digits
+    charset = charset.replace('O', '').replace('0', '').replace('I', '').replace('1', '')
+    
     while True:
-        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-        # Avoid confusing characters
-        if code not in active_rooms and 'O' not in code and '0' not in code and 'I' not in code and '1' not in code:
+        # Use secrets module for cryptographically secure randomness
+        code = ''.join(secrets.choice(charset) for _ in range(8))
+        if code not in active_rooms:
             return code
 
 @socketio.on('create_room')
+@ws_rate_limit(max_requests=5)  # Max 5 room creations per minute
 def handle_create_room():
     """Desktop teleprompter creates a new room."""
     room_code = generate_room_code()
@@ -129,6 +240,7 @@ def handle_create_room():
     emit('room_created', {'roomCode': room_code})
 
 @socketio.on('join_room')
+@ws_rate_limit(max_requests=10)  # Max 10 join attempts per minute
 def handle_join_room(data):
     """Phone remote joins an existing room."""
     room_code = data.get('roomCode', '').upper()
@@ -155,6 +267,7 @@ def handle_join_room(data):
     emit('joined_room', {'roomCode': room_code})
 
 @socketio.on('command')
+@ws_rate_limit(max_requests=60)  # Max 60 commands per minute (1/sec average)
 def handle_command(data):
     """Phone sends command to desktop."""
     # Find which room this phone is in
@@ -348,6 +461,7 @@ def health_check():
         }), 503
 
 @app.route('/api/convert', methods=['POST'])
+@require_api_key
 def convert():
     """Audio conversion endpoint."""
     try:
@@ -478,6 +592,7 @@ def convert():
         return jsonify({'error': 'An unexpected error occurred'}), 500
 
 @app.route('/api/audio/acx-check', methods=['POST'])
+@require_api_key
 def acx_check():
     """ACX Audio Compliance Check endpoint."""
     try:
@@ -544,13 +659,21 @@ def acx_check():
 @app.route('/')
 @app.route('/<path:path>')
 def serve_static(path='index.html'):
-    """Serve Next.js static build."""
+    """Serve Next.js static build with path traversal protection."""
     try:
-        # Try to serve the requested file
-        if path and os.path.exists(os.path.join(STATIC_FOLDER, path)):
+        # Validate and sanitize path using safe_join
+        safe_path = safe_join(STATIC_FOLDER, path)
+        
+        # Check if safe path exists and is a file
+        if safe_path and os.path.exists(safe_path) and os.path.isfile(safe_path):
             return send_from_directory(STATIC_FOLDER, path)
+        
         # For routes, serve index.html (Next.js handles client-side routing)
-        return send_from_directory(STATIC_FOLDER, 'index.html')
+        index_path = safe_join(STATIC_FOLDER, 'index.html')
+        if index_path and os.path.exists(index_path):
+            return send_from_directory(STATIC_FOLDER, 'index.html')
+        
+        return jsonify({'error': 'File not found'}), 404
     except Exception as e:
         logger.error(f"Error serving static file {path}: {str(e)}")
         return jsonify({'error': 'File not found'}), 404
@@ -573,6 +696,11 @@ if __name__ == '__main__':
     logger.info(f"Starting VO Tools API with SocketIO on {host}:{port}")
     logger.info(f"Allowed origins: {ALLOWED_ORIGINS}")
     logger.info(f"Max upload size: {app.config['MAX_CONTENT_LENGTH'] // (1024 * 1024)}MB")
+    logger.info(f"Authentication: {'ENABLED' if AUTH_ENABLED else 'DISABLED'}")
     
-    # Use socketio.run instead of app.run to enable WebSocket support
-    socketio.run(app, host=host, port=port, debug=debug, allow_unsafe_werkzeug=True)
+    # Use socketio.run for development only
+    # In production, this is managed by gunicorn + supervisor (see Dockerfile)
+    if debug:
+        logger.warning("Running in DEBUG mode - for development only!")
+    
+    socketio.run(app, host=host, port=port, debug=debug)

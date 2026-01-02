@@ -44,14 +44,19 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Create supervisor config
+# Ensure nextjs user owns all necessary directories
+RUN mkdir -p /tmp/uploads \
+    && chown -R nextjs:nodejs /tmp/uploads /app \
+    && chmod -R 755 /app
+
+# Create supervisor config (runs as root, but spawns processes as nextjs)
 RUN echo '[supervisord]' > /etc/supervisor/conf.d/supervisord.conf \
     && echo 'nodaemon=true' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'user=root' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo '' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo '[program:nextjs]' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo 'command=node server.js' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo 'directory=/app' >> /etc/supervisor/conf.d/supervisord.conf \
+    && echo 'user=nextjs' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo 'autostart=true' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo 'autorestart=true' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo 'stdout_logfile=/dev/stdout' >> /etc/supervisor/conf.d/supervisord.conf \
@@ -62,6 +67,7 @@ RUN echo '[supervisord]' > /etc/supervisor/conf.d/supervisord.conf \
     && echo '[program:flask]' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo 'command=gunicorn --bind 0.0.0.0:5000 --worker-class eventlet --workers 1 --timeout 120 app:app' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo 'directory=/app' >> /etc/supervisor/conf.d/supervisord.conf \
+    && echo 'user=nextjs' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo 'autostart=true' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo 'autorestart=true' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo 'stdout_logfile=/dev/stdout' >> /etc/supervisor/conf.d/supervisord.conf \

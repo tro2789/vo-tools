@@ -12,4 +12,5 @@ services:
     environment:
       - NODE_ENV=production
       - FLASK_API_URL=http://localhost:5000
-      - ALLOWED_ORIGINS=*
+      - ALLOWED_ORIGINS=https://voiceover-tools.com,https://www.voiceover-tools.com,http://localhost:3010
+      - API_KEY=${API_KEY:-}

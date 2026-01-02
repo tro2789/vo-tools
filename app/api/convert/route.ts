@@ -4,13 +4,21 @@ export async function POST(request: NextRequest) {
   try {
     // Get the Flask API URL (internal Docker network)
     const flaskUrl = process.env.FLASK_API_URL || 'http://localhost:5000';
+    const apiKey = process.env.API_KEY;
     
     // Forward the request to Flask API
     const formData = await request.formData();
     
+    // Prepare headers with API key if available
+    const headers: HeadersInit = {};
+    if (apiKey) {
+      headers['X-API-Key'] = apiKey;
+    }
+    
     const response = await fetch(`${flaskUrl}/api/convert`, {
       method: 'POST',
       body: formData,
+      headers,
     });
 
     if (!response.ok) {

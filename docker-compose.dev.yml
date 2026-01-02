@@ -14,8 +14,9 @@ services:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=http://localhost:5001
       - FLASK_API_URL=http://localhost:5000
-      - ALLOWED_ORIGINS=*
+      - ALLOWED_ORIGINS=http://localhost:3011,http://localhost:3000,http://dev.votools.tohareprod.com,https://dev.votools.tohareprod.com,https://voiceover-tools.com,https://www.voiceover-tools.com
       - LOG_LEVEL=DEBUG  # More verbose logging for development
+      - API_KEY=${API_KEY:-dev-api-key-change-in-production}
     labels:
       - "app.environment=development"
       - "app.version=dev"
