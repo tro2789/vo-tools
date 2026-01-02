@@ -5,7 +5,10 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm ci
+# Update npm to latest and install dependencies with audit fix
+RUN npm install -g npm@latest \
+    && npm ci \
+    && npm audit fix --force || true
 
 # Build Next.js
 FROM base AS builder
@@ -16,21 +19,26 @@ COPY . .
 RUN npm run build
 
 # Production image - includes both Node and Python
-FROM python:3.11-slim AS runner
+# Using Python 3.13-slim as recommended by Docker Scout to reduce vulnerabilities
+FROM python:3.13-slim AS runner
 WORKDIR /app
 
 # Install system dependencies (Node.js, FFmpeg, supervisor)
-RUN apt-get update && apt-get install -y \
+# Also upgrade all packages to latest versions to fix CVEs
+RUN apt-get update && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
     curl \
     ffmpeg \
     supervisor \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get install -y --no-install-recommends nodejs \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Install Python dependencies
+# Upgrade pip to fix CVE-2025-8869 and install Python dependencies
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade "pip>=24.0" \
+    && pip install --no-cache-dir -r requirements.txt
 
 # Copy Python API
 COPY app.py ./
