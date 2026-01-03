@@ -151,11 +151,29 @@ cp .env.example .env
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `API_KEY` | Authentication key - **change this!** | `your-secure-api-key-change-this` |
+| `API_KEY` | Authentication key for Flask API - **required!** | `your-secure-api-key-change-this` |
 | `AUTH_ENABLED` | Enable API authentication | `true` |
 | `ALLOWED_ORIGINS` | CORS origins (comma-separated) | `https://voiceover-tools.com,...` |
 
 > 💡 Generate a secure API key: `openssl rand -hex 32`
+
+**Important:** The `API_KEY` protects your Flask API from external abuse. Your Next.js frontend uses this key internally to authenticate to Flask. Users access your site through Next.js (port 3000) and never see the API key. Only expose port 3000 publicly - keep port 5000 internal.
+
+**Production Setup:**
+```bash
+# Create .env file with your API key
+echo "API_KEY=$(openssl rand -hex 32)" > .env
+
+# Deploy with docker-compose (reads .env automatically)
+docker-compose up -d
+```
+
+**Security Best Practices:**
+- ✅ Set a strong random `API_KEY`
+- ✅ Only expose port 3000 to the internet (Next.js)
+- ✅ Keep port 5000 internal (Flask API)
+- ✅ Use HTTPS in production with reverse proxy (Nginx/Cloudflare)
+- ❌ Never commit `.env` to git
 
 ### API Settings
 

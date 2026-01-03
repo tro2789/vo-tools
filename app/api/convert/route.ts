@@ -6,6 +6,10 @@ export async function POST(request: NextRequest) {
     const flaskUrl = process.env.FLASK_API_URL || 'http://localhost:5000';
     const apiKey = process.env.API_KEY;
     
+    // Debug logging (remove after testing)
+    console.log('API_KEY present:', !!apiKey);
+    console.log('Flask URL:', flaskUrl);
+    
     // Forward the request to Flask API
     const formData = await request.formData();
     
@@ -13,6 +17,8 @@ export async function POST(request: NextRequest) {
     const headers: HeadersInit = {};
     if (apiKey) {
       headers['X-API-Key'] = apiKey;
+    } else {
+      console.error('WARNING: API_KEY not found in environment!');
     }
     
     const response = await fetch(`${flaskUrl}/api/convert`, {

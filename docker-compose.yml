@@ -17,4 +17,8 @@ services:
       # Set this to your public Flask/API URL (e.g., https://voiceover-tools.com:5000)
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-}
       - ALLOWED_ORIGINS=https://voiceover-tools.com,https://www.voiceover-tools.com,http://localhost:3010
-      - API_KEY=${API_KEY:-}
+      # API Authentication - protects Flask API from external access
+      # Next.js uses this same key to authenticate to Flask internally
+      # Generate with: openssl rand -hex 32
+      - AUTH_ENABLED=${AUTH_ENABLED:-true}
+      - API_KEY=${API_KEY}

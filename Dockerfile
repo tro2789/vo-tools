@@ -58,6 +58,7 @@ RUN mkdir -p /tmp/uploads \
     && chmod -R 755 /app
 
 # Create supervisor config (runs as root, but spawns processes as nextjs)
+# Don't set environment in supervisor - let processes inherit from container
 RUN echo '[supervisord]' > /etc/supervisor/conf.d/supervisord.conf \
     && echo 'nodaemon=true' >> /etc/supervisor/conf.d/supervisord.conf \
     && echo '' >> /etc/supervisor/conf.d/supervisord.conf \
@@ -86,6 +87,10 @@ RUN echo '[supervisord]' > /etc/supervisor/conf.d/supervisord.conf \
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+# Disable API authentication by default for public-facing deployments
+# Users access the site through Next.js which proxies to Flask internally
+# Enable AUTH_ENABLED=true in production if you want to restrict API access
+ENV AUTH_ENABLED=false
 
 EXPOSE 3000 5000
 
