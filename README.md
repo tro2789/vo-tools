@@ -91,6 +91,85 @@ Access at http://localhost:3000
 
 > **Note:** The ACX Checker and Telephony Converter require the Python backend. See [Development Guide](docs/DEVELOPMENT.md) for full setup.
 
+## Production Deployment with Reverse Proxy
+
+When deploying behind a reverse proxy (Nginx, Nginx Proxy Manager, Caddy, etc.), you need to configure proper routing for the API endpoints.
+
+### Nginx / Nginx Proxy Manager
+
+Add these location blocks to your proxy configuration:
+
+```nginx
+# Main application (Next.js)
+location / {
+    proxy_pass http://127.0.0.1:3000;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+# WebSocket for teleprompter remote (Flask)
+location /socket.io/ {
+    proxy_pass http://127.0.0.1:5000/socket.io/;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+# Flask API endpoints
+location /api/convert {
+    proxy_pass http://127.0.0.1:3000/api/convert;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+location /api/acx-check {
+    proxy_pass http://127.0.0.1:3000/api/acx-check;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+location /health {
+    proxy_pass http://127.0.0.1:5000/health;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+}
+```
+
+### Caddy
+
+```caddy
+voiceover-tools.com {
+    reverse_proxy / localhost:3000
+    reverse_proxy /socket.io/* localhost:5000
+    reverse_proxy /api/convert localhost:3000
+    reverse_proxy /api/acx-check localhost:3000
+    reverse_proxy /health localhost:5000
+}
+```
+
+### Important Notes
+
+- **Port 3000** serves the Next.js frontend and API routes (`/api/convert`, `/api/acx-check`)
+- **Port 5000** serves the Flask backend (WebSocket `/socket.io/`, health check `/health`)
+- Only expose your reverse proxy (port 80/443) to the internet
+- Keep ports 3000 and 5000 internal (localhost only)
+
 ## Development
 
 For active development with hot-reload:

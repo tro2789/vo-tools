@@ -56,11 +56,13 @@ export const ACXCheckContainer: React.FC = () => {
     const fileObj = files[index];
     if (!fileObj || fileObj.analyzing) return;
 
-    setFiles(prev => prev.map((f, i) => 
+    setFiles(prev => prev.map((f, i) =>
       i === index ? { ...f, analyzing: true, error: null, result: null } : f
     ));
 
     try {
+      console.log('[ACX Frontend] Starting analysis for:', fileObj.file.name);
+      
       const formData = new FormData();
       formData.append('file', fileObj.file);
 
@@ -69,21 +71,30 @@ export const ACXCheckContainer: React.FC = () => {
         body: formData,
       });
 
+      console.log('[ACX Frontend] Response status:', response.status);
+
       const data = await response.json();
+      
+      console.log('[ACX Frontend] Response data:', data);
 
       if (!response.ok) {
+        console.error('[ACX Frontend] Error response:', data);
         throw new Error(data.error || 'Analysis failed');
       }
 
-      setFiles(prev => prev.map((f, i) => 
+      console.log('[ACX Frontend] Analysis successful');
+      setFiles(prev => prev.map((f, i) =>
         i === index ? { ...f, analyzing: false, result: data } : f
       ));
     } catch (err) {
-      setFiles(prev => prev.map((f, i) => 
-        i === index ? { 
-          ...f, 
-          analyzing: false, 
-          error: err instanceof Error ? err.message : 'An error occurred during analysis' 
+      console.error('[ACX Frontend] Catch block error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred during analysis';
+      console.error('[ACX Frontend] Error message:', errorMessage);
+      setFiles(prev => prev.map((f, i) =>
+        i === index ? {
+          ...f,
+          analyzing: false,
+          error: errorMessage
         } : f
       ));
     }
