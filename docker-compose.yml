@@ -1,7 +1,7 @@
 services:
   app:
     container_name: vo-tools
-    image: vo-tools:latest
+    image: tro2789/vo-tools:latest
     build:
       context: .
       dockerfile: Dockerfile
