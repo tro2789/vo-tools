@@ -4,7 +4,7 @@ Handy tools designed for voice actors and audio engineers.
 
 🌐 **Live Demo:** [voiceover-tools.com](https://voiceover-tools.com)
 
-[![Docker Hub](https://img.shields.io/docker/pulls/tro2789/vo-tools)](https://hub.docker.com/r/tro2789/vo-tools)
+![Docker Pulls](https://img.shields.io/docker/pulls/tro2789/vo-tools)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
 ## Features
