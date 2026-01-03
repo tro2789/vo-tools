@@ -135,7 +135,7 @@ def add_security_headers(response):
         "style-src 'self' 'unsafe-inline'; "
         "img-src 'self' data: https:; "
         "font-src 'self' data:; "
-        "connect-src 'self'; "
+        "connect-src 'self' wss: ws:; "
         "frame-ancestors 'none'"
     )
     

@@ -52,7 +52,14 @@ Access at http://localhost:3000
 
 ### Option 2: Docker Compose
 
-Clone the repo for more control over the deployment:
+Download just the compose file for easy deployment:
+
+```bash
+curl -O https://raw.githubusercontent.com/tro2789/vo-tools/main/docker-compose.yml
+docker compose up -d
+```
+
+Or clone the full repo:
 
 ```bash
 git clone https://github.com/tro2789/vo-tools.git
@@ -66,7 +73,7 @@ Access at http://localhost:3010
 ```bash
 docker compose down              # Stop
 docker compose logs -f           # View logs
-docker compose up -d --build     # Rebuild from source
+docker compose pull              # Update to latest image
 ```
 
 ### Option 3: Local Development (No Docker)

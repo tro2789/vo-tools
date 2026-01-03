@@ -2,15 +2,19 @@ services:
   app:
     container_name: vo-tools
     image: tro2789/vo-tools:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # To build from source instead of pulling from Docker Hub, uncomment:
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     restart: unless-stopped
     ports:
       - "3010:3000"  # Next.js frontend
-      - "5000:5000"  # Python API backend
+      - "5000:5000"  # Python API backend (WebSocket)
     environment:
       - NODE_ENV=production
       - FLASK_API_URL=http://localhost:5000
+      # NEXT_PUBLIC_API_URL tells the browser where to connect for WebSocket
+      # Set this to your public Flask/API URL (e.g., https://voiceover-tools.com:5000)
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-}
       - ALLOWED_ORIGINS=https://voiceover-tools.com,https://www.voiceover-tools.com,http://localhost:3010
       - API_KEY=${API_KEY:-}
