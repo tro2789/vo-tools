@@ -195,8 +195,8 @@ function RemoteControl() {
           disabled={!joined}
           className={`w-full h-24 rounded-xl font-bold text-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
             state.isPlaying
-              ? 'bg-gradient-to-br from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-lg shadow-red-500/30'
-              : 'bg-gradient-to-br from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg shadow-green-500/30'
+              ? 'bg-linear-to-br from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-lg shadow-red-500/30'
+              : 'bg-linear-to-br from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg shadow-green-500/30'
           }`}
         >
           <div className="flex flex-col items-center justify-center gap-1">
@@ -280,7 +280,7 @@ function RemoteControl() {
             disabled={!joined}
             className={`h-12 rounded-lg flex items-center justify-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
               state.isMirrored
-                ? 'bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-md shadow-purple-500/30'
+                ? 'bg-linear-to-br from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-md shadow-purple-500/30'
                 : 'bg-slate-700 hover:bg-slate-600'
             }`}
           >

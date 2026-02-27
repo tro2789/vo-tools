@@ -44,7 +44,7 @@ export const ScriptEditorWithPronunciation: React.FC<ScriptEditorWithPronunciati
   const canShowPronunciation = showPronunciationToggle && value.trim().length > 0;
 
   return (
-    <div className={`bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800/60 flex flex-col ${height} overflow-hidden transition-all ${viewMode === 'edit' ? 'focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500/50' : ''}`}>
+    <div className={`bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800/60 flex flex-col ${height} overflow-hidden transition-all ${viewMode === 'edit' ? 'focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500/50' : ''}`}>
       {/* Toolbar */}
       <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
         <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
@@ -67,7 +67,7 @@ export const ScriptEditorWithPronunciation: React.FC<ScriptEditorWithPronunciati
                 onClick={() => setViewMode('edit')}
                 className={`px-2 py-1 rounded text-xs font-medium transition-all ${
                   viewMode === 'edit'
-                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
+                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
                 title="Edit mode"
@@ -79,7 +79,7 @@ export const ScriptEditorWithPronunciation: React.FC<ScriptEditorWithPronunciati
                 onClick={() => setViewMode('pronunciation')}
                 className={`px-2 py-1 rounded text-xs font-medium transition-all ${
                   viewMode === 'pronunciation'
-                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
+                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
                 title="Pronunciation lookup mode - click words to see pronunciations"

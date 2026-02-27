@@ -294,7 +294,7 @@ export const ScriptCalculator = () => {
               {/* Diff Visualization below editors */}
               {originalScript && revisedScript && comparison.diffSegments.originalSegments.length > 0 && (
                 <Suspense fallback={
-                  <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-8 text-center">
+                  <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-8 text-center">
                     <div className="text-slate-500 dark:text-slate-400">Loading diff visualization...</div>
                   </div>
                 }>
@@ -310,7 +310,7 @@ export const ScriptCalculator = () => {
             <div className="lg:col-span-4 space-y-4">
               {/* Comparison Stats */}
               <Suspense fallback={
-                <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-8 text-center">
+                <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-8 text-center">
                   <div className="text-slate-500 dark:text-slate-400">Loading stats...</div>
                 </div>
               }>

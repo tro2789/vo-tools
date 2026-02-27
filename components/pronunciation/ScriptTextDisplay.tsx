@@ -120,7 +120,7 @@ export const ScriptTextDisplay: React.FC<ScriptTextDisplayProps> = ({
                       <span
                         key={`${line.key}-${tokenIndex}`}
                         onClick={(e) => handleWordClick(token.content, e)}
-                        className="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded px-0.5 transition-colors"
+                        className="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-sm px-0.5 transition-colors"
                         role="button"
                         tabIndex={0}
                         onKeyDown={(e) => {

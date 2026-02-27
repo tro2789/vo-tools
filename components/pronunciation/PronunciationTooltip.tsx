@@ -112,7 +112,7 @@ export const PronunciationTooltip: React.FC<PronunciationTooltipProps> = ({
         {/* Copy button */}
         <button
           onClick={handleCopy}
-          className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+          className="p-1.5 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
           title="Copy pronunciation"
           aria-label="Copy pronunciation to clipboard"
         >

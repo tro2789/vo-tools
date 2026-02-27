@@ -36,7 +36,7 @@ export const ExpansionSettings: React.FC<ExpansionSettingsProps> = ({
                 type="checkbox"
                 checked={expansionOptions[key]}
                 onChange={() => toggleExpansionOption(key)}
-                className="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                className="mt-0.5 w-4 h-4 rounded-sm border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
               />
               <div className="flex-1">
                 <div className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">

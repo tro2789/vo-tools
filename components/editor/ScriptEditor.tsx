@@ -17,7 +17,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
   height = "h-[50vh] lg:h-[80vh]"
 }) => {
   return (
-    <div className={`bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800/60 flex flex-col ${height} overflow-hidden transition-all focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500/50`}>
+    <div className={`bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800/60 flex flex-col ${height} overflow-hidden transition-all focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500/50`}>
       {/* Toolbar */}
       <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
         <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">

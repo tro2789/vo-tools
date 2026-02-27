@@ -31,7 +31,7 @@ export const ComparisonStats: React.FC<ComparisonStatsProps> = ({
   return (
     <div className="grid grid-cols-1 gap-4">
       {/* Original Stats */}
-      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-5">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-5">
         <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">
           Original Script
         </div>
@@ -58,7 +58,7 @@ export const ComparisonStats: React.FC<ComparisonStatsProps> = ({
       </div>
 
       {/* Difference Stats */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800 rounded-xl shadow-sm border border-blue-200 dark:border-slate-700 p-5">
+      <div className="bg-linear-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800 rounded-xl shadow-xs border border-blue-200 dark:border-slate-700 p-5">
         <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-3">
           Difference
         </div>
@@ -102,7 +102,7 @@ export const ComparisonStats: React.FC<ComparisonStatsProps> = ({
       </div>
 
       {/* Revised Stats */}
-      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-5">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-5">
         <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">
           Revised Script
         </div>

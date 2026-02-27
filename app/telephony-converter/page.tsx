@@ -121,7 +121,7 @@ export default function TelephonyConverterPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             
             {/* File Upload */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-4">
+            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-4">
               <div className="flex items-center gap-2 mb-3">
                 <Upload className="w-4 h-4 text-slate-700 dark:text-slate-300" />
                 <h3 className="text-base font-semibold text-slate-900 dark:text-white">
@@ -148,7 +148,7 @@ export default function TelephonyConverterPage() {
             </div>
 
             {/* Format Selection */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-4">
+            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-4">
               <div className="flex items-center gap-2 mb-3">
                 <Settings className="w-4 h-4 text-slate-700 dark:text-slate-300" />
                 <h3 className="text-base font-semibold text-slate-900 dark:text-white">
@@ -179,7 +179,7 @@ export default function TelephonyConverterPage() {
 
             {/* Volume Control and Options - Combined Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-4">
+              <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-4">
                 <div className="flex items-center gap-2 mb-3">
                   <Volume2 className="w-4 h-4 text-slate-700 dark:text-slate-300" />
                   <h3 className="text-base font-semibold text-slate-900 dark:text-white">
@@ -208,7 +208,7 @@ export default function TelephonyConverterPage() {
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-4">
+              <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-4">
                 <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-3">
                   4. Options
                 </h3>
@@ -217,7 +217,7 @@ export default function TelephonyConverterPage() {
                     type="checkbox"
                     checked={optimize}
                     onChange={(e) => setOptimize(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    className="w-4 h-4 text-blue-600 rounded-sm focus:ring-2 focus:ring-blue-500"
                   />
                   <span className="text-slate-700 dark:text-slate-300 text-xs">
                     Optimize Audio for Phone (Bandpass Filter 300-3400Hz)

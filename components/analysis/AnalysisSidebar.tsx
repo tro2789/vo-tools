@@ -102,7 +102,7 @@ export const AnalysisSidebar: React.FC<AnalysisSidebarProps> = ({
               <Clock size={12} />
               Total Time (with Pauses)
             </div>
-            <div className="text-3xl font-bold bg-gradient-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent tracking-tight tabular-nums">
+            <div className="text-3xl font-bold bg-linear-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent tracking-tight tabular-nums">
               {timeWithPauses}
             </div>
           </div>
@@ -115,7 +115,7 @@ export const AnalysisSidebar: React.FC<AnalysisSidebarProps> = ({
             <Clock size={12} />
             Total Time
           </div>
-          <div className="text-3xl font-bold bg-gradient-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent tracking-tight tabular-nums">
+          <div className="text-3xl font-bold bg-linear-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent tracking-tight tabular-nums">
             {timeEstimate}
           </div>
         </div>

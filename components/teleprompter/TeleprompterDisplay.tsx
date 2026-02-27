@@ -110,7 +110,7 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
           showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
         }`}
       >
-        <div className="bg-gradient-to-b from-black/90 to-transparent p-4">
+        <div className="bg-linear-to-b from-black/90 to-transparent p-4">
           <div className="max-w-5xl mx-auto flex items-center justify-between">
             {/* Timing info */}
             <div className="flex items-center gap-6 text-white">
@@ -191,7 +191,7 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
             <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
               <button
                 onClick={onReset}
-                className="p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white flex-shrink-0"
+                className="p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white shrink-0"
                 title="Reset to beginning (Home)"
               >
                 <RotateCcw size={20} />
@@ -199,7 +199,7 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
 
               <button
                 onClick={onToggleMirror}
-                className={`p-3 rounded-lg transition-colors text-white flex-shrink-0 ${
+                className={`p-3 rounded-lg transition-colors text-white shrink-0 ${
                   isMirrored ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-white/10 hover:bg-white/20'
                 }`}
                 title="Mirror mode for physical teleprompters (M)"
@@ -207,7 +207,7 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
                 <FlipHorizontal2 size={20} />
               </button>
 
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={() => onAdjustSpeed(-0.1)}
                   className="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white font-medium"
@@ -226,13 +226,13 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
 
               <button
                 onClick={onTogglePlayPause}
-                className="w-14 h-14 flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 transition-colors text-white shadow-lg flex-shrink-0"
+                className="w-14 h-14 flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 transition-colors text-white shadow-lg shrink-0"
                 title="Play/Pause (Space)"
               >
                 {isPlaying ? <Pause size={28} fill="currentColor" /> : <Play size={28} fill="currentColor" />}
               </button>
 
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={() => onAdjustTextSize(-1)}
                   disabled={textSize <= 1}

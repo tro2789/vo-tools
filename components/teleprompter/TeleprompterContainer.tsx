@@ -199,7 +199,7 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
           </div>
 
           {/* Settings */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xs border border-slate-200 dark:border-slate-700 p-6">
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               Reading Speed (WPM)
             </label>
@@ -228,9 +228,9 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
 
           {/* Remote Control Panel */}
           {remote.remoteUrl && (
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
+            <div className="bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div className="bg-white dark:bg-slate-800 p-3 rounded-lg shadow-md">
                     <QRCodeCanvas
                       value={remote.remoteUrl}
@@ -254,7 +254,7 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
                       <span className="text-purple-800 dark:text-purple-200">
                         Room Code:
                       </span>
-                      <code className="px-2 py-1 bg-white dark:bg-slate-700 rounded font-mono font-bold text-purple-900 dark:text-purple-100 border border-purple-300 dark:border-purple-600">
+                      <code className="px-2 py-1 bg-white dark:bg-slate-700 rounded-sm font-mono font-bold text-purple-900 dark:text-purple-100 border border-purple-300 dark:border-purple-600">
                         {remote.roomCode}
                       </code>
                     </div>
@@ -290,7 +290,7 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
           <button
             onClick={handleStart}
             disabled={!script.trim()}
-            className="w-full py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-lg shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-indigo-600"
+            className="w-full py-4 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold text-lg shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-indigo-600"
           >
             Start Teleprompter
           </button>
@@ -302,25 +302,25 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
             </h3>
             <div className="grid grid-cols-2 gap-3 text-sm text-blue-800 dark:text-blue-200">
               <div>
-                <kbd className="px-2 py-1 bg-white dark:bg-slate-700 rounded border border-blue-300 dark:border-blue-600 font-mono text-xs">
+                <kbd className="px-2 py-1 bg-white dark:bg-slate-700 rounded-sm border border-blue-300 dark:border-blue-600 font-mono text-xs">
                   Space
                 </kbd>{' '}
                 Play / Pause
               </div>
               <div>
-                <kbd className="px-2 py-1 bg-white dark:bg-slate-700 rounded border border-blue-300 dark:border-blue-600 font-mono text-xs">
+                <kbd className="px-2 py-1 bg-white dark:bg-slate-700 rounded-sm border border-blue-300 dark:border-blue-600 font-mono text-xs">
                   ↑ ↓
                 </kbd>{' '}
                 Adjust Speed
               </div>
               <div>
-                <kbd className="px-2 py-1 bg-white dark:bg-slate-700 rounded border border-blue-300 dark:border-blue-600 font-mono text-xs">
+                <kbd className="px-2 py-1 bg-white dark:bg-slate-700 rounded-sm border border-blue-300 dark:border-blue-600 font-mono text-xs">
                   Home
                 </kbd>{' '}
                 Reset to Start
               </div>
               <div>
-                <kbd className="px-2 py-1 bg-white dark:bg-slate-700 rounded border border-blue-300 dark:border-blue-600 font-mono text-xs">
+                <kbd className="px-2 py-1 bg-white dark:bg-slate-700 rounded-sm border border-blue-300 dark:border-blue-600 font-mono text-xs">
                   Esc
                 </kbd>{' '}
                 Exit Fullscreen

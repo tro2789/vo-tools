@@ -21,7 +21,7 @@ export const SpeedControl: React.FC<SpeedControlProps> = ({
           <Settings2 size={16} />
           Reading Speed
         </label>
-        <span className="text-xs font-mono font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded text-slate-600 dark:text-slate-300">
+        <span className="text-xs font-mono font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded-sm text-slate-600 dark:text-slate-300">
           {wpm} WPM
         </span>
       </div>

@@ -150,7 +150,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
             <>
               <div className="h-px bg-slate-200 dark:bg-slate-700 my-4" />
               
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800 rounded-xl p-4 border border-blue-200 dark:border-slate-700">
+              <div className="bg-linear-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800 rounded-xl p-4 border border-blue-200 dark:border-slate-700">
                 <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-3">
                   {isComparisonMode ? 'Suggested Quote (Revised Script)' : 'Suggested Quote'}
                 </div>
@@ -173,7 +173,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
                   
                   <div className="flex justify-between items-baseline">
                     <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Initial Recording:</span>
-                    <span className="text-2xl font-black bg-gradient-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent">
+                    <span className="text-2xl font-black bg-linear-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent">
                       {formatCurrency(quote.finalPrice)}
                     </span>
                   </div>
@@ -219,7 +219,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
               {/* Download PDF Button */}
               <button
                 onClick={handleDownloadPDF}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-sm transition-all bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/20"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-sm transition-all bg-linear-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/20"
               >
                 <Download size={16} />
                 Download Quote PDF

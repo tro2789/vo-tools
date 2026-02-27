@@ -52,7 +52,7 @@ export function Navigation() {
             href="https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-lg shadow-pink-500/20"
+            className="flex items-center gap-1.5 px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm transition-all bg-linear-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-lg shadow-pink-500/20"
           >
             <Heart size={14} className="fill-current md:w-4 md:h-4" />
             <span className="hidden sm:inline">Buy Me A Coffee</span>

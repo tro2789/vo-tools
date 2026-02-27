@@ -200,7 +200,7 @@ export const ACXCheckContainer: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Upload Section */}
           <div className="lg:col-span-7">
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xs border border-slate-200 dark:border-slate-700 p-6">
               <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
                 Upload Audio Files
               </h2>
@@ -245,11 +245,11 @@ export const ACXCheckContainer: React.FC = () => {
                       className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg"
                     >
                       <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <FileAudio className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                        <FileAudio className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
                         <span className="text-sm font-medium text-slate-900 dark:text-white truncate">
                           {fileObj.file.name}
                         </span>
-                        <span className="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">
+                        <span className="text-xs text-slate-500 dark:text-slate-400 shrink-0">
                           ({(fileObj.file.size / 1024 / 1024).toFixed(2)} MB)
                         </span>
                       </div>
@@ -271,7 +271,7 @@ export const ACXCheckContainer: React.FC = () => {
                         )}
                         <button
                           onClick={() => removeFile(index)}
-                          className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
+                          className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-sm transition-colors"
                           disabled={fileObj.analyzing}
                         >
                           <Trash2 className="w-4 h-4 text-slate-500 dark:text-slate-400" />
@@ -287,7 +287,7 @@ export const ACXCheckContainer: React.FC = () => {
                   <button
                     onClick={analyzeAll}
                     disabled={!hasUnanalyzedFiles || isAnalyzing}
-                    className="flex-1 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-base shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-indigo-600"
+                    className="flex-1 py-3 rounded-lg bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold text-base shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-indigo-600"
                   >
                     {isAnalyzing ? 'Analyzing Files...' : 'Analyze All Files'}
                   </button>
@@ -308,34 +308,34 @@ export const ACXCheckContainer: React.FC = () => {
           {/* Info Section */}
           <div className="lg:col-span-5 space-y-6">
             {/* ACX Requirements */}
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xs border border-slate-200 dark:border-slate-700 p-6">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
                 ACX Technical Requirements
               </h3>
               <div className="space-y-3 text-sm">
                 <div className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-slate-700 dark:text-slate-300 font-medium">MP3 Format</p>
                     <p className="text-slate-500 dark:text-slate-400 text-xs">192 kbps or higher, Constant Bit Rate (CBR)</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-slate-700 dark:text-slate-300 font-medium">44.1 kHz Sample Rate</p>
                     <p className="text-slate-500 dark:text-slate-400 text-xs">CD quality audio sample rate</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-slate-700 dark:text-slate-300 font-medium">RMS: -23dB to -18dB</p>
                     <p className="text-slate-500 dark:text-slate-400 text-xs">Average loudness (typically -20dB)</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-slate-700 dark:text-slate-300 font-medium">Peak: ≤ -3dB</p>
                     <p className="text-slate-500 dark:text-slate-400 text-xs">Maximum loudness level</p>
@@ -393,7 +393,7 @@ export const ACXCheckContainer: React.FC = () => {
 
         {/* Full-Width Results Section */}
         {hasResults && (
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xs border border-slate-200 dark:border-slate-700 overflow-hidden">
             <div className="p-8">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
@@ -514,7 +514,7 @@ export const ACXCheckContainer: React.FC = () => {
                     fileObj.error && (
                       <div key={`error-${index}`} className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                         <div className="flex items-start gap-2">
-                          <XCircle className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                          <XCircle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
                           <div>
                             <p className="text-sm font-medium text-red-900 dark:text-red-100">{fileObj.file.name}</p>
                             <p className="text-xs text-red-800 dark:text-red-200 mt-0.5">{fileObj.error}</p>
@@ -529,7 +529,7 @@ export const ACXCheckContainer: React.FC = () => {
               {/* Analysis Only Notice */}
               <div className="mt-6 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
                 <div className="flex items-start gap-2">
-                  <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                  <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                   <div>
                     <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-100 mb-1">
                       Analysis Only

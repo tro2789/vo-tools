@@ -26,7 +26,7 @@ export const DiffVisualization: React.FC<DiffVisualizationProps> = ({
           <span
             key={index}
             className={`bg-green-200 dark:bg-green-900/40 text-green-900 dark:text-green-200 ${
-              isWhitespace ? '' : 'rounded px-0.5'
+              isWhitespace ? '' : 'rounded-sm px-0.5'
             }`}
           >
             {segment.value}
@@ -37,7 +37,7 @@ export const DiffVisualization: React.FC<DiffVisualizationProps> = ({
           <span
             key={index}
             className={`bg-red-200 dark:bg-red-900/40 text-red-900 dark:text-red-200 line-through ${
-              isWhitespace ? '' : 'rounded px-0.5'
+              isWhitespace ? '' : 'rounded-sm px-0.5'
             }`}
           >
             {segment.value}
@@ -61,7 +61,7 @@ export const DiffVisualization: React.FC<DiffVisualizationProps> = ({
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Original with Highlights */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800/60 overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800/60 overflow-hidden">
           <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
             <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
               <Type size={14} />
@@ -74,7 +74,7 @@ export const DiffVisualization: React.FC<DiffVisualizationProps> = ({
         </div>
 
         {/* Revised with Highlights */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800/60 overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800/60 overflow-hidden">
           <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
             <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
               <Type size={14} />
@@ -88,19 +88,19 @@ export const DiffVisualization: React.FC<DiffVisualizationProps> = ({
       </div>
 
       {/* Legend */}
-      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800/60 p-5">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-5">
         <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">
           Legend
         </div>
         <div className="flex flex-wrap gap-4">
           <div className="flex items-center gap-2">
-            <span className="bg-green-200 dark:bg-green-900/40 text-green-900 dark:text-green-200 px-2 py-1 rounded text-sm">
+            <span className="bg-green-200 dark:bg-green-900/40 text-green-900 dark:text-green-200 px-2 py-1 rounded-sm text-sm">
               Added
             </span>
             <span className="text-xs text-slate-500">New text in revised</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="bg-red-200 dark:bg-red-900/40 text-red-900 dark:text-red-200 line-through px-2 py-1 rounded text-sm">
+            <span className="bg-red-200 dark:bg-red-900/40 text-red-900 dark:text-red-200 line-through px-2 py-1 rounded-sm text-sm">
               Removed
             </span>
             <span className="text-xs text-slate-500">Deleted from original</span>

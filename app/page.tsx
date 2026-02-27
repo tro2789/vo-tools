@@ -5,7 +5,7 @@ import { Footer } from '@/components/Footer';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <main className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Top Navigation */}
       <div className="w-full px-4 sm:px-6 lg:px-8 py-3">
         <div className="max-w-6xl mx-auto flex justify-end gap-2">
@@ -23,7 +23,7 @@ export default function Home() {
             href="https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-lg shadow-pink-500/20"
+            className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all bg-linear-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-lg shadow-pink-500/20"
           >
             <Heart size={16} className="fill-current" />
             <span className="hidden sm:inline">Buy Me A Coffee</span>
@@ -51,11 +51,11 @@ export default function Home() {
             <div className="group relative bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 cursor-pointer h-full">
               
               {/* Gradient Accent */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-blue-500 to-indigo-600"></div>
               
               <div className="p-5 flex gap-5">
                 {/* Icon */}
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <Calculator className="w-6 h-6 text-white" />
                 </div>
 
@@ -103,11 +103,11 @@ export default function Home() {
             <div className="group relative bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 cursor-pointer h-full">
               
               {/* Gradient Accent */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-indigo-500 to-purple-600"></div>
               
               <div className="p-5 flex gap-5">
                 {/* Icon */}
-                <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 bg-linear-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <AudioWaveform className="w-6 h-6 text-white" />
                 </div>
 
@@ -155,11 +155,11 @@ export default function Home() {
             <div className="group relative bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 cursor-pointer h-full">
               
               {/* Gradient Accent */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-600"></div>
+              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-emerald-500 to-teal-600"></div>
               
               <div className="p-5 flex gap-5">
                 {/* Icon */}
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 bg-linear-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <ScrollText className="w-6 h-6 text-white" />
                 </div>
 
@@ -207,11 +207,11 @@ export default function Home() {
             <div className="group relative bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 cursor-pointer h-full">
               
               {/* Gradient Accent */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-600"></div>
+              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-amber-500 to-orange-600"></div>
               
               <div className="p-5 flex gap-5">
                 {/* Icon */}
-                <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 bg-linear-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <CheckCircle2 className="w-6 h-6 text-white" />
                 </div>
 
