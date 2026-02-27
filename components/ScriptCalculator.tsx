@@ -64,7 +64,7 @@ export const ScriptCalculator = () => {
   const [comparisonMode, setComparisonMode] = useState<boolean>(
     persistedState?.comparisonMode ?? false
   );
-  
+
   // Script content state (immediate for responsive typing)
   const [script, setScript] = useState<string>(persistedState?.script ?? '');
   const [originalScript, setOriginalScript] = useState<string>(
@@ -95,7 +95,7 @@ export const ScriptCalculator = () => {
   // Pricing (uses revised script in comparison mode, single script otherwise)
   const activeWordCount = comparisonMode ? revisedAnalysis.wordCount : singleAnalysis.wordCount;
   const activeTimeEstimate = comparisonMode ? revisedAnalysis.timeEstimate : singleAnalysis.timeEstimate;
-  
+
   const pricingHook = usePricing(
     activeWordCount,
     wpm,
@@ -182,31 +182,31 @@ export const ScriptCalculator = () => {
   const handleReset = useCallback(() => {
     // Clear only app-specific state, preserve theme preference
     localStorage.removeItem('vo-tools-state');
-    
+
     // Reload the page to reset all state
     window.location.reload();
   }, []);
 
   return (
-    <div className="min-h-screen w-full bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-      
+    <div className="min-h-screen w-full bg-[#f5f7fa] dark:bg-[#000d15] transition-colors duration-300">
+
       {/* Page Header - Secondary controls specific to Script Analysis */}
-      <div className="w-full border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 px-4 md:px-6 py-4">
+      <div className="w-full border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-[#072030] px-4 md:px-6 py-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between gap-2">
             <div>
-              <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
                 Script Analysis
               </h1>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 Analyze scripts for word count, timing, and pricing
               </p>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <button
                 onClick={handleReset}
-                className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
+                className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all bg-gray-100 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
                 title="Reset all data to defaults"
               >
                 <RotateCcw size={16} />
@@ -216,8 +216,8 @@ export const ScriptCalculator = () => {
                 onClick={toggleComparisonMode}
                 className={`flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all ${
                   comparisonMode
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/10'
+                    : 'bg-gray-100 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
               >
                 {comparisonMode ? <GitCompare size={16} /> : <FileText size={16} />}
@@ -294,8 +294,8 @@ export const ScriptCalculator = () => {
               {/* Diff Visualization below editors */}
               {originalScript && revisedScript && comparison.diffSegments.originalSegments.length > 0 && (
                 <Suspense fallback={
-                  <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-8 text-center">
-                    <div className="text-slate-500 dark:text-slate-400">Loading diff visualization...</div>
+                  <div className="bg-white dark:bg-[#000d15] rounded-xl shadow-xs border border-gray-200 dark:border-gray-700/50 p-8 text-center">
+                    <div className="text-gray-500 dark:text-gray-400">Loading diff visualization...</div>
                   </div>
                 }>
                   <DiffVisualization
@@ -310,8 +310,8 @@ export const ScriptCalculator = () => {
             <div className="lg:col-span-4 space-y-4">
               {/* Comparison Stats */}
               <Suspense fallback={
-                <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-8 text-center">
-                  <div className="text-slate-500 dark:text-slate-400">Loading stats...</div>
+                <div className="bg-white dark:bg-[#000d15] rounded-xl shadow-xs border border-gray-200 dark:border-gray-700/50 p-8 text-center">
+                  <div className="text-gray-500 dark:text-gray-400">Loading stats...</div>
                 </div>
               }>
                 <ComparisonStats

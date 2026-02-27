@@ -109,7 +109,7 @@ export const ScriptTextDisplay: React.FC<ScriptTextDisplayProps> = ({
   return (
     <div className={`relative ${className}`}>
       {/* Rendered script text */}
-      <div className="text-slate-700 dark:text-slate-300 text-lg leading-relaxed whitespace-pre-wrap">
+      <div className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed whitespace-pre-wrap">
         {parsedContent.map((paragraph) => (
           <div key={paragraph.key} className="mb-4 last:mb-0">
             {paragraph.lines.map((line, lineIndex) => (
@@ -120,7 +120,7 @@ export const ScriptTextDisplay: React.FC<ScriptTextDisplayProps> = ({
                       <span
                         key={`${line.key}-${tokenIndex}`}
                         onClick={(e) => handleWordClick(token.content, e)}
-                        className="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-sm px-0.5 transition-colors"
+                        className="cursor-pointer hover:bg-cyan-50 dark:hover:bg-cyan-900/20 rounded-sm px-0.5 transition-colors"
                         role="button"
                         tabIndex={0}
                         onKeyDown={(e) => {

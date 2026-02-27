@@ -163,16 +163,16 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
   }
 
   return (
-    <div className="min-h-screen w-full bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-      
+    <div className="min-h-screen w-full bg-gray-50 dark:bg-[#000d15] transition-colors duration-300">
+
       {/* Page Header - Secondary controls specific to Teleprompter */}
-      <div className="w-full border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 px-4 md:px-6 py-4">
+      <div className="w-full border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-[#072030]/80 px-4 md:px-6 py-4">
         <div className="max-w-7xl mx-auto">
           <div>
-            <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
               Teleprompter
             </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               Professional teleprompter with auto-scroll, speed control, and studio-ready features
             </p>
           </div>
@@ -193,14 +193,14 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
               height="h-64"
               showPronunciationToggle={true}
             />
-            <div className="text-sm text-slate-500 dark:text-slate-400 px-1">
+            <div className="text-sm text-gray-500 dark:text-gray-400 px-1">
               {wordCount} words • Estimated {Math.ceil((wordCount / wpm) * 60)} seconds
             </div>
           </div>
 
           {/* Settings */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xs border border-slate-200 dark:border-slate-700 p-6">
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <div className="bg-white dark:bg-gray-800/60 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700 p-6">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Reading Speed (WPM)
             </label>
             <div className="flex items-center gap-4">
@@ -218,20 +218,20 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
                 max="200"
                 value={wpm}
                 onChange={(e) => setWpm(Number(e.target.value))}
-                className="w-20 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-center"
+                className="w-20 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#072030] text-gray-900 dark:text-white text-center"
               />
             </div>
-            <div className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               This determines the base scrolling speed. You can adjust it in real-time during playback.
             </div>
           </div>
 
           {/* Remote Control Panel */}
           {remote.remoteUrl && (
-            <div className="bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
+            <div className="bg-linear-to-br from-cyan-50 to-gray-50 dark:from-cyan-950/20 dark:to-gray-900/20 rounded-xl p-6 border border-cyan-200 dark:border-cyan-800">
               <div className="flex items-start gap-4">
                 <div className="shrink-0">
-                  <div className="bg-white dark:bg-slate-800 p-3 rounded-lg shadow-md">
+                  <div className="bg-white dark:bg-gray-800/60 p-3 rounded-lg shadow-md">
                     <QRCodeCanvas
                       value={remote.remoteUrl}
                       size={120}
@@ -240,25 +240,25 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <Smartphone className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                    <h3 className="text-sm font-semibold text-purple-900 dark:text-purple-100">
+                    <Smartphone className="w-5 h-5 text-cyan-500 dark:text-cyan-500" />
+                    <h3 className="text-sm font-semibold text-cyan-900 dark:text-cyan-100">
                       Phone Remote Control
                     </h3>
                   </div>
-                  
+
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
-                      <span className="text-purple-800 dark:text-purple-200">
+                      <span className="text-cyan-800 dark:text-cyan-200">
                         Room Code:
                       </span>
-                      <code className="px-2 py-1 bg-white dark:bg-slate-700 rounded-sm font-mono font-bold text-purple-900 dark:text-purple-100 border border-purple-300 dark:border-purple-600">
+                      <code className="px-2 py-1 bg-white dark:bg-gray-700 rounded-sm font-mono font-bold text-cyan-900 dark:text-cyan-100 border border-cyan-300 dark:border-cyan-600">
                         {remote.roomCode}
                       </code>
                     </div>
-                    
+
                     <div className="flex items-center gap-2">
                       {remote.phoneConnected ? (
                         <>
@@ -269,15 +269,15 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
                         </>
                       ) : (
                         <>
-                          <WifiOff className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                          <span className="text-slate-600 dark:text-slate-400">
+                          <WifiOff className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                          <span className="text-gray-600 dark:text-gray-400">
                             Waiting for phone...
                           </span>
                         </>
                       )}
                     </div>
-                    
-                    <p className="text-purple-700 dark:text-purple-300 text-xs pt-1">
+
+                    <p className="text-cyan-600 dark:text-cyan-300 text-xs pt-1">
                       Scan the QR code with your phone to use it as a wireless remote control
                     </p>
                   </div>
@@ -290,37 +290,37 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
           <button
             onClick={handleStart}
             disabled={!script.trim()}
-            className="w-full py-4 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold text-lg shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-indigo-600"
+            className="w-full py-4 rounded-xl bg-linear-to-r from-cyan-500 to-cyan-500 text-white font-semibold text-lg shadow-lg hover:from-cyan-500 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-cyan-500 disabled:hover:to-cyan-500"
           >
             Start Teleprompter
           </button>
 
           {/* Instructions */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
-            <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-3">
+          <div className="bg-cyan-50 dark:bg-cyan-900/20 rounded-xl p-6 border border-cyan-200 dark:border-cyan-800">
+            <h3 className="text-sm font-semibold text-cyan-900 dark:text-cyan-100 mb-3">
               Keyboard Controls
             </h3>
-            <div className="grid grid-cols-2 gap-3 text-sm text-blue-800 dark:text-blue-200">
+            <div className="grid grid-cols-2 gap-3 text-sm text-cyan-800 dark:text-cyan-200">
               <div>
-                <kbd className="px-2 py-1 bg-white dark:bg-slate-700 rounded-sm border border-blue-300 dark:border-blue-600 font-mono text-xs">
+                <kbd className="px-2 py-1 bg-white dark:bg-gray-700 rounded-sm border border-cyan-300 dark:border-cyan-600 font-mono text-xs">
                   Space
                 </kbd>{' '}
                 Play / Pause
               </div>
               <div>
-                <kbd className="px-2 py-1 bg-white dark:bg-slate-700 rounded-sm border border-blue-300 dark:border-blue-600 font-mono text-xs">
+                <kbd className="px-2 py-1 bg-white dark:bg-gray-700 rounded-sm border border-cyan-300 dark:border-cyan-600 font-mono text-xs">
                   ↑ ↓
                 </kbd>{' '}
                 Adjust Speed
               </div>
               <div>
-                <kbd className="px-2 py-1 bg-white dark:bg-slate-700 rounded-sm border border-blue-300 dark:border-blue-600 font-mono text-xs">
+                <kbd className="px-2 py-1 bg-white dark:bg-gray-700 rounded-sm border border-cyan-300 dark:border-cyan-600 font-mono text-xs">
                   Home
                 </kbd>{' '}
                 Reset to Start
               </div>
               <div>
-                <kbd className="px-2 py-1 bg-white dark:bg-slate-700 rounded-sm border border-blue-300 dark:border-blue-600 font-mono text-xs">
+                <kbd className="px-2 py-1 bg-white dark:bg-gray-700 rounded-sm border border-cyan-300 dark:border-cyan-600 font-mono text-xs">
                   Esc
                 </kbd>{' '}
                 Exit Fullscreen

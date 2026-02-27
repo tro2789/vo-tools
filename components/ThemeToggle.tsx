@@ -8,25 +8,24 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
 
-  // Avoid hydration mismatch
   React.useEffect(() => {
     setMounted(true)
   }, [])
 
   if (!mounted) {
-    return <div className="w-10 h-10" /> // Placeholder to prevent layout shift
+    return <div className="w-9 h-9" />
   }
 
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
+      className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800/60 text-gray-500 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
       aria-label="Toggle Dark Mode"
     >
       {theme === "dark" ? (
-        <Sun className="w-5 h-5" />
+        <Sun className="w-[18px] h-[18px]" />
       ) : (
-        <Moon className="w-5 h-5" />
+        <Moon className="w-[18px] h-[18px]" />
       )}
     </button>
   )

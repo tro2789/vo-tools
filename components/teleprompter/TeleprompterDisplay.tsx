@@ -226,7 +226,7 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
 
               <button
                 onClick={onTogglePlayPause}
-                className="w-14 h-14 flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 transition-colors text-white shadow-lg shrink-0"
+                className="w-14 h-14 flex items-center justify-center rounded-full bg-cyan-500 hover:bg-cyan-600 transition-colors text-white shadow-lg shrink-0"
                 title="Play/Pause (Space)"
               >
                 {isPlaying ? <Pause size={28} fill="currentColor" /> : <Play size={28} fill="currentColor" />}

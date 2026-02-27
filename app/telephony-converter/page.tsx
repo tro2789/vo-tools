@@ -81,24 +81,24 @@ export default function TelephonyConverterPage() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+    <div className="min-h-screen w-full bg-gray-50 dark:bg-[#000d15] transition-colors duration-300">
       
       {/* Page Header - Secondary controls specific to Telephony Converter */}
-      <div className="w-full border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 px-4 md:px-6 py-4">
+      <div className="w-full border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-[#072030]/80 px-4 md:px-6 py-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between gap-2">
             <div>
-              <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
                 Telephony Converter
               </h1>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 Convert media files into telephony-compatible formats for IVR systems and VoIP applications
               </p>
             </div>
             
             <button
               onClick={handleReset}
-              className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
+              className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all bg-gray-100 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
               title="Reset all fields"
             >
               <RotateCcw size={16} />
@@ -121,10 +121,10 @@ export default function TelephonyConverterPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             
             {/* File Upload */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-4">
+            <div className="bg-white dark:bg-[#072030] rounded-xl shadow-xs border border-gray-200 dark:border-gray-700/50 p-4">
               <div className="flex items-center gap-2 mb-3">
-                <Upload className="w-4 h-4 text-slate-700 dark:text-slate-300" />
-                <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+                <Upload className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white">
                   1. Source File
                 </h3>
               </div>
@@ -135,23 +135,23 @@ export default function TelephonyConverterPage() {
                 required
                 onChange={handleFileChange}
                 accept={ALLOWED_FILE_TYPES.join(',')}
-                className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800/60 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
               />
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
                 Max total size: 50MB
               </p>
               {files && files.length > 0 && (
-                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1.5 font-medium">
+                <p className="text-xs text-cyan-500 dark:text-cyan-400 mt-1.5 font-medium">
                   ✓ {files.length} file{files.length > 1 ? 's' : ''} selected
                 </p>
               )}
             </div>
 
             {/* Format Selection */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-4">
+            <div className="bg-white dark:bg-[#072030] rounded-xl shadow-xs border border-gray-200 dark:border-gray-700/50 p-4">
               <div className="flex items-center gap-2 mb-3">
-                <Settings className="w-4 h-4 text-slate-700 dark:text-slate-300" />
-                <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+                <Settings className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white">
                   2. Output Format
                 </h3>
               </div>
@@ -159,7 +159,7 @@ export default function TelephonyConverterPage() {
                 {FORMATS.map((option) => (
                   <label
                     key={option.value}
-                    className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-2 rounded-lg transition-colors"
+                    className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 p-2 rounded-lg transition-colors"
                   >
                     <input
                       type="radio"
@@ -167,9 +167,9 @@ export default function TelephonyConverterPage() {
                       value={option.value}
                       checked={format === option.value}
                       onChange={(e) => setFormat(e.target.value as Format)}
-                      className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                      className="w-4 h-4 text-cyan-500 focus:ring-2 focus:ring-cyan-500"
                     />
-                    <span className="text-slate-700 dark:text-slate-300 text-xs">
+                    <span className="text-gray-700 dark:text-gray-300 text-xs">
                       {option.label} ({option.description})
                     </span>
                   </label>
@@ -179,10 +179,10 @@ export default function TelephonyConverterPage() {
 
             {/* Volume Control and Options - Combined Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-4">
+              <div className="bg-white dark:bg-[#072030] rounded-xl shadow-xs border border-gray-200 dark:border-gray-700/50 p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <Volume2 className="w-4 h-4 text-slate-700 dark:text-slate-300" />
-                  <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+                  <Volume2 className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+                  <h3 className="text-base font-semibold text-gray-900 dark:text-white">
                     3. Volume
                   </h3>
                 </div>
@@ -198,9 +198,9 @@ export default function TelephonyConverterPage() {
                         value={option.value}
                         checked={volume === option.value}
                         onChange={(e) => setVolume(e.target.value as VolumeLevel)}
-                        className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                        className="w-4 h-4 text-cyan-500 focus:ring-2 focus:ring-cyan-500"
                       />
-                      <span className="text-slate-700 dark:text-slate-300 text-xs">
+                      <span className="text-gray-700 dark:text-gray-300 text-xs">
                         {option.label}
                       </span>
                     </label>
@@ -208,18 +208,18 @@ export default function TelephonyConverterPage() {
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800/60 p-4">
-                <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-3">
+              <div className="bg-white dark:bg-[#072030] rounded-xl shadow-xs border border-gray-200 dark:border-gray-700/50 p-4">
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3">
                   4. Options
                 </h3>
-                <label className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-2 rounded-lg transition-colors">
+                <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 p-2 rounded-lg transition-colors">
                   <input
                     type="checkbox"
                     checked={optimize}
                     onChange={(e) => setOptimize(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 rounded-sm focus:ring-2 focus:ring-blue-500"
+                    className="w-4 h-4 text-cyan-500 rounded-sm focus:ring-2 focus:ring-cyan-500"
                   />
-                  <span className="text-slate-700 dark:text-slate-300 text-xs">
+                  <span className="text-gray-700 dark:text-gray-300 text-xs">
                     Optimize Audio for Phone (Bandpass Filter 300-3400Hz)
                   </span>
                 </label>
@@ -231,7 +231,7 @@ export default function TelephonyConverterPage() {
               <button
                 type="submit"
                 disabled={isLoading || !files}
-                className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 dark:disabled:bg-slate-600 text-white rounded-lg transition-all font-medium text-sm shadow-lg shadow-blue-500/20 disabled:cursor-not-allowed disabled:shadow-none"
+                className="flex items-center gap-2 px-6 py-2.5 bg-cyan-500 hover:bg-cyan-600 disabled:bg-gray-400 dark:disabled:bg-gray-600 text-white rounded-lg transition-all font-medium text-sm shadow-lg shadow-cyan-500/10 disabled:cursor-not-allowed disabled:shadow-none"
               >
                 <Download className="w-4 h-4" />
                 {isLoading ? 'Converting...' : 'Convert & Download'}

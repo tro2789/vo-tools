@@ -4,7 +4,11 @@ import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { Navigation } from '@/components/Navigation';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'VO Tools - Professional Voiceover Tools',
@@ -18,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased bg-white dark:bg-slate-900 transition-colors duration-300`}>
+      <body className={`${inter.variable} font-sans antialiased bg-[#f5f7fa] dark:bg-[#000d15] transition-colors duration-300`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

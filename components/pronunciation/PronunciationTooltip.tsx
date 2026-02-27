@@ -12,10 +12,10 @@ interface PronunciationTooltipProps {
 
 /**
  * PronunciationTooltip Component
- * 
+ *
  * Displays a subtle, professional tooltip showing the phonetic pronunciation
  * of a word when clicked. Designed for voice actors to quickly check pronunciations.
- * 
+ *
  * Features:
  * - Positioned near the clicked word
  * - Shows word and ARPABET pronunciation
@@ -90,7 +90,7 @@ export const PronunciationTooltip: React.FC<PronunciationTooltipProps> = ({
   return (
     <div
       ref={tooltipRef}
-      className="fixed z-50 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 p-3 min-w-[200px] max-w-[300px]"
+      className="fixed z-50 bg-white dark:bg-gray-800/60 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-3 min-w-[200px] max-w-[300px]"
       style={{
         left: `${position.x}px`,
         top: `${position.y + 20}px`,
@@ -99,29 +99,29 @@ export const PronunciationTooltip: React.FC<PronunciationTooltipProps> = ({
       aria-label={`Pronunciation for ${word}`}
     >
       {/* Word */}
-      <div className="text-sm font-semibold text-slate-900 dark:text-white mb-1">
+      <div className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
         {word}
       </div>
 
       {/* Pronunciation in ARPABET */}
       <div className="flex items-center justify-between gap-2">
-        <div className="font-mono text-sm text-slate-600 dark:text-slate-300 flex-1">
+        <div className="font-mono text-sm text-gray-600 dark:text-gray-300 flex-1">
           {pronunciation}
         </div>
 
         {/* Copy button */}
         <button
           onClick={handleCopy}
-          className="p-1.5 rounded-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+          className="p-1.5 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           title="Copy pronunciation"
           aria-label="Copy pronunciation to clipboard"
         >
-          <Copy size={14} className="text-slate-500 dark:text-slate-400" />
+          <Copy size={14} className="text-gray-500 dark:text-gray-400" />
         </button>
       </div>
 
       {/* Format label */}
-      <div className="text-xs text-slate-400 dark:text-slate-500 mt-2">
+      <div className="text-xs text-gray-400 dark:text-gray-500 mt-2">
         ARPABET • North American English
       </div>
     </div>

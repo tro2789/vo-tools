@@ -53,30 +53,30 @@ export const AnalysisSidebar: React.FC<AnalysisSidebarProps> = ({
   handleDownloadPDF
 }) => {
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800/60 p-6 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto scrollbar-thin">
-      
-      <h2 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-6 flex items-center gap-2">
+    <div className="bg-white dark:bg-[#000d15] rounded-2xl shadow-lg shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-700/50 p-6 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto scrollbar-thin">
+
+      <h2 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-6 flex items-center gap-2">
         <Info size={14} />
         Analysis
       </h2>
 
       {/* Word Count */}
       <div className="mb-8">
-        <div className="text-xs font-medium text-slate-500 mb-2">Spoken Word Count</div>
-        <div className="text-5xl font-black text-slate-900 dark:text-white tracking-tight tabular-nums">
+        <div className="text-xs font-medium text-gray-500 mb-2">Spoken Word Count</div>
+        <div className="text-5xl font-black text-gray-900 dark:text-white tracking-tight tabular-nums">
           {wordCount}
         </div>
       </div>
 
-      <div className="h-px w-full bg-slate-100 dark:bg-slate-800 my-6" />
+      <div className="h-px w-full bg-gray-100 dark:bg-gray-800/60 my-6" />
 
       {/* Time Estimate */}
       <div className="mb-8">
-        <div className="text-xs font-medium text-slate-500 mb-2 flex items-center gap-1">
+        <div className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1">
           <Clock size={12} />
           Reading Time (Words Only)
         </div>
-        <div className="text-3xl font-bold text-slate-700 dark:text-slate-300 tracking-tight tabular-nums">
+        <div className="text-3xl font-bold text-gray-700 dark:text-gray-300 tracking-tight tabular-nums">
           {timeEstimate}
         </div>
       </div>
@@ -98,11 +98,11 @@ export const AnalysisSidebar: React.FC<AnalysisSidebarProps> = ({
           </div>
 
           <div className="mb-8">
-            <div className="text-xs font-medium text-slate-500 mb-2 flex items-center gap-1">
+            <div className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1">
               <Clock size={12} />
               Total Time (with Pauses)
             </div>
-            <div className="text-3xl font-bold bg-linear-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent tracking-tight tabular-nums">
+            <div className="text-3xl font-bold bg-linear-to-br from-cyan-500 to-cyan-600 bg-clip-text text-transparent tracking-tight tabular-nums">
               {timeWithPauses}
             </div>
           </div>
@@ -111,11 +111,11 @@ export const AnalysisSidebar: React.FC<AnalysisSidebarProps> = ({
 
       {pauseAnalysis.pauseCount === 0 && (
         <div className="mb-8">
-          <div className="text-xs font-medium text-slate-500 mb-2 flex items-center gap-1">
+          <div className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1">
             <Clock size={12} />
             Total Time
           </div>
-          <div className="text-3xl font-bold bg-linear-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent tracking-tight tabular-nums">
+          <div className="text-3xl font-bold bg-linear-to-br from-cyan-500 to-cyan-600 bg-clip-text text-transparent tracking-tight tabular-nums">
             {timeEstimate}
           </div>
         </div>

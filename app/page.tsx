@@ -3,261 +3,122 @@ import { Calculator, AudioWaveform, ScrollText, ArrowRight, MessageCircle, Heart
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Footer } from '@/components/Footer';
 
+const tools = [
+  {
+    href: '/script-analysis',
+    icon: Calculator,
+    title: 'Script Analysis',
+    description: 'Analyze scripts for word count, timing, and pricing. Quickly estimate project scope and calculate rates.',
+    features: ['Word & character count', 'Timing calculation', 'Pricing calculator', 'Script comparison'],
+  },
+  {
+    href: '/telephony-converter',
+    icon: AudioWaveform,
+    title: 'Telephony Converter',
+    description: 'Convert audio files to telephony-compatible formats for IVR systems, VoIP, and phone systems.',
+    features: ['Multiple formats', 'Batch conversion', 'Volume control', 'Bandpass filter'],
+  },
+  {
+    href: '/teleprompter',
+    icon: ScrollText,
+    title: 'Teleprompter',
+    description: 'Professional teleprompter with auto-scrolling, speed control, and phone remote for studio sessions.',
+    features: ['Fullscreen mode', 'Speed control', 'Phone remote', 'Mirror mode'],
+  },
+  {
+    href: '/acx-check',
+    icon: CheckCircle2,
+    title: 'ACX Compliance',
+    description: 'Analyze audiobook files for ACX technical requirements. Check format, loudness, and noise floor.',
+    features: ['Format & bitrate', 'LUFS analysis', 'Batch processing', 'CSV export'],
+  },
+];
+
 export default function Home() {
   return (
-    <main className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <main className="min-h-screen bg-[#f5f7fa] dark:bg-[#000d15]">
       {/* Top Navigation */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-3">
-        <div className="max-w-6xl mx-auto flex justify-end gap-2">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-5xl mx-auto flex justify-end gap-2">
           <ThemeToggle />
           <a
             href="https://discord.gg/gYg69PbHfR"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
+            className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/60 text-gray-600 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-300 dark:hover:border-cyan-600"
           >
-            <MessageCircle size={16} />
+            <MessageCircle size={15} />
             <span className="hidden sm:inline">Discord</span>
           </a>
           <a
             href="https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all bg-linear-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-lg shadow-pink-500/20"
+            className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all bg-cyan-600 text-white hover:bg-cyan-500 shadow-lg shadow-cyan-600/20"
           >
-            <Heart size={16} className="fill-current" />
-            <span className="hidden sm:inline">Buy Me A Coffee</span>
+            <Heart size={15} className="fill-current" />
+            <span className="hidden sm:inline">Support</span>
           </a>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">
-            VO Tools
-          </h1>
-          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-            Handy tools designed for voice actors and audio engineers
-          </p>
-        </div>
-
-        {/* Feature Cards - 2 Column Grid */}
-        <div className="grid lg:grid-cols-2 gap-5 max-w-6xl mx-auto">
-          
-          {/* Script Analysis Card */}
-          <Link href="/script-analysis">
-            <div className="group relative bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 cursor-pointer h-full">
-              
-              {/* Gradient Accent */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-blue-500 to-indigo-600"></div>
-              
-              <div className="p-5 flex gap-5">
-                {/* Icon */}
-                <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <Calculator className="w-6 h-6 text-white" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  {/* Content */}
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-                    Script Analysis
-                  </h2>
-                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-3 leading-relaxed">
-                    Analyze scripts for word count, timing, and pricing. Perfect for voice actors to quickly estimate project scope and calculate rates.
-                  </p>
-
-                  {/* Features List - Horizontal */}
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-blue-500">✓</span>
-                      <span>Word & character count</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-blue-500">✓</span>
-                      <span>Timing calculation</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-blue-500">✓</span>
-                      <span>Pricing calculator</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-blue-500">✓</span>
-                      <span>Script comparison</span>
-                    </div>
-                  </div>
-
-                  {/* CTA */}
-                  <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-medium text-sm group-hover:gap-3 transition-all">
-                    <span>Open Tool</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Link>
-
-          {/* Telephony Converter Card */}
-          <Link href="/telephony-converter">
-            <div className="group relative bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 cursor-pointer h-full">
-              
-              {/* Gradient Accent */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-indigo-500 to-purple-600"></div>
-              
-              <div className="p-5 flex gap-5">
-                {/* Icon */}
-                <div className="w-12 h-12 bg-linear-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <AudioWaveform className="w-6 h-6 text-white" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  {/* Content */}
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-                    Telephony Converter
-                  </h2>
-                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-3 leading-relaxed">
-                    Convert audio files to telephony-compatible formats for IVR systems, VoIP applications, and phone systems. Adjust loudness and apply bandpass filter.
-                  </p>
-
-                  {/* Features List - Horizontal */}
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-indigo-500">✓</span>
-                      <span>Multiple formats</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-indigo-500">✓</span>
-                      <span>Batch conversion</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-indigo-500">✓</span>
-                      <span>Volume normalization</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-indigo-500">✓</span>
-                      <span>Phone-optimized filtering</span>
-                    </div>
-                  </div>
-
-                  {/* CTA */}
-                  <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-medium text-sm group-hover:gap-3 transition-all">
-                    <span>Open Tool</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Link>
-
-          {/* Teleprompter Card */}
-          <Link href="/teleprompter">
-            <div className="group relative bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 cursor-pointer h-full">
-              
-              {/* Gradient Accent */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-emerald-500 to-teal-600"></div>
-              
-              <div className="p-5 flex gap-5">
-                {/* Icon */}
-                <div className="w-12 h-12 bg-linear-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <ScrollText className="w-6 h-6 text-white" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  {/* Content */}
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-                    Teleprompter
-                  </h2>
-                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-3 leading-relaxed">
-                    Professional teleprompter with auto-scrolling, speed control, and timing display. Perfect for studio recording sessions.
-                  </p>
-
-                  {/* Features List - Horizontal */}
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-emerald-500">✓</span>
-                      <span>Fullscreen mode</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-emerald-500">✓</span>
-                      <span>Auto-scroll & speed control</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-emerald-500">✓</span>
-                      <span>Time display</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-emerald-500">✓</span>
-                      <span>Keyboard controls</span>
-                    </div>
-                  </div>
-
-                  {/* CTA */}
-                  <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium text-sm group-hover:gap-3 transition-all">
-                    <span>Open Tool</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Link>
-
-          {/* ACX Compliance Checker Card */}
-          <Link href="/acx-check">
-            <div className="group relative bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 cursor-pointer h-full">
-              
-              {/* Gradient Accent */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-amber-500 to-orange-600"></div>
-              
-              <div className="p-5 flex gap-5">
-                {/* Icon */}
-                <div className="w-12 h-12 bg-linear-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <CheckCircle2 className="w-6 h-6 text-white" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  {/* Content */}
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-                    ACX Compliance Checker
-                  </h2>
-                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-3 leading-relaxed">
-                    Analyze audiobook files for ACX technical requirements compliance. Check format, bitrate, loudness, and noise floor automatically.
-                  </p>
-
-                  {/* Features List - Horizontal */}
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-amber-500">✓</span>
-                      <span>Format & bitrate check</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-amber-500">✓</span>
-                      <span>LUFS analysis</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-amber-500">✓</span>
-                      <span>Batch processing</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      <span className="text-amber-500">✓</span>
-                      <span>CSV export</span>
-                    </div>
-                  </div>
-
-                  {/* CTA */}
-                  <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-medium text-sm group-hover:gap-3 transition-all">
-                    <span>Open Tool</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Link>
-
-        </div>
-
+      {/* Hero */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 pb-12 sm:pb-16 text-center animate-fade-in-up">
+        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 dark:text-gray-50">
+          VO{' '}
+          <span className="bg-gradient-to-r from-cyan-500 to-cyan-700 dark:from-cyan-400 dark:to-cyan-600 bg-clip-text text-transparent">Tools</span>
+        </h1>
+        <div className="w-12 h-px bg-cyan-500/40 mx-auto mt-5 mb-5" />
+        <p className="text-base sm:text-lg text-gray-500 dark:text-gray-400 max-w-md mx-auto leading-relaxed">
+          Professional-grade tools designed for voice actors and audio engineers
+        </p>
       </div>
-      
+
+      {/* Tool Cards */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="grid lg:grid-cols-2 gap-4 sm:gap-5">
+          {tools.map((tool, index) => {
+            const Icon = tool.icon;
+            return (
+              <Link key={tool.href} href={tool.href}>
+                <div
+                  className="group relative bg-white dark:bg-[#072030] rounded-xl border border-gray-200 dark:border-gray-700/50 p-5 sm:p-6 transition-all duration-200 hover:border-cyan-400/50 dark:hover:border-cyan-600/40 hover:shadow-lg cursor-pointer h-full animate-fade-in-up"
+                  style={{ animationDelay: `${index * 80 + 100}ms` }}
+                >
+                  <div className="flex gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-cyan-50 dark:bg-cyan-950/40 flex items-center justify-center shrink-0 group-hover:bg-cyan-100 dark:group-hover:bg-cyan-900/40 transition-colors">
+                      <Icon className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-50 mb-1.5">
+                        {tool.title}
+                      </h2>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 leading-relaxed">
+                        {tool.description}
+                      </p>
+                      <div className="flex flex-wrap gap-1.5 mb-4">
+                        {tool.features.map((feature) => (
+                          <span
+                            key={feature}
+                            className="text-[11px] px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800/60 text-gray-500 dark:text-gray-400"
+                          >
+                            {feature}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-1.5 text-cyan-600 dark:text-cyan-400 text-sm font-medium group-hover:gap-2.5 transition-all">
+                        <span>Open Tool</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
       <Footer />
     </main>
   );
