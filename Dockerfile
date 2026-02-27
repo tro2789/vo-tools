@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 
 # Install dependencies for both Node and Python
 FROM base AS deps
@@ -30,7 +30,7 @@ RUN apt-get update && apt-get upgrade -y \
     curl \
     ffmpeg \
     supervisor \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
