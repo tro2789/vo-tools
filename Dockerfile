@@ -32,6 +32,10 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Copy full node_modules for server.mjs dependencies (socket.io, archiver)
+# that aren't traced by Next.js standalone output
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
+
 # Copy custom server (Socket.IO integration)
 COPY --chown=nextjs:nodejs server.mjs ./
 

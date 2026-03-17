@@ -91,11 +91,14 @@ export async function measureLoudness(filepath: string): Promise<number> {
   const { stderr } = await execFile(
     'ffmpeg',
     ['-i', filepath, '-af', 'ebur128=framelog=verbose', '-f', 'null', '-'],
-    { timeout: 120_000 }
+    { timeout: 120_000, maxBuffer: 10 * 1024 * 1024 }
   );
 
-  // Parse "I:         -20.1 LUFS" from stderr
-  for (const line of stderr.split('\n')) {
+  // Parse the summary section's "I: -20.1 LUFS" line (search from end
+  // to skip per-frame lines that also contain "I:" values)
+  const lines = stderr.split('\n');
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const line = lines[i];
     if (line.includes('I:') && line.includes('LUFS')) {
       const match = line.split('I:')[1]?.split('LUFS')[0]?.trim();
       if (match) {
@@ -109,26 +112,34 @@ export async function measureLoudness(filepath: string): Promise<number> {
 
 /**
  * Measure peak amplitude using FFmpeg's astats filter.
- * Returns peak in dBFS.
+ * Returns the highest peak across all channels in dBFS.
  */
 export async function measurePeak(filepath: string): Promise<number> {
   const { stderr } = await execFile(
     'ffmpeg',
     ['-i', filepath, '-af', 'astats=metadata=1:reset=0', '-f', 'null', '-'],
-    { timeout: 60_000 }
+    { timeout: 60_000, maxBuffer: 10 * 1024 * 1024 }
   );
 
-  // Parse "Overall Peak dB" or "Peak level dB" from astats output
+  // Collect all "Peak level dB:" values across all channels and return the max.
+  // astats outputs per-channel peaks plus an "Overall" section — we take the
+  // highest value found to match the original Python behavior (numpy.max).
+  let maxPeak = -Infinity;
   for (const line of stderr.split('\n')) {
     if (line.includes('Peak level dB:')) {
       const match = line.split('Peak level dB:')[1]?.trim();
       if (match) {
         const peak = parseFloat(match);
-        if (!isNaN(peak)) return peak;
+        if (!isNaN(peak) && peak > maxPeak) {
+          maxPeak = peak;
+        }
       }
     }
   }
-  throw new Error('Could not extract peak level from FFmpeg output');
+  if (maxPeak === -Infinity) {
+    throw new Error('Could not extract peak level from FFmpeg output');
+  }
+  return maxPeak;
 }
 
 /**
@@ -151,7 +162,7 @@ export async function detectSilence(
       '-af', `silencedetect=noise=${thresholdDb}dB:d=0.01`,
       '-f', 'null', '-',
     ],
-    { timeout: 60_000 }
+    { timeout: 60_000, maxBuffer: 10 * 1024 * 1024 }
   );
 
   // Parse silence_start and silence_end from stderr

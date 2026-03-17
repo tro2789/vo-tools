@@ -1,6 +1,6 @@
 import type { ConversionOptions, ErrorResponse, HealthCheckResponse } from '../types/converter'
 
-// Use same-origin API routes (Next.js proxies to Flask backend)
+// Use same-origin API routes
 const API_URL = ''
 
 export class ConverterAPIError extends Error {
@@ -19,7 +19,7 @@ export class ConverterAPIError extends Error {
  */
 export async function checkHealth(): Promise<HealthCheckResponse> {
   try {
-    const response = await fetch(`${API_URL}/health`)
+    const response = await fetch(`${API_URL}/api/health`)
     
     if (!response.ok) {
       throw new ConverterAPIError(
