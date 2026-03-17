@@ -1,52 +1,64 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { writeFile, mkdir, rm } from 'fs/promises';
+import path from 'path';
+import { randomUUID } from 'crypto';
+import { isValidAudio } from '@/lib/audio/ffmpeg';
+import { isAllowedFile, sanitizeFilename } from '@/lib/audio/convert';
+import { analyzeAcxCompliance } from '@/lib/audio/acx-analyzer';
+
+const UPLOAD_FOLDER = process.env.UPLOAD_FOLDER || '/tmp/uploads';
 
 export async function POST(request: NextRequest) {
+  const jobId = randomUUID();
+  const jobDir = path.join(UPLOAD_FOLDER, jobId);
+
   try {
-    // Get the Flask API URL (internal Docker network)
-    const flaskUrl = process.env.FLASK_API_URL || 'http://localhost:5000';
-    const apiKey = process.env.API_KEY;
-    
-    console.log('[ACX Check] Starting request to Flask API');
-    
-    // Forward the request to Flask API
     const formData = await request.formData();
-    
-    // Prepare headers with API key if available
-    const headers: HeadersInit = {};
-    if (apiKey) {
-      headers['X-API-Key'] = apiKey;
+    const file = formData.get('file') as File | null;
+
+    if (!file || !file.name) {
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
-    
-    console.log('[ACX Check] Forwarding to:', `${flaskUrl}/api/audio/acx-check`);
-    
-    const response = await fetch(`${flaskUrl}/api/audio/acx-check`, {
-      method: 'POST',
-      body: formData,
-      headers,
-    });
 
-    console.log('[ACX Check] Flask response status:', response.status);
-
-    const data = await response.json();
-    
-    console.log('[ACX Check] Flask response data:', data);
-
-    if (!response.ok) {
-      console.error('[ACX Check] Flask returned error:', data);
+    if (!isAllowedFile(file.name)) {
       return NextResponse.json(
-        { error: data.error || 'Analysis failed' },
-        { status: response.status }
+        { error: 'Invalid file type. Please upload an audio file.' },
+        { status: 400 }
       );
     }
 
-    // Return the JSON response
-    return NextResponse.json(data, {
-      status: 200,
-    });
+    await mkdir(jobDir, { recursive: true });
+
+    const safeName = sanitizeFilename(file.name);
+    if (!safeName) {
+      await rm(jobDir, { recursive: true, force: true });
+      return NextResponse.json({ error: 'Invalid filename' }, { status: 400 });
+    }
+
+    const filepath = path.join(jobDir, safeName);
+
+    // Save file
+    const buffer = Buffer.from(await file.arrayBuffer());
+    await writeFile(filepath, buffer);
+
+    // Validate audio
+    if (!(await isValidAudio(filepath))) {
+      await rm(jobDir, { recursive: true, force: true });
+      return NextResponse.json({ error: 'Not a valid audio file' }, { status: 400 });
+    }
+
+    // Analyze
+    const result = await analyzeAcxCompliance(filepath);
+
+    // Cleanup
+    await rm(jobDir, { recursive: true, force: true });
+
+    return NextResponse.json(result);
   } catch (error) {
-    console.error('[ACX Check] Proxy error:', error);
+    console.error('ACX analysis error:', error);
+    await rm(jobDir, { recursive: true, force: true }).catch(() => {});
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to process ACX compliance check request' },
+      { error: error instanceof Error ? error.message : 'Analysis failed' },
       { status: 500 }
     );
   }

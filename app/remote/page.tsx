@@ -35,32 +35,8 @@ function RemoteControl() {
       return;
     }
 
-    // Determine the Socket.IO server URL
-    let apiUrl: string;
-    
-    if (process.env.NEXT_PUBLIC_API_URL) {
-      // Use environment variable if set
-      apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    } else {
-      const port = window.location.port;
-      
-      // If accessing with explicit port, map to API port
-      if (port === '3011') {
-        // Development: Next.js on 3011, Flask on 5001
-        apiUrl = `${window.location.protocol}//${window.location.hostname}:5001`;
-      } else if (port === '3010') {
-        // Production: Next.js on 3010, Flask on 5000
-        apiUrl = `${window.location.protocol}//${window.location.hostname}:5000`;
-      } else {
-        // No port or unknown port = proxied access, use same domain
-        apiUrl = `${window.location.protocol}//${window.location.host}`;
-      }
-    }
-    
-    console.log('Connecting to Socket.IO server at:', apiUrl);
-    
-    // Connect to Flask-SocketIO server
-    const socket = io(apiUrl, {
+    // Connect to Socket.IO on same origin (integrated into Next.js server)
+    const socket = io({
       path: '/socket.io/',
       transports: ['websocket', 'polling'],
       reconnection: true,
