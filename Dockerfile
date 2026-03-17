@@ -1,11 +1,10 @@
 FROM node:22-alpine AS base
 
-# Install dependencies for both Node and Python
+# Install dependencies
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json* ./
-# Update npm to latest and install dependencies with audit fix
 RUN npm install -g npm@latest \
     && npm ci \
     && npm audit fix --force || true
@@ -15,83 +14,39 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
 RUN npm run build
 
-# Production image - includes both Node and Python
-# Using Python 3.13-slim as recommended by Docker Scout to reduce vulnerabilities
-FROM python:3.13-slim AS runner
+# Production image — Node.js + FFmpeg only
+FROM node:22-alpine AS runner
 WORKDIR /app
 
-# Install system dependencies (Node.js, FFmpeg, supervisor)
-# Also upgrade all packages to latest versions to fix CVEs
-RUN apt-get update && apt-get upgrade -y \
-    && apt-get install -y --no-install-recommends \
-    curl \
-    ffmpeg \
-    supervisor \
-    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
-    && apt-get install -y --no-install-recommends nodejs \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# Install FFmpeg
+RUN apk add --no-cache ffmpeg
 
-# Upgrade pip to fix CVE-2025-8869 and install Python dependencies
-COPY requirements.txt ./
-RUN pip install --no-cache-dir --upgrade "pip>=24.0" \
-    && pip install --no-cache-dir -r requirements.txt
-
-# Copy Python API
-COPY app.py ./
-COPY acx_analyzer.py ./
-
-# Setup Next.js
+# Create non-root user
 RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 nextjs
 
+# Copy Next.js standalone build
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Ensure nextjs user owns all necessary directories
-RUN mkdir -p /tmp/uploads \
-    && chown -R nextjs:nodejs /tmp/uploads /app \
-    && chmod -R 755 /app
+# Copy custom server (Socket.IO integration)
+COPY --chown=nextjs:nodejs server.mjs ./
 
-# Create supervisor config (runs as root, but spawns processes as nextjs)
-# Don't set environment in supervisor - let processes inherit from container
-RUN echo '[supervisord]' > /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'nodaemon=true' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo '' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo '[program:nextjs]' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'command=node server.js' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'directory=/app' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'user=nextjs' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'autostart=true' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'autorestart=true' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'stdout_logfile=/dev/stdout' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'stdout_logfile_maxbytes=0' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'stderr_logfile=/dev/stderr' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'stderr_logfile_maxbytes=0' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo '' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo '[program:flask]' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'command=gunicorn --bind 0.0.0.0:5000 --worker-class eventlet --workers 1 --timeout 120 app:app' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'directory=/app' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'user=nextjs' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'autostart=true' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'autorestart=true' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'stdout_logfile=/dev/stdout' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'stdout_logfile_maxbytes=0' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'stderr_logfile=/dev/stderr' >> /etc/supervisor/conf.d/supervisord.conf \
-    && echo 'stderr_logfile_maxbytes=0' >> /etc/supervisor/conf.d/supervisord.conf
+# Create upload directory
+RUN mkdir -p /tmp/uploads \
+    && chown -R nextjs:nodejs /tmp/uploads /app
+
+USER nextjs
 
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
-# Disable API authentication by default for public-facing deployments
-# Users access the site through Next.js which proxies to Flask internally
-# Enable AUTH_ENABLED=true in production if you want to restrict API access
-ENV AUTH_ENABLED=false
+ENV UPLOAD_FOLDER=/tmp/uploads
 
-EXPOSE 3000 5000
+EXPOSE 3000
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Single process — custom server handles both HTTP and WebSocket
+CMD ["node", "server.mjs"]

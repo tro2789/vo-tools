@@ -7,8 +7,10 @@ Professional tools for voice actors and audio engineers.
 - **Frontend**: Next.js 16 (App Router, standalone output, Turbopack dev), React 19, TypeScript
 - **Styling**: Tailwind CSS v4 (CSS-based config in `globals.css`, `@theme`/`@custom-variant`/`@utility` syntax), PostCSS via `@tailwindcss/postcss`
 - **Theming**: next-themes (light/dark, class-based via `@custom-variant dark`)
-- **Backend**: Python Flask (audio processing — `app.py`, `acx_analyzer.py`), served by Gunicorn + Eventlet
-- **Runtime**: Node 22 LTS, Python 3.13
+- **Backend**: Next.js API routes + FFmpeg via `child_process.execFile`, Socket.IO for WebSocket
+- **Runtime**: Node 22 LTS
+- **Audio**: FFmpeg/FFprobe (system dependency, installed in Docker image)
+- **Server**: Custom `server.mjs` wrapping Next.js + Socket.IO on a single port
 
 ## Design System
 
@@ -31,7 +33,10 @@ app/                    # Next.js App Router pages
   teleprompter/         # Auto-scrolling teleprompter with phone remote
   acx-check/            # ACX audiobook compliance checker
   remote/               # Phone remote control for teleprompter
-  api/                  # API routes (convert, acx-check)
+  api/                  # API routes
+    convert/            # Audio format conversion (direct FFmpeg)
+    acx-check/          # ACX compliance analysis (direct FFmpeg)
+    health/             # Health check endpoint
 components/             # React components
   Navigation.tsx        # Sticky nav (hidden on homepage)
   Footer.tsx            # Site footer
@@ -46,9 +51,15 @@ components/             # React components
   pronunciation/        # Pronunciation guide
   settings/             # Expansion settings
 lib/                    # Utilities
+  audio/                # Audio processing modules
+    ffmpeg.ts           # FFmpeg/FFprobe wrappers (uses execFile, safe from injection)
+    convert.ts          # Audio conversion logic (format maps, filters)
+    acx-analyzer.ts     # ACX compliance analysis
+  socket/               # WebSocket modules
+    rooms.ts            # Teleprompter remote room management
+  types/                # TypeScript type definitions
 hooks/                  # React hooks
-app.py                  # Flask backend (audio conversion, ACX analysis)
-acx_analyzer.py         # ACX audio analysis logic
+server.mjs              # Custom server (Next.js + Socket.IO, single port)
 ```
 
 ## Commands
@@ -57,7 +68,16 @@ acx_analyzer.py         # ACX audio analysis logic
 npm run dev             # Start dev server (Turbopack)
 npm run build           # Production build
 npm run lint            # ESLint
+node server.mjs         # Production server (after build)
 ```
+
+## Environment Variables
+
+- `ALLOWED_ORIGINS` — Comma-separated CORS origins (default: `http://localhost:3000`)
+- `UPLOAD_FOLDER` — Temp directory for audio processing (default: `/tmp/uploads`)
+- `FFMPEG_TIMEOUT` — FFmpeg conversion timeout in ms (default: `300000`)
+- `MAX_CONTENT_LENGTH` — Max upload size in bytes (default: `52428800` / 50MB)
+- `WS_RATE_LIMIT_PER_MINUTE` — WebSocket rate limit (default: `30`)
 
 ## Deployment
 
@@ -65,4 +85,5 @@ npm run lint            # ESLint
 - **Docker**: `tro2789/vo-tools:latest` on Docker Hub
 - **Build**: `docker build -t tro2789/vo-tools:latest .`
 - **Push**: `docker push tro2789/vo-tools:latest`
-- Dockerfile: multi-stage (node:22-alpine build → python:3.13-slim runtime)
+- Dockerfile: multi-stage (node:22-alpine build, node:22-alpine + ffmpeg runtime)
+- Single process, single port (3000)
