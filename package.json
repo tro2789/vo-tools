@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "archiver": "^7.0.1",
     "cmu-pronouncing-dictionary": "^3.0.0",
     "jspdf": "^4.0.0",
     "lucide-react": "^0.575.0",
@@ -18,10 +19,12 @@
     "qrcode": "^1.5.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.1",
+    "@types/archiver": "^7.0.0",
     "@types/node": "^22",
     "@types/number-to-words": "^1.2.3",
     "@types/qrcode": "^1.5.5",
