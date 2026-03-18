@@ -55,8 +55,6 @@ lib/                    # Utilities
     ffmpeg.ts           # FFmpeg/FFprobe wrappers (uses execFile, safe from injection)
     convert.ts          # Audio conversion logic (format maps, filters)
     acx-analyzer.ts     # ACX compliance analysis
-  socket/               # WebSocket modules
-    rooms.ts            # Teleprompter remote room management
   types/                # TypeScript type definitions
 hooks/                  # React hooks
 server.mjs              # Custom server (Next.js + Socket.IO, single port)
@@ -81,9 +79,11 @@ node server.mjs         # Production server (after build)
 
 ## Deployment
 
-- **Git**: `https://gitea.tohareprod.com/tro2789/vo-tools` — push to both `main` and `dev`
+- **Hosting**: Railway (Hobby tier) — single process, single port
+- **Domain**: `voiceover-tools.com` via Cloudflare DNS (CNAME to Railway)
+- **Git**: `https://gitea.tohareprod.com/tro2789/vo-tools` — push to `main`
 - **Docker**: `tro2789/vo-tools:latest` on Docker Hub
 - **Build**: `docker build -t tro2789/vo-tools:latest .`
 - **Push**: `docker push tro2789/vo-tools:latest`
 - Dockerfile: multi-stage (node:22-alpine build, node:22-alpine + ffmpeg runtime)
-- Single process, single port (3000)
+- Railway CLI: `~/.local/bin/railway` (linked to project `sparkling-compassion`)
