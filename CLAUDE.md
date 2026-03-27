@@ -28,6 +28,7 @@ When editing components, use `gray-*` for neutrals and `cyan-*` for accents. Do 
 ```
 app/                    # Next.js App Router pages
   page.tsx              # Homepage
+  sitemap.ts            # Auto-generated sitemap.xml (all public pages)
   script-analysis/      # Script word count, timing, pricing
   telephony-converter/  # Audio format conversion for IVR/VoIP
   teleprompter/         # Auto-scrolling teleprompter with phone remote
@@ -82,8 +83,6 @@ node server.mjs         # Production server (after build)
 - **Hosting**: Railway (Hobby tier) — single process, single port
 - **Domain**: `voiceover-tools.com` via Cloudflare DNS (CNAME to Railway)
 - **Git**: `https://gitea.tohareprod.com/tro2789/vo-tools` — push to `main`
-- **Docker**: `tro2789/vo-tools:latest` on Docker Hub
-- **Build**: `docker build -t tro2789/vo-tools:latest .`
-- **Push**: `docker push tro2789/vo-tools:latest`
+- **Build**: Railway builds from Dockerfile on push to `main` (auto-deploy)
 - Dockerfile: multi-stage (node:22-alpine build, node:22-alpine + ffmpeg runtime)
 - Railway CLI: `~/.local/bin/railway` (linked to project `sparkling-compassion`)
