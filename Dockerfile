@@ -5,9 +5,7 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm install -g npm@latest \
-    && npm ci \
-    && npm audit fix --force || true
+RUN npm ci
 
 # Build Next.js
 FROM base AS builder
