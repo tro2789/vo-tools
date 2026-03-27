@@ -4,8 +4,33 @@ export function Footer() {
   return (
     <footer className="w-full mt-4 px-4 md:px-6 py-5 border-t border-gray-200 dark:border-gray-700/50">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-400 dark:text-gray-500">
-        <div>
-          Built for the voiceover community
+        <div className="flex items-center gap-3">
+          <a
+            href="https://votrainer.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+          >
+            VOTrainer
+          </a>
+          <span className="text-gray-300 dark:text-gray-700">·</span>
+          <a
+            href="https://trevorohare.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+          >
+            Trevor O&apos;Hare
+          </a>
+          <span className="text-gray-300 dark:text-gray-700">·</span>
+          <a
+            href="https://realvotalent.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+          >
+            RealVOTalent
+          </a>
         </div>
         <div className="flex items-center gap-4">
           <a
