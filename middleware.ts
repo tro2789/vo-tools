@@ -4,9 +4,8 @@ import type { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   const host = request.headers.get('host') || ''
   if (host.startsWith('www.')) {
-    const url = request.nextUrl.clone()
-    url.host = host.replace('www.', '')
-    return NextResponse.redirect(url, 301)
+    const canonical = `https://voiceover-tools.com${request.nextUrl.pathname}${request.nextUrl.search}`
+    return NextResponse.redirect(canonical, 301)
   }
   return NextResponse.next()
 }
