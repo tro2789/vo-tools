@@ -80,9 +80,9 @@ node server.mjs         # Production server (after build)
 
 ## Deployment
 
-- **Hosting**: Railway (Hobby tier) — single process, single port
-- **Domain**: `voiceover-tools.com` via Cloudflare DNS (CNAME to Railway)
+- **Hosting**: Self-hosted via Docker Compose on home box (migrated off Railway — Socket.IO + long FFmpeg jobs don't fit free-tier serverless)
+- **Domain**: `voiceover-tools.com` via Cloudflare Tunnel → `http://localhost:3010`
 - **Git**: `https://gitea.tohareprod.com/tro2789/vo-tools` — push to `main`
-- **Build**: Railway builds from Dockerfile on push to `main` (auto-deploy)
 - Dockerfile: multi-stage (node:22-alpine build, node:22-alpine + ffmpeg runtime)
-- Railway CLI: `~/.local/bin/railway` (linked to project `sparkling-compassion`)
+- Compose: `docker-compose.yml` builds locally, maps `3010:3000`, `restart: unless-stopped`
+- Deploy workflow: commit → push → `docker compose up -d --build` on the home box (no CI/CD)

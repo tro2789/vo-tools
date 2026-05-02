@@ -11,8 +11,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://voiceover-tools.com'),
   title: 'VO Tools - Professional Voiceover Tools',
   description: 'Professional tools for voice actors including script analysis, timing calculator, and telephony converter for IVR systems.',
+  alternates: {
+    canonical: '/',
+  },
 };
 
 export default function RootLayout({

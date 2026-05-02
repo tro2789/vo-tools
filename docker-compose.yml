@@ -2,10 +2,9 @@ services:
   app:
     container_name: vo-tools
     image: tro2789/vo-tools:latest
-    # To build from source instead of pulling from Docker Hub, uncomment:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: unless-stopped
     ports:
       - "3010:3000"  # Next.js + Socket.IO (single port)
