@@ -3,7 +3,7 @@ import { writeFile, mkdir, rm, readFile } from 'fs/promises';
 import { createWriteStream } from 'fs';
 import path from 'path';
 import { randomUUID } from 'crypto';
-import archiver from 'archiver';
+import { ZipArchive } from 'archiver';
 import { isValidAudio } from '@/lib/audio/ffmpeg';
 import {
   isAllowedFile,
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
 
     await new Promise<void>((resolve, reject) => {
       const output = createWriteStream(zipPath);
-      const archive = archiver('zip', { zlib: { level: 1 } });
+      const archive = new ZipArchive({ zlib: { level: 1 } });
       output.on('close', resolve);
       archive.on('error', reject);
       archive.pipe(output);
