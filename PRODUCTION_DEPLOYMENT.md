@@ -1,5 +1,10 @@
 # Production Deployment Checklist
 
+> **OBSOLETE (marked 2026-08-19).** This checklist describes the retired
+> Flask/Railway-era deployment. The app is now a Next.js + Socket.IO Docker
+> stack self-hosted on the Debian VM (container `vo-tools`, port 3010).
+> See `CLAUDE.md` → Deployment for the current process. Kept for history only.
+
 **Target:** VPS with reverse proxy → Docker container
 **Domain:** voiceover-tools.com / www.voiceover-tools.com
 

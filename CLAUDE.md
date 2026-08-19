@@ -81,7 +81,7 @@ node server.mjs         # Production server (after build)
 ## Deployment
 
 - **Hosting**: Self-hosted via Docker Compose on home box (migrated off Railway — Socket.IO + long FFmpeg jobs don't fit free-tier serverless)
-- **Domain**: `voiceover-tools.com` via Cloudflare Tunnel → `http://localhost:3010`
+- **Domain**: `voiceover-tools.com` via direct static-IP ingress (CF proxied A → `149.154.41.49` → Caddy edge LXC `192.168.0.254` → NPM → `http://192.168.0.83:3010`). Migrated 2026-08-19 — the domain had been missed in the 2026-08-03 Phase 3 cutover and rode the standby tunnel until then. Origin CA cert in `~/Repos/docs/edge-proxy/certs/`, zone SSL `strict`. `www` 301s to the apex at the Cloudflare edge.
 - **Git**: `https://gitea.tohareprod.com/tro2789/vo-tools` — push to `main`
 - Dockerfile: multi-stage (node:22-alpine build, node:22-alpine + ffmpeg runtime)
 - Compose: `docker-compose.yml` builds locally, maps `3010:3000`, `restart: unless-stopped`
