@@ -90,3 +90,4 @@ node server.mjs         # Production server (after build)
 ## Testing (added 2026-08-23)
 
 Vitest, node environment. `npm test` runs 8 files / 139 tests over `utils/*` (text analysis, pause detection, pricing, comparison, pronunciation) and `lib/audio/*` (ffmpeg parsing with `execFile` mocked, ACX analyzer). Config: `vitest.config.mts`. Known quirk pinned by tests: `calculateSpokenWordCount` collapses contractions and hyphenated numbers into one token. Not covered: `pdfGenerator.ts`, `lib/api/converter.ts`, API route handlers.
+CI: `.gitea/workflows/ci.yml` runs `npm ci` and the checks above on every push (Node 24, added 2026-08-23). Lint is not in CI because of 9 pre-existing ESLint errors in untouched files.
