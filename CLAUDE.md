@@ -86,3 +86,7 @@ node server.mjs         # Production server (after build)
 - Dockerfile: multi-stage (node:22-alpine build, node:22-alpine + ffmpeg runtime)
 - Compose: `docker-compose.yml` builds locally, maps `3010:3000`, `restart: unless-stopped`
 - Deploy workflow: commit → push → `docker compose up -d --build` on the home box (no CI/CD)
+
+## Testing (added 2026-08-23)
+
+Vitest, node environment. `npm test` runs 8 files / 139 tests over `utils/*` (text analysis, pause detection, pricing, comparison, pronunciation) and `lib/audio/*` (ffmpeg parsing with `execFile` mocked, ACX analyzer). Config: `vitest.config.mts`. Known quirk pinned by tests: `calculateSpokenWordCount` collapses contractions and hyphenated numbers into one token. Not covered: `pdfGenerator.ts`, `lib/api/converter.ts`, API route handlers.
