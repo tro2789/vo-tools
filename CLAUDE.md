@@ -87,6 +87,7 @@ hooks/                  # React hooks
   useScriptDocument.ts  # Shared script document (localStorage, cross-tab)
   useHydrated.ts        # false until hydration finishes (useSyncExternalStore)
 design-reference/       # Redesign spec + Claude Design HTML exports
+proxy.ts                # www→apex redirect for pages only; /api excluded so uploads >10 MB are not truncated
 server.mjs              # Custom server (Next.js + Socket.IO, single port)
 ```
 
