@@ -1,14 +1,32 @@
 'use client';
 
-import React, { useState, lazy, Suspense, useCallback, useEffect } from 'react';
-import { GitCompare, FileText, RotateCcw } from 'lucide-react';
-import { Footer } from './Footer';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
+import { BookOpen, FileText, GitCompare, RotateCcw, ScrollText, Upload } from 'lucide-react';
+import {
+  Button,
+  DocumentBar,
+  RailSection,
+  SavedIndicator,
+  SectionLabel,
+  Segmented,
+  StatusBar,
+  Workspace,
+  type SavedState,
+} from './shell';
 import { ScriptEditor } from './editor/ScriptEditor';
-import { ScriptEditorWithPronunciation } from './editor/ScriptEditorWithPronunciation';
-import { AnalysisSidebar } from './analysis/AnalysisSidebar';
+import {
+  ScriptEditorWithPronunciation,
+  type EditorViewMode,
+} from './editor/ScriptEditorWithPronunciation';
+import { MetricsBlock } from './analysis/MetricsBlock';
 import { SpeedControl } from './analysis/SpeedControl';
+import { formatClock, formatCountDelta } from './analysis/format';
 import { ExpansionSettings } from './settings/ExpansionSettings';
-import { PricingSection } from './pricing/PricingSection';
+import { QuoteSection } from './pricing/QuoteSection';
+import { DeltaTable } from './comparison/DeltaTable';
+import { DiffPanes } from './comparison/DiffPanes';
+import { LookedUpList, type Lookup } from './pronunciation/LookedUpList';
 import { useScriptAnalysis } from '@/hooks/useScriptAnalysis';
 import { useComparison } from '@/hooks/useComparison';
 import { usePricing } from '@/hooks/usePricing';
@@ -16,20 +34,35 @@ import { useExpansionOptions } from '@/hooks/useExpansionOptions';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useAutosave } from '@/hooks/useAutosave';
+import { useScriptDocument } from '@/hooks/useScriptDocument';
 import { ExpansionOptions } from '@/utils/expansionOptions';
-import { PricingConfig } from '@/utils/pricingTypes';
-
-// Lazy load comparison components (only loaded when comparison mode is activated)
-const ComparisonStats = lazy(() => import('./comparison/ComparisonStats').then(m => ({ default: m.ComparisonStats })));
-const DiffVisualization = lazy(() => import('./comparison/DiffVisualization').then(m => ({ default: m.DiffVisualization })));
+import { PricingConfig, formatCurrency } from '@/utils/pricingTypes';
 
 const DEFAULT_WPM = 150;
 const MIN_WPM = 75;
 const MAX_WPM = 160;
 
-// Interface for persisted state
+const PLACEHOLDER =
+  'Paste your script. Numbers, dates, currencies and measurements are counted the way you would read them aloud — $1,250 counts as five words, not one.';
+
+const SAMPLE_SCRIPT = `Introducing the Vantage Series. Engineered for the way you actually work — and priced at $1,250 for a limited time.
+
+Every unit ships with a 10,000-hour warranty. That's a full 15% longer than anything else in its class.
+
+Visit vantage.example.com to reserve yours before October 12th.`;
+
+const SPEED_HELPER =
+  'Set this to your own pace once and it sticks. Most read-throughs land between 140 and 160.';
+
+const QUOTE_HELPER =
+  'Add a script and set a rate to see a quote, then export it as a PDF with your client and project on it.';
+
+const PRONUNCIATION_HELPER =
+  'Only words in the North American dictionary respond to a click. Names and coined product words usually will not — mark those in the script yourself.';
+
+/** Persisted analysis state. `script` is legacy — it now lives in the shared script document. */
 interface PersistedState {
-  script: string;
+  script?: string;
   originalScript: string;
   revisedScript: string;
   comparisonMode: boolean;
@@ -43,85 +76,87 @@ interface PersistedState {
 }
 
 export const ScriptCalculator = () => {
-  // Clear localStorage BEFORE any state initialization if resetting flag is set
-  // This must happen synchronously before useState runs
+  // Clear localStorage before any state initialisation when the reset flag is set.
   if (typeof window !== 'undefined') {
     const isResetting = sessionStorage.getItem('vo-tools-resetting');
     if (isResetting === 'true') {
       sessionStorage.removeItem('vo-tools-resetting');
-      // Only remove app-specific localStorage items, preserve theme preference
       localStorage.removeItem('vo-tools-state');
     }
   }
 
-  // Load persisted state from localStorage
-  const [persistedState, setPersistedState, clearPersistedState] = useLocalStorage<PersistedState | null>(
+  const [persistedState, setPersistedState] = useLocalStorage<PersistedState | null>(
     'vo-tools-state',
-    null
+    null,
   );
 
-  // Mode state
+  const { title, text, setTitle, setText, reset: resetDocument } = useScriptDocument();
+
   const [comparisonMode, setComparisonMode] = useState<boolean>(
-    persistedState?.comparisonMode ?? false
+    persistedState?.comparisonMode ?? false,
   );
-
-  // Script content state (immediate for responsive typing)
-  const [script, setScript] = useState<string>(persistedState?.script ?? '');
   const [originalScript, setOriginalScript] = useState<string>(
-    persistedState?.originalScript ?? ''
+    persistedState?.originalScript ?? '',
   );
-  const [revisedScript, setRevisedScript] = useState<string>(
-    persistedState?.revisedScript ?? ''
-  );
+  const [revisedScript, setRevisedScript] = useState<string>(persistedState?.revisedScript ?? '');
   const [wpm, setWpm] = useState<number>(persistedState?.wpm ?? DEFAULT_WPM);
 
-  // Debounced versions for expensive calculations (300ms delay)
-  const debouncedScript = useDebounce(script, 300);
+  const [viewMode, setViewMode] = useState<EditorViewMode>('edit');
+  const [lookups, setLookups] = useState<Lookup[]>([]);
+  const [importError, setImportError] = useState<string | null>(null);
+  const [docSaving, setDocSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // One-time migration of the old `script` blob field into the shared document.
+  const migrated = useRef(false);
+  useEffect(() => {
+    if (migrated.current) return;
+    migrated.current = true;
+    const legacy = persistedState?.script;
+    if (legacy && legacy.trim() && !text) {
+      setText(legacy);
+    }
+    // Runs once on mount; the shared document is the source of truth afterwards.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const debouncedScript = useDebounce(text, 300);
   const debouncedOriginalScript = useDebounce(originalScript, 300);
   const debouncedRevisedScript = useDebounce(revisedScript, 300);
 
-  // Custom hooks for business logic
-  const expansionHook = useExpansionOptions(persistedState?.expansionOptions);
-  const { expansionOptions, showExpansionSettings, setShowExpansionSettings, toggleExpansionOption } = expansionHook;
+  const { expansionOptions, showExpansionSettings, toggleExpansionOption } = useExpansionOptions(
+    persistedState?.expansionOptions,
+  );
 
-  // Single mode analysis (using debounced text)
   const singleAnalysis = useScriptAnalysis(debouncedScript, wpm, expansionOptions);
-
-  // Comparison mode analysis (using debounced text)
   const originalAnalysis = useScriptAnalysis(debouncedOriginalScript, wpm, expansionOptions);
   const revisedAnalysis = useScriptAnalysis(debouncedRevisedScript, wpm, expansionOptions);
   const comparison = useComparison(debouncedOriginalScript, debouncedRevisedScript);
 
-  // Pricing (uses revised script in comparison mode, single script otherwise)
-  const activeWordCount = comparisonMode ? revisedAnalysis.wordCount : singleAnalysis.wordCount;
-  const activeTimeEstimate = comparisonMode ? revisedAnalysis.timeEstimate : singleAnalysis.timeEstimate;
+  const activeAnalysis = comparisonMode ? revisedAnalysis : singleAnalysis;
 
-  const pricingHook = usePricing(
-    activeWordCount,
-    wpm,
-    activeTimeEstimate,
-    persistedState?.pricingConfig,
-    persistedState?.clientName,
-    persistedState?.projectName,
-    persistedState?.showPricing
-  );
   const {
     pricingConfig,
     updatePricingConfig,
     showPricing,
-    setShowPricing,
     clientName,
     setClientName,
     projectName,
     setProjectName,
     quote,
-    handleDownloadPDF
-  } = pricingHook;
+    handleDownloadPDF,
+  } = usePricing(
+    activeAnalysis.wordCount,
+    wpm,
+    activeAnalysis.timeEstimate,
+    persistedState?.pricingConfig,
+    persistedState?.clientName,
+    persistedState?.projectName,
+    persistedState?.showPricing,
+  );
 
-  // Autosave function - saves current state to localStorage
   const saveState = useCallback(() => {
-    const currentState: PersistedState = {
-      script,
+    setPersistedState({
       originalScript,
       revisedScript,
       comparisonMode,
@@ -132,10 +167,8 @@ export const ScriptCalculator = () => {
       projectName,
       showPricing,
       showExpansionSettings,
-    };
-    setPersistedState(currentState);
+    });
   }, [
-    script,
     originalScript,
     revisedScript,
     comparisonMode,
@@ -149,10 +182,8 @@ export const ScriptCalculator = () => {
     setPersistedState,
   ]);
 
-  // Autosave hook - saves every 30 seconds when changes are detected
-  const { lastSaved, saveNow, hasUnsavedChanges } = useAutosave(
+  const { hasUnsavedChanges } = useAutosave(
     {
-      script,
       originalScript,
       revisedScript,
       comparisonMode,
@@ -165,199 +196,349 @@ export const ScriptCalculator = () => {
       showExpansionSettings,
     },
     saveState,
-    30000 // 30 seconds
+    30000,
   );
 
-  // Toggle comparison mode
-  const toggleComparisonMode = () => {
-    if (!comparisonMode) {
-      // Switching to comparison mode - preserve current script as original
-      setOriginalScript(script);
+  // The document persists on every keystroke; flash "saving" briefly so the edit is acknowledged.
+  const handleTextChange = useCallback(
+    (next: string) => {
+      setText(next);
+      setDocSaving(true);
+    },
+    [setText],
+  );
+
+  useEffect(() => {
+    if (!docSaving) return;
+    const timer = setTimeout(() => setDocSaving(false), 600);
+    return () => clearTimeout(timer);
+  }, [docSaving, text]);
+
+  const hasAnyScript = Boolean(text.trim() || originalScript.trim() || revisedScript.trim());
+  const isFirstRun = !comparisonMode && !text.trim();
+
+  const savedState: SavedState = !hasAnyScript
+    ? 'empty'
+    : hasUnsavedChanges || docSaving
+      ? 'saving'
+      : 'saved';
+
+  const toggleComparisonMode = (mode: 'single' | 'compare') => {
+    const next = mode === 'compare';
+    if (next === comparisonMode) return;
+    if (next) {
+      setOriginalScript(text);
       setRevisedScript('');
+      setViewMode('edit');
     }
-    setComparisonMode(!comparisonMode);
+    setComparisonMode(next);
   };
 
-  // Reset all data to defaults - immediate reset with no confirmation
   const handleReset = useCallback(() => {
-    // Clear only app-specific state, preserve theme preference
     localStorage.removeItem('vo-tools-state');
-
-    // Reload the page to reset all state
+    resetDocument();
     window.location.reload();
-  }, []);
+  }, [resetDocument]);
 
-  return (
-    <div className="min-h-screen w-full bg-[#f5f7fa] dark:bg-[#000d15] transition-colors duration-300">
+  const handlePasteFromClipboard = async () => {
+    setImportError(null);
+    try {
+      const clipboardText = await navigator.clipboard.readText();
+      if (clipboardText.trim()) {
+        handleTextChange(clipboardText);
+      } else {
+        setImportError('Your clipboard is empty.');
+      }
+    } catch {
+      setImportError('Clipboard access was blocked. Paste into the editor instead.');
+    }
+  };
 
-      {/* Page Header - Secondary controls specific to Script Analysis */}
-      <div className="w-full border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-[#072030] px-4 md:px-6 py-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
-                Script Analysis
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Analyze scripts for word count, timing, and pricing
-              </p>
-            </div>
+  const handleOpenFile = (file: File | undefined) => {
+    if (!file) return;
+    setImportError(null);
+    const reader = new FileReader();
+    reader.onload = () => handleTextChange(String(reader.result ?? ''));
+    reader.onerror = () => setImportError('That file could not be read.');
+    reader.readAsText(file);
+  };
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleReset}
-                className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all bg-gray-100 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
-                title="Reset all data to defaults"
-              >
-                <RotateCcw size={16} />
-                <span className="hidden sm:inline">Reset</span>
-              </button>
-              <button
-                onClick={toggleComparisonMode}
-                className={`flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                  comparisonMode
-                    ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/10'
-                    : 'bg-gray-100 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                }`}
-              >
-                {comparisonMode ? <GitCompare size={16} /> : <FileText size={16} />}
-                <span className="hidden sm:inline">{comparisonMode ? 'Compare' : 'Single'}</span>
-              </button>
-            </div>
-          </div>
+  const rate = wpm || 1;
+  const secondsFor = (wordCount: number, pauseTime: number) => ({
+    wordsOnly: (wordCount / rate) * 60,
+    total: (wordCount / rate) * 60 + pauseTime,
+  });
+
+  const singleSeconds = secondsFor(
+    singleAnalysis.wordCount,
+    singleAnalysis.pauseAnalysis.totalPauseTime,
+  );
+  const revisedSeconds = secondsFor(
+    revisedAnalysis.wordCount,
+    revisedAnalysis.pauseAnalysis.totalPauseTime,
+  );
+
+  const wordDelta = revisedAnalysis.wordCount - originalAnalysis.wordCount;
+
+  const firstRunActions = useMemo(
+    () => (
+      <div className="px-7 pb-6">
+        <div className="flex flex-wrap gap-2">
+          <Button size={32} icon={FileText} onClick={handlePasteFromClipboard}>
+            Paste from clipboard
+          </Button>
+          <Button size={32} icon={Upload} onClick={() => fileInputRef.current?.click()}>
+            Open a .txt file
+          </Button>
+          <Button size={32} onClick={() => handleTextChange(SAMPLE_SCRIPT)}>
+            Load a sample script
+          </Button>
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".txt,text/plain"
+          className="sr-only"
+          aria-label="Open a .txt script file"
+          onChange={(event) => {
+            handleOpenFile(event.target.files?.[0]);
+            event.target.value = '';
+          }}
+        />
+        {importError ? <p className="mt-2 text-[11px] text-bad">{importError}</p> : null}
+      </div>
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [importError],
+  );
+
+  const documentIcon = comparisonMode
+    ? GitCompare
+    : viewMode === 'pronunciation' && text.trim()
+      ? BookOpen
+      : FileText;
+
+  const main = comparisonMode ? (
+    <div className="flex min-w-0 flex-1 flex-col">
+      <div className="grid grid-cols-1 gap-px border-b border-line bg-line lg:grid-cols-2">
+        <ScriptEditor
+          compact
+          label="ORIGINAL"
+          height="h-[240px]"
+          value={originalScript}
+          onChange={setOriginalScript}
+          placeholder="Paste your original script here..."
+        />
+        <ScriptEditor
+          compact
+          label="REVISED"
+          labelTone="ink"
+          height="h-[240px]"
+          value={revisedScript}
+          onChange={setRevisedScript}
+          placeholder="Paste your revised script here..."
+        />
+      </div>
+
+      <div className="flex h-[30px] shrink-0 items-center justify-between gap-3 border-b border-line bg-subtle px-[14px]">
+        <SectionLabel>DIFFERENCE</SectionLabel>
+        <div className="flex items-center gap-[14px] text-[11px] text-muted uppercase">
+          <span className="flex items-center gap-[6px]">
+            <span className="h-[9px] w-[9px] border border-ok bg-ok-bg" />
+            ADDED
+          </span>
+          <span className="flex items-center gap-[6px]">
+            <span className="h-[9px] w-[9px] border border-bad bg-bad-bg" />
+            REMOVED
+          </span>
         </div>
       </div>
 
-      <main className="w-full max-w-7xl mx-auto px-4 md:px-6 py-4">
-        {!comparisonMode ? (
-          // Single Mode Layout
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            {/* Left Column: Editor */}
-            <div className="lg:col-span-8 flex flex-col gap-4">
-              <ScriptEditorWithPronunciation
-                value={script}
-                onChange={setScript}
-                placeholder="Paste your script here... Numbers like '10,000' will be automatically expanded..."
-                showPronunciationToggle={true}
-              />
-            </div>
+      <DiffPanes
+        originalSegments={comparison.diffSegments.originalSegments}
+        revisedSegments={comparison.diffSegments.revisedSegments}
+      />
+    </div>
+  ) : (
+    <ScriptEditorWithPronunciation
+      value={text}
+      onChange={handleTextChange}
+      placeholder={PLACEHOLDER}
+      label="Script"
+      viewMode={viewMode}
+      onViewModeChange={setViewMode}
+      onLookup={(word, pronunciation) =>
+        setLookups((prev) => [
+          { word, pronunciation },
+          ...prev.filter((entry) => entry.word !== word),
+        ])
+      }
+      bottomSlot={isFirstRun ? firstRunActions : undefined}
+    />
+  );
 
-            {/* Right Column: Analysis Sidebar */}
-            <div className="lg:col-span-4 space-y-4">
-              <AnalysisSidebar
-                wordCount={singleAnalysis.wordCount}
-                timeEstimate={singleAnalysis.timeEstimate}
-                pauseAnalysis={singleAnalysis.pauseAnalysis}
-                timeWithPauses={singleAnalysis.timeWithPauses}
-                wpm={wpm}
-                setWpm={setWpm}
-                expansionOptions={expansionOptions}
-                showExpansionSettings={showExpansionSettings}
-                setShowExpansionSettings={setShowExpansionSettings}
-                toggleExpansionOption={toggleExpansionOption}
-                pricingConfig={pricingConfig}
-                updatePricingConfig={updatePricingConfig}
-                showPricing={showPricing}
-                setShowPricing={setShowPricing}
-                quote={quote}
-                clientName={clientName}
-                setClientName={setClientName}
-                projectName={projectName}
-                setProjectName={setProjectName}
-                handleDownloadPDF={handleDownloadPDF}
-              />
-            </div>
-          </div>
-        ) : (
-          // Comparison Mode Layout - Similar to Single Mode
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            {/* Left Column: Stacked Editors */}
-            <div className="lg:col-span-8 flex flex-col gap-4">
-              <ScriptEditorWithPronunciation
-                value={originalScript}
-                onChange={setOriginalScript}
-                placeholder="Paste your original script here..."
-                label="Original Script"
-                height="h-[32vh]"
-                showPronunciationToggle={true}
-              />
+  const speedSection = (
+    <SpeedControl
+      wpm={wpm}
+      setWpm={setWpm}
+      minWpm={MIN_WPM}
+      maxWpm={MAX_WPM}
+      helper={isFirstRun ? SPEED_HELPER : undefined}
+    />
+  );
 
-              <ScriptEditorWithPronunciation
-                value={revisedScript}
-                onChange={setRevisedScript}
-                placeholder="Paste your revised script here..."
-                label="Revised Script"
-                height="h-[32vh]"
-                showPronunciationToggle={true}
-              />
+  const expansionSection = (
+    <ExpansionSettings
+      expansionOptions={expansionOptions}
+      toggleExpansionOption={toggleExpansionOption}
+    />
+  );
 
-              {/* Diff Visualization below editors */}
-              {originalScript && revisedScript && comparison.diffSegments.originalSegments.length > 0 && (
-                <Suspense fallback={
-                  <div className="bg-white dark:bg-[#000d15] rounded-xl shadow-xs border border-gray-200 dark:border-gray-700/50 p-8 text-center">
-                    <div className="text-gray-500 dark:text-gray-400">Loading diff visualization...</div>
-                  </div>
-                }>
-                  <DiffVisualization
-                    originalSegments={comparison.diffSegments.originalSegments}
-                    revisedSegments={comparison.diffSegments.revisedSegments}
-                  />
-                </Suspense>
-              )}
-            </div>
+  const showPronunciationRail = !comparisonMode && viewMode === 'pronunciation' && !!text.trim();
 
-            {/* Right Column: Stats and Controls */}
-            <div className="lg:col-span-4 space-y-4">
-              {/* Comparison Stats */}
-              <Suspense fallback={
-                <div className="bg-white dark:bg-[#000d15] rounded-xl shadow-xs border border-gray-200 dark:border-gray-700/50 p-8 text-center">
-                  <div className="text-gray-500 dark:text-gray-400">Loading stats...</div>
-                </div>
-              }>
-                <ComparisonStats
-                  originalWordCount={originalAnalysis.wordCount}
-                  revisedWordCount={revisedAnalysis.wordCount}
-                  originalTimeEstimate={originalAnalysis.timeEstimate}
-                  revisedTimeEstimate={revisedAnalysis.timeEstimate}
-                  originalPauseAnalysis={originalAnalysis.pauseAnalysis}
-                  revisedPauseAnalysis={revisedAnalysis.pauseAnalysis}
-                  originalTimeWithPauses={originalAnalysis.timeWithPauses}
-                  revisedTimeWithPauses={revisedAnalysis.timeWithPauses}
-                  wpm={wpm}
-                />
-              </Suspense>
+  const rail = comparisonMode ? (
+    <>
+      <DeltaTable
+        originalWordCount={originalAnalysis.wordCount}
+        revisedWordCount={revisedAnalysis.wordCount}
+        originalPauseTime={originalAnalysis.pauseAnalysis.totalPauseTime}
+        revisedPauseTime={revisedAnalysis.pauseAnalysis.totalPauseTime}
+        wpm={wpm}
+      />
+      {speedSection}
+      {expansionSection}
+      <QuoteSection
+        variant="compare"
+        pricingConfig={pricingConfig}
+        updatePricingConfig={updatePricingConfig}
+        quote={quote}
+        wordCount={revisedAnalysis.wordCount}
+        clientName={clientName}
+        setClientName={setClientName}
+        projectName={projectName}
+        setProjectName={setProjectName}
+        handleDownloadPDF={handleDownloadPDF}
+      />
+    </>
+  ) : showPronunciationRail ? (
+    <>
+      <MetricsBlock
+        wordCount={singleAnalysis.wordCount}
+        totalTime={formatClock(singleSeconds.total)}
+        wordsOnlyTime={formatClock(singleSeconds.wordsOnly)}
+        pauseTime={singleAnalysis.pauseAnalysis.totalPauseTime}
+        pauseCount={singleAnalysis.pauseAnalysis.pauseCount}
+      />
+      <LookedUpList lookups={lookups} />
+      <RailSection last>
+        <p className="text-[12px] leading-[1.55] text-body">{PRONUNCIATION_HELPER}</p>
+      </RailSection>
+    </>
+  ) : (
+    <>
+      <MetricsBlock
+        wordCount={singleAnalysis.wordCount}
+        totalTime={formatClock(singleSeconds.total)}
+        wordsOnlyTime={formatClock(singleSeconds.wordsOnly)}
+        pauseTime={singleAnalysis.pauseAnalysis.totalPauseTime}
+        pauseCount={singleAnalysis.pauseAnalysis.pauseCount}
+        empty={isFirstRun}
+      />
+      {speedSection}
+      {expansionSection}
+      {isFirstRun ? (
+        <RailSection last label="QUOTE">
+          <p className="text-[12px] leading-[1.55] text-muted">{QUOTE_HELPER}</p>
+        </RailSection>
+      ) : (
+        <QuoteSection
+          pricingConfig={pricingConfig}
+          updatePricingConfig={updatePricingConfig}
+          quote={quote}
+          wordCount={singleAnalysis.wordCount}
+          clientName={clientName}
+          setClientName={setClientName}
+          projectName={projectName}
+          setProjectName={setProjectName}
+          handleDownloadPDF={handleDownloadPDF}
+        />
+      )}
+    </>
+  );
 
-              {/* Speed Control */}
-              <SpeedControl wpm={wpm} setWpm={setWpm} minWpm={MIN_WPM} maxWpm={MAX_WPM} />
+  const statusLeft = comparisonMode
+    ? [
+        `${revisedAnalysis.wordCount} WORDS`,
+        `${formatClock(revisedSeconds.total)} TOTAL`,
+        `${formatCountDelta(wordDelta)} WORDS VS ORIGINAL`,
+        `${wpm} WPM`,
+      ]
+    : [
+        `${singleAnalysis.wordCount} WORDS`,
+        `${formatClock(singleSeconds.total)} TOTAL`,
+        `${wpm} WPM`,
+        ...(isFirstRun
+          ? []
+          : [
+              showPronunciationRail
+                ? 'PRONUNCIATION VIEW'
+                : `${singleAnalysis.pauseAnalysis.pauseCount} PAUSES`,
+            ]),
+      ];
 
-              {/* Expansion Settings */}
-              <ExpansionSettings
-                showExpansionSettings={showExpansionSettings}
-                setShowExpansionSettings={setShowExpansionSettings}
-                expansionOptions={expansionOptions}
-                toggleExpansionOption={toggleExpansionOption}
-              />
+  const statusRight = isFirstRun
+    ? ['NOTHING TO SAVE YET']
+    : showPronunciationRail
+      ? [`${lookups.length} LOOKUPS`, savedState === 'saving' ? 'SAVING…' : 'AUTOSAVED']
+      : [
+          `QUOTE ${formatCurrency(quote?.finalPrice ?? 0)}`,
+          savedState === 'saving' ? 'SAVING…' : 'AUTOSAVED',
+        ];
 
-              {/* Pricing Section */}
-              <PricingSection
-                showPricing={showPricing}
-                setShowPricing={setShowPricing}
-                pricingConfig={pricingConfig}
-                updatePricingConfig={updatePricingConfig}
-                quote={quote}
-                clientName={clientName}
-                setClientName={setClientName}
-                projectName={projectName}
-                setProjectName={setProjectName}
-                handleDownloadPDF={handleDownloadPDF}
-                isComparisonMode={true}
-              />
-            </div>
-          </div>
-        )}
-      </main>
+  return (
+    <div className="flex min-h-[calc(100vh-44px)] flex-col bg-page">
+      <DocumentBar
+        icon={documentIcon}
+        title={
+          <input
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            placeholder="Untitled script"
+            aria-label="Script title"
+            className="w-full max-w-[280px] border-none bg-transparent text-[15px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-muted sm:w-[280px]"
+          />
+        }
+        meta={<SavedIndicator state={savedState} />}
+        actions={
+          <>
+            <Segmented
+              label="Analysis mode"
+              value={comparisonMode ? 'compare' : 'single'}
+              onChange={toggleComparisonMode}
+              options={[
+                { value: 'single', label: 'Single' },
+                { value: 'compare', label: 'Compare', disabled: !hasAnyScript },
+              ]}
+            />
+            {!comparisonMode && (
+              <Link
+                href="/teleprompter"
+                className="inline-flex h-[26px] shrink-0 items-center gap-[6px] border border-line-strong bg-panel px-[10px] text-[11px] whitespace-nowrap text-muted"
+              >
+                <ScrollText width={13} height={13} aria-hidden="true" />
+                Send to teleprompter
+              </Link>
+            )}
+            <Button size={26} tone="muted" icon={RotateCcw} onClick={handleReset}>
+              Reset
+            </Button>
+          </>
+        }
+      />
 
-      <Footer />
+      <Workspace main={main} rail={rail} mainClassName="min-h-[420px] lg:min-h-[640px]" />
+
+      <StatusBar left={statusLeft} right={statusRight} />
     </div>
   );
 };

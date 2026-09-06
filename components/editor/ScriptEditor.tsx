@@ -1,41 +1,83 @@
-import React from 'react';
-import { Type } from 'lucide-react';
+'use client';
 
-interface ScriptEditorProps {
+import type { ReactNode } from 'react';
+
+export interface ScriptEditorProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  /** Header label. Ignored when `headerLeft` is supplied. */
   label?: string;
+  /** Height utility class for the shell, e.g. `h-[240px]`. */
   height?: string;
+  /** Show the "N CHARS" meta on the right of the header. Defaults to true. */
+  charsMeta?: boolean;
+  /** Replaces the header label. */
+  headerLeft?: ReactNode;
+  /** Replaces the header meta. */
+  headerRight?: ReactNode;
+  /** Rendered under the textarea, inside the cell. */
+  bottomSlot?: ReactNode;
+  /** 30px header + 14px/1.7 body (compare panes) instead of 32px + 15px/1.8. */
+  compact?: boolean;
+  labelTone?: 'muted' | 'ink';
+  className?: string;
+  textareaLabel?: string;
 }
 
-export const ScriptEditor: React.FC<ScriptEditorProps> = ({
+/**
+ * Borderless workspace editor: a header strip plus a textarea that fills the cell.
+ * No panel chrome of its own — it is meant to sit inside a `Workspace` cell.
+ */
+export const ScriptEditor = ({
   value,
   onChange,
-  placeholder = "Paste your script here...",
-  label = "Script Input",
-  height = "h-[50vh] lg:h-[80vh]"
-}) => {
+  placeholder = 'Paste your script here...',
+  label = 'Script',
+  height = 'flex-1 min-h-[200px]',
+  charsMeta = true,
+  headerLeft,
+  headerRight,
+  bottomSlot,
+  compact = false,
+  labelTone = 'muted',
+  className = '',
+  textareaLabel,
+}: ScriptEditorProps) => {
   return (
-    <div className={`bg-white dark:bg-[#000d15] rounded-2xl shadow-xs border border-gray-200 dark:border-gray-700/50 flex flex-col ${height} overflow-hidden transition-all focus-within:ring-2 focus-within:ring-cyan-500/20 focus-within:border-cyan-500/50`}>
-      {/* Toolbar */}
-      <div className="px-5 py-3 border-b border-gray-100 dark:border-gray-700/50 flex items-center justify-between bg-gray-50/50 dark:bg-[#072030]/50">
-        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-          <Type size={14} />
-          <span className="text-xs font-bold uppercase tracking-wider">{label}</span>
-        </div>
-        <div className="text-xs font-mono text-gray-400">
-          {value.length} chars
-        </div>
+    <div className={`flex min-w-0 flex-col bg-panel ${height} ${className}`}>
+      <div
+        className={`flex shrink-0 items-center justify-between gap-3 border-b border-line px-[14px] ${
+          compact ? 'h-[30px]' : 'h-8'
+        }`}
+      >
+        {headerLeft ?? (
+          <span
+            className={`text-[10px] font-semibold tracking-[0.14em] uppercase ${
+              labelTone === 'ink' ? 'text-ink' : 'text-muted'
+            }`}
+          >
+            {label}
+          </span>
+        )}
+        {headerRight ??
+          (charsMeta ? (
+            <span className="text-[11px] text-muted uppercase">{value.length} CHARS</span>
+          ) : null)}
       </div>
 
       <textarea
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="flex-1 w-full p-6 resize-none bg-transparent border-none focus:ring-0 text-gray-700 dark:text-gray-300 text-lg leading-relaxed placeholder:text-gray-300 dark:placeholder:text-gray-700"
+        aria-label={textareaLabel ?? label}
         spellCheck={false}
+        className={`w-full flex-1 resize-none border-none bg-transparent text-body outline-none placeholder:text-muted ${
+          compact ? 'px-[18px] py-4 text-[14px] leading-[1.7]' : 'px-7 py-6 text-[15px] leading-[1.8]'
+        }`}
       />
+
+      {bottomSlot}
     </div>
   );
 };

@@ -1,29 +1,98 @@
 "use client"
 
 import { useState } from 'react'
-import { Upload, Volume2, Settings, Download, RotateCcw } from 'lucide-react'
-import { Footer } from '@/components/Footer'
+import type { ChangeEvent } from 'react'
+import {
+  AudioWaveform,
+  Upload,
+  RotateCcw,
+  Trash2,
+  Info,
+  XCircle,
+  Download,
+} from 'lucide-react'
+import {
+  DocumentBar,
+  Workspace,
+  StatusBar,
+  RailSection,
+  Button,
+  IconButton,
+  DropZone,
+} from '@/components/shell'
 import { convertAudioFiles, ConverterAPIError } from '@/lib/api/converter'
 import { FORMATS, VOLUME_LEVELS, ALLOWED_FILE_TYPES } from '@/lib/types/converter'
 import type { Format, VolumeLevel } from '@/lib/types/converter'
 
+const FORMAT_META: Record<Format, { code: string; statusRate: string; infoRate: string; railSpec: string }> = {
+  ulaw: { code: 'ULAW', statusRate: '8K MONO', infoRate: '8KHZ MONO', railSpec: '8K MONO' },
+  alaw: { code: 'ALAW', statusRate: '8K MONO', infoRate: '8KHZ MONO', railSpec: '8K MONO' },
+  pcm8: { code: 'PCM8', statusRate: '8K MONO', infoRate: '8KHZ MONO', railSpec: '8-BIT PCM' },
+  pcm16: { code: 'PCM16', statusRate: '8K MONO', infoRate: '8KHZ MONO', railSpec: '16-BIT PCM' },
+  pcm16hd: { code: 'PCM16 HD', statusRate: '16K MONO', infoRate: '16KHZ MONO', railSpec: '16K MONO' },
+  g722: { code: 'G.722', statusRate: '16K MONO', infoRate: '16KHZ MONO', railSpec: '16K G.722' },
+  sln: { code: 'SLN', statusRate: '8K MONO', infoRate: '8KHZ MONO', railSpec: '8K SLN' },
+}
+
+const FORMATS_LINE = 'WAV · MP3 · OGG · FLAC · M4A · AIFF · WMA · AAC'
+
+function formatRowSize(bytes: number): string {
+  return `${(bytes / (1024 * 1024)).toFixed(3)} MB`
+}
+
+function formatTotalSize(bytes: number): string {
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function dedupeAdd(existing: File[], added: File[]): File[] {
+  const keyOf = (f: File) => `${f.name}::${f.size}`
+  const seen = new Set(existing.map(keyOf))
+  const next = [...existing]
+  for (const file of added) {
+    const key = keyOf(file)
+    if (!seen.has(key)) {
+      seen.add(key)
+      next.push(file)
+    }
+  }
+  return next
+}
+
+function filesToFileList(files: File[]): FileList {
+  const dt = new DataTransfer()
+  files.forEach((file) => dt.items.add(file))
+  return dt.files
+}
+
 export default function TelephonyConverterPage() {
-  const [files, setFiles] = useState<FileList | null>(null)
+  const [files, setFiles] = useState<File[]>([])
   const [format, setFormat] = useState<Format>('pcm16')
   const [volume, setVolume] = useState<VolumeLevel>('medium')
   const [optimize, setOptimize] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const totalBytes = files.reduce((sum, f) => sum + f.size, 0)
+  const selectedFormat = FORMATS.find((f) => f.value === format) ?? FORMATS[0]
+  const selectedVolume = VOLUME_LEVELS.find((v) => v.value === volume) ?? VOLUME_LEVELS[2]
+  const meta = FORMAT_META[format]
+
+  const addFiles = (added: File[]) => {
     setError(null)
-    setFiles(e.target.files)
+    setFiles((prev) => dedupeAdd(prev, added))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!files || files.length === 0) {
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const clearQueue = () => {
+    setFiles([])
+    setError(null)
+  }
+
+  const handleSubmit = async () => {
+    if (files.length === 0) {
       setError('Please select at least one file')
       return
     }
@@ -32,33 +101,28 @@ export default function TelephonyConverterPage() {
     setError(null)
 
     try {
-      const blob = await convertAudioFiles(files, {
+      const blob = await convertAudioFiles(filesToFileList(files), {
         format,
         volume,
-        optimize
+        optimize,
       })
 
-      // Download the file
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      
-      // Determine filename based on number of files
-      const filename = files.length === 1 
-        ? `${files[0].name.split('.')[0]}_converted.wav`
-        : 'batch_converted.zip'
-      
+
+      const filename =
+        files.length === 1
+          ? `${files[0].name.split('.')[0]}_converted.wav`
+          : 'batch_converted.zip'
+
       a.download = filename
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
-      
-      // Reset form
-      setFiles(null)
-      const fileInput = document.getElementById('file-input') as HTMLInputElement
-      if (fileInput) fileInput.value = ''
-      
+
+      setFiles([])
     } catch (err) {
       if (err instanceof ConverterAPIError) {
         setError(err.message)
@@ -70,178 +134,203 @@ export default function TelephonyConverterPage() {
     }
   }
 
-  const handleReset = () => {
-    setFiles(null)
-    setFormat('pcm16')
-    setVolume('medium')
-    setOptimize(false)
-    setError(null)
-    const fileInput = document.getElementById('file-input') as HTMLInputElement
-    if (fileInput) fileInput.value = ''
-  }
+  const hasFiles = files.length > 0
 
   return (
-    <div className="min-h-screen w-full bg-gray-50 dark:bg-[#000d15] transition-colors duration-300">
-      
-      {/* Page Header - Secondary controls specific to Telephony Converter */}
-      <div className="w-full border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-[#072030]/80 px-4 md:px-6 py-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
-                Telephony Converter
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Convert media files into telephony-compatible formats for IVR systems and VoIP applications
-              </p>
-            </div>
-            
-            <button
-              onClick={handleReset}
-              className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all bg-gray-100 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
-              title="Reset all fields"
-            >
-              <RotateCcw size={16} />
-              <span className="hidden sm:inline">Reset</span>
-            </button>
-          </div>
-        </div>
-      </div>
+    <div className="flex min-h-screen w-full flex-col bg-page">
+      <DocumentBar
+        icon={AudioWaveform}
+        title={<span className="text-[15px] font-semibold text-ink">Conversion queue</span>}
+        meta={
+          <span className="text-[11px] text-muted uppercase">
+            {hasFiles
+              ? `${files.length} FILE${files.length > 1 ? 'S' : ''} · ${formatTotalSize(totalBytes)} · MAX 50 MB`
+              : '0 FILES · MAX 50 MB'}
+          </span>
+        }
+        actions={
+          hasFiles ? (
+            <Button variant="secondary" tone="muted" size={26} icon={RotateCcw} onClick={clearQueue}>
+              Clear queue
+            </Button>
+          ) : null
+        }
+      />
 
-      <main className="w-full max-w-7xl mx-auto px-4 md:px-6 py-4">
-        <div className="max-w-5xl mx-auto">
+      <Workspace
+        className="flex-1"
+        mainClassName="p-4 lg:min-h-[560px]"
+        main={
+          <div>
+            <DropZone
+              icon={Upload}
+              title={hasFiles ? 'Drop audio files, or click to browse' : 'Drop audio files here'}
+              hint={hasFiles ? undefined : 'or click to browse — several at once is fine'}
+              formats={FORMATS_LINE}
+              height={hasFiles ? 96 : 180}
+              accept={ALLOWED_FILE_TYPES.join(',')}
+              multiple
+              onFiles={addFiles}
+            />
 
-          {/* Error Banner */}
-          {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-4 py-3 rounded-lg mb-4 text-sm">
-              <strong>Error:</strong> {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            
-            {/* File Upload */}
-            <div className="bg-white dark:bg-[#072030] rounded-xl shadow-xs border border-gray-200 dark:border-gray-700/50 p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <Upload className="w-4 h-4 text-gray-700 dark:text-gray-300" />
-                <h3 className="text-base font-semibold text-gray-900 dark:text-white">
-                  1. Source File
-                </h3>
-              </div>
-              <input
-                id="file-input"
-                type="file"
-                multiple
-                required
-                onChange={handleFileChange}
-                accept={ALLOWED_FILE_TYPES.join(',')}
-                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800/60 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
-              />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
-                Max total size: 50MB
-              </p>
-              {files && files.length > 0 && (
-                <p className="text-xs text-cyan-500 dark:text-cyan-400 mt-1.5 font-medium">
-                  ✓ {files.length} file{files.length > 1 ? 's' : ''} selected
-                </p>
-              )}
-            </div>
-
-            {/* Format Selection */}
-            <div className="bg-white dark:bg-[#072030] rounded-xl shadow-xs border border-gray-200 dark:border-gray-700/50 p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <Settings className="w-4 h-4 text-gray-700 dark:text-gray-300" />
-                <h3 className="text-base font-semibold text-gray-900 dark:text-white">
-                  2. Output Format
-                </h3>
-              </div>
-              <div className="space-y-1.5">
-                {FORMATS.map((option) => (
-                  <label
-                    key={option.value}
-                    className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 p-2 rounded-lg transition-colors"
+            {hasFiles ? (
+              <div className="mt-4 overflow-x-auto border border-line">
+                <div className="grid h-[30px] min-w-[300px] grid-cols-[1fr_110px_40px] items-center gap-3 border-b border-line bg-subtle px-3 text-[10px] font-semibold tracking-[0.12em] text-muted uppercase">
+                  <span>FILE</span>
+                  <span className="text-right">SIZE</span>
+                  <span />
+                </div>
+                {files.map((file, index) => (
+                  <div
+                    key={`${file.name}::${file.size}::${index}`}
+                    className={`grid h-[38px] min-w-[300px] grid-cols-[1fr_110px_40px] items-center gap-3 px-3 ${
+                      index < files.length - 1 ? 'border-b border-line' : ''
+                    }`}
                   >
-                    <input
-                      type="radio"
-                      name="format"
-                      value={option.value}
-                      checked={format === option.value}
-                      onChange={(e) => setFormat(e.target.value as Format)}
-                      className="w-4 h-4 text-cyan-500 focus:ring-2 focus:ring-cyan-500"
+                    <span className="truncate text-[13px] text-ink">{file.name}</span>
+                    <span className="text-right text-[12px] text-body">{formatRowSize(file.size)}</span>
+                    <IconButton
+                      icon={Trash2}
+                      label={`Remove ${file.name}`}
+                      className="justify-self-end"
+                      onClick={() => removeFile(index)}
                     />
-                    <span className="text-gray-700 dark:text-gray-300 text-xs">
-                      {option.label} ({option.description})
-                    </span>
-                  </label>
+                  </div>
                 ))}
               </div>
-            </div>
+            ) : null}
 
-            {/* Volume Control and Options - Combined Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white dark:bg-[#072030] rounded-xl shadow-xs border border-gray-200 dark:border-gray-700/50 p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <Volume2 className="w-4 h-4 text-gray-700 dark:text-gray-300" />
-                  <h3 className="text-base font-semibold text-gray-900 dark:text-white">
-                    3. Volume
-                  </h3>
+            {error ? (
+              <div className="mt-4 flex items-center gap-[10px] border border-line bg-subtle px-[14px] py-3">
+                <XCircle width={14} height={14} className="shrink-0 text-bad" aria-hidden="true" />
+                <span className="text-[12px] text-bad">{error}</span>
+              </div>
+            ) : hasFiles ? (
+              <div className="mt-4 flex items-center gap-[10px] border border-line bg-subtle px-[14px] py-3">
+                <Info width={14} height={14} className="shrink-0 text-muted" aria-hidden="true" />
+                <span className="text-[12px] text-body">
+                  Output:{' '}
+                  <span className="text-[11px]">
+                    {selectedFormat.label.toUpperCase()} · {meta.infoRate} · {selectedVolume.label.toUpperCase()}
+                  </span>
+                  . A single file downloads as WAV; several download as a ZIP.
+                </span>
+              </div>
+            ) : (
+              <div className="mt-4 border border-line bg-subtle px-[14px] py-3">
+                <div className="mb-[6px] text-[10px] font-semibold tracking-[0.14em] text-muted uppercase">
+                  DEFAULTS
                 </div>
-                <div className="flex flex-wrap gap-3">
-                  {VOLUME_LEVELS.map((option) => (
+                <div className="text-[12px] leading-[1.6] text-body">
+                  Standard definition 16-bit WAV, 8 kHz mono, medium volume, no phone filter. Change any of it
+                  in the rail before converting.
+                </div>
+              </div>
+            )}
+          </div>
+        }
+        rail={
+          <>
+            <RailSection label="OUTPUT FORMAT">
+              <div className="flex flex-col">
+                {FORMATS.map((option, index) => {
+                  const selected = option.value === format
+                  return (
                     <label
                       key={option.value}
-                      className="flex items-center gap-1.5 cursor-pointer"
+                      className={`flex h-[30px] cursor-pointer items-center gap-2 ${
+                        index < FORMATS.length - 1 ? 'border-b border-line-faint' : ''
+                      } ${selected ? 'bg-page' : ''}`}
                     >
                       <input
                         type="radio"
-                        name="volume"
+                        name="format"
                         value={option.value}
-                        checked={volume === option.value}
-                        onChange={(e) => setVolume(e.target.value as VolumeLevel)}
-                        className="w-4 h-4 text-cyan-500 focus:ring-2 focus:ring-cyan-500"
+                        checked={selected}
+                        onChange={() => setFormat(option.value)}
+                        className="h-[13px] w-[13px] m-0"
                       />
-                      <span className="text-gray-700 dark:text-gray-300 text-xs">
+                      <span
+                        className={`flex-1 text-[12px] ${
+                          selected ? 'font-medium text-ink' : 'text-body'
+                        }`}
+                      >
                         {option.label}
                       </span>
+                      <span
+                        className={`text-[10px] uppercase ${selected ? 'text-body' : 'text-muted'}`}
+                      >
+                        {FORMAT_META[option.value].railSpec}
+                      </span>
                     </label>
-                  ))}
-                </div>
+                  )
+                })}
               </div>
+            </RailSection>
 
-              <div className="bg-white dark:bg-[#072030] rounded-xl shadow-xs border border-gray-200 dark:border-gray-700/50 p-4">
-                <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3">
-                  4. Options
-                </h3>
-                <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 p-2 rounded-lg transition-colors">
-                  <input
-                    type="checkbox"
-                    checked={optimize}
-                    onChange={(e) => setOptimize(e.target.checked)}
-                    className="w-4 h-4 text-cyan-500 rounded-sm focus:ring-2 focus:ring-cyan-500"
-                  />
-                  <span className="text-gray-700 dark:text-gray-300 text-xs">
-                    Optimize Audio for Phone (Bandpass Filter 300-3400Hz)
-                  </span>
-                </label>
+            <RailSection label="VOLUME">
+              <div className="flex h-[28px] border border-line-strong">
+                {VOLUME_LEVELS.map((option, index) => {
+                  const selected = option.value === volume
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => setVolume(option.value)}
+                      className={`flex-1 text-[11px] transition-colors ${
+                        index > 0 ? 'border-l border-line-strong' : ''
+                      } ${selected ? 'bg-button font-medium text-panel' : 'bg-panel text-muted'}`}
+                    >
+                      {option.label}
+                    </button>
+                  )
+                })}
               </div>
-            </div>
+            </RailSection>
 
-            {/* Action Button */}
-            <div className="flex justify-end pt-2">
-              <button
-                type="submit"
-                disabled={isLoading || !files}
-                className="flex items-center gap-2 px-6 py-2.5 bg-cyan-500 hover:bg-cyan-600 disabled:bg-gray-400 dark:disabled:bg-gray-600 text-white rounded-lg transition-all font-medium text-sm shadow-lg shadow-cyan-500/10 disabled:cursor-not-allowed disabled:shadow-none"
+            <RailSection label="OPTIONS">
+              <label className="flex cursor-pointer items-start gap-2">
+                <input
+                  type="checkbox"
+                  checked={optimize}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => setOptimize(e.target.checked)}
+                  className="mt-[2px] h-[13px] w-[13px]"
+                />
+                <span>
+                  <span className="block text-[12px] font-medium text-body">Optimize for phone</span>
+                  <span className="block text-[10px] text-muted uppercase">BANDPASS 300&ndash;3400 HZ</span>
+                </span>
+              </label>
+            </RailSection>
+
+            <RailSection last pad={16} className="mt-auto">
+              <Button
+                variant="primary"
+                size={40}
+                icon={Download}
+                disabled={!hasFiles || isLoading}
+                onClick={handleSubmit}
+                className="w-full"
               >
-                <Download className="w-4 h-4" />
-                {isLoading ? 'Converting...' : 'Convert & Download'}
-              </button>
-            </div>
-          </form>
-        </div>
-      </main>
+                {isLoading
+                  ? 'Converting…'
+                  : `Convert ${files.length || 1} file${(files.length || 1) === 1 ? '' : 's'}`}
+              </Button>
+            </RailSection>
+          </>
+        }
+      />
 
-      <Footer />
+      <StatusBar
+        left={[
+          `${files.length} FILE${files.length === 1 ? '' : 'S'}`,
+          formatTotalSize(totalBytes),
+          `${meta.code} · ${meta.statusRate}`,
+          selectedVolume.label.toUpperCase(),
+        ]}
+        right={[`BANDPASS ${optimize ? 'ON' : 'OFF'}`, error ? 'ERROR' : isLoading ? 'CONVERTING' : hasFiles ? 'READY' : 'EMPTY']}
+      />
     </div>
   )
 }

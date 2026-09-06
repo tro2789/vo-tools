@@ -1,146 +1,124 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { getPronunciation } from '@/utils/pronunciation';
 import { PronunciationTooltip } from './PronunciationTooltip';
 
 interface ScriptTextDisplayProps {
   text: string;
   className?: string;
+  /** Called whenever a dictionary word is opened. */
+  onLookup?: (word: string, pronunciation: string) => void;
 }
 
 interface TooltipState {
+  id: string;
   word: string;
   pronunciation: string;
   position: { x: number; y: number };
 }
 
+interface Token {
+  type: 'word' | 'separator';
+  content: string;
+  /** Set when the word is in the dictionary. */
+  pronunciation?: string;
+}
+
 /**
- * ScriptTextDisplay Component
- * 
- * Renders script text with clickable words for pronunciation lookup.
- * Designed for voice actors to quickly check pronunciations while reading.
- * 
- * Features:
- * - Each word is clickable to show pronunciation
- * - Preserves paragraphs and line breaks
- * - Doesn't interfere with text selection/copy-paste
- * - Memoized word parsing for performance
- * - Only shows pronunciation for words that exist in the dictionary
- * 
- * Implementation Notes:
- * - Words are wrapped in <span> elements with onClick handlers
- * - Whitespace and punctuation are preserved between words
- * - Tooltip positioning is handled automatically
+ * Renders the script with every dictionary word clickable for an ARPABET lookup.
+ * Paragraphs and line breaks are preserved and text stays selectable.
  */
-export const ScriptTextDisplay: React.FC<ScriptTextDisplayProps> = ({
-  text,
-  className = ''
-}) => {
+export const ScriptTextDisplay = ({ text, className = '', onLookup }: ScriptTextDisplayProps) => {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
-  // Parse text into paragraphs and words
-  // Memoized to avoid re-parsing on every render
   const parsedContent = useMemo(() => {
     if (!text) return [];
 
-    // Split by double newlines for paragraphs
-    const paragraphs = text.split(/\n\n+/);
+    return text.split(/\n\n+/).map((paragraph, pIndex) => ({
+      key: `p-${pIndex}`,
+      lines: paragraph.split(/\n/).map((line, lIndex) => {
+        const tokens: Token[] = [];
+        const regex = /(\b[\w']+\b)|([^\w']+)/g;
+        let match: RegExpExecArray | null;
 
-    return paragraphs.map((paragraph, pIndex) => {
-      // Split by single newlines within paragraph
-      const lines = paragraph.split(/\n/);
-
-      return {
-        key: `p-${pIndex}`,
-        lines: lines.map((line, lIndex) => {
-          // Tokenize line into words and non-words (spaces, punctuation)
-          // Match words (sequences of letters, possibly with apostrophes)
-          // and capture everything else as separators
-          const tokens: Array<{ type: 'word' | 'separator'; content: string }> = [];
-          const regex = /(\b[\w']+\b)|([^\w']+)/g;
-          let match;
-
-          while ((match = regex.exec(line)) !== null) {
-            if (match[1]) {
-              // It's a word
-              tokens.push({ type: 'word', content: match[1] });
-            } else if (match[2]) {
-              // It's a separator (space, punctuation, etc.)
-              tokens.push({ type: 'separator', content: match[2] });
-            }
+        while ((match = regex.exec(line)) !== null) {
+          if (match[1]) {
+            const pronunciation = getPronunciation(match[1]).pronunciation;
+            tokens.push({
+              type: 'word',
+              content: match[1],
+              pronunciation: pronunciation ?? undefined,
+            });
+          } else if (match[2]) {
+            tokens.push({ type: 'separator', content: match[2] });
           }
+        }
 
-          return {
-            key: `l-${pIndex}-${lIndex}`,
-            tokens
-          };
-        })
-      };
-    });
+        return { key: `l-${pIndex}-${lIndex}`, tokens };
+      }),
+    }));
   }, [text]);
 
-  // Handle word click
-  const handleWordClick = (word: string, event: React.MouseEvent<HTMLSpanElement>) => {
-    event.stopPropagation();
-
-    // Get pronunciation
-    const result = getPronunciation(word);
-
-    // Only show tooltip if pronunciation exists
-    if (result.pronunciation) {
-      const rect = event.currentTarget.getBoundingClientRect();
-      setTooltip({
-        word: result.text,
-        pronunciation: result.pronunciation,
-        position: {
-          x: rect.left,
-          y: rect.bottom
-        }
-      });
-    }
-  };
-
-  // Close tooltip
-  const closeTooltip = () => {
-    setTooltip(null);
+  const openWord = (
+    id: string,
+    token: Token,
+    element: HTMLElement,
+  ) => {
+    if (!token.pronunciation) return;
+    const result = getPronunciation(token.content);
+    const pronunciation = result.pronunciation ?? token.pronunciation;
+    const rect = element.getBoundingClientRect();
+    setTooltip({
+      id,
+      word: result.text,
+      pronunciation,
+      position: { x: rect.left, y: rect.bottom },
+    });
+    onLookup?.(result.text, pronunciation);
   };
 
   return (
     <div className={`relative ${className}`}>
-      {/* Rendered script text */}
-      <div className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed whitespace-pre-wrap">
+      <div className="text-[15px] leading-[1.9] whitespace-pre-wrap text-body">
         {parsedContent.map((paragraph) => (
           <div key={paragraph.key} className="mb-4 last:mb-0">
             {paragraph.lines.map((line, lineIndex) => (
               <React.Fragment key={line.key}>
                 {line.tokens.map((token, tokenIndex) => {
-                  if (token.type === 'word') {
-                    return (
-                      <span
-                        key={`${line.key}-${tokenIndex}`}
-                        onClick={(e) => handleWordClick(token.content, e)}
-                        className="cursor-pointer hover:bg-cyan-50 dark:hover:bg-cyan-900/20 rounded-sm px-0.5 transition-colors"
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            handleWordClick(token.content, e as any);
-                          }
-                        }}
-                      >
-                        {token.content}
-                      </span>
-                    );
-                  } else {
-                    // Separator (spaces, punctuation, etc.)
-                    return (
-                      <span key={`${line.key}-${tokenIndex}`}>
-                        {token.content}
-                      </span>
-                    );
+                  const id = `${line.key}-${tokenIndex}`;
+
+                  if (token.type !== 'word' || !token.pronunciation) {
+                    return <span key={id}>{token.content}</span>;
                   }
+
+                  const selected = tooltip?.id === id;
+
+                  return (
+                    <span
+                      key={id}
+                      role="button"
+                      tabIndex={0}
+                      title={`Pronunciation for ${token.content}`}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        openWord(id, token, event.currentTarget);
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          openWord(id, token, event.currentTarget);
+                        }
+                      }}
+                      className={`cursor-pointer ${
+                        selected
+                          ? 'bg-ink text-panel'
+                          : 'hover:bg-page hover:shadow-[0_1px_0_var(--line-strong)]'
+                      }`}
+                    >
+                      {token.content}
+                    </span>
+                  );
                 })}
                 {lineIndex < paragraph.lines.length - 1 && <br />}
               </React.Fragment>
@@ -149,13 +127,12 @@ export const ScriptTextDisplay: React.FC<ScriptTextDisplayProps> = ({
         ))}
       </div>
 
-      {/* Pronunciation tooltip */}
       {tooltip && (
         <PronunciationTooltip
           word={tooltip.word}
           pronunciation={tooltip.pronunciation}
           position={tooltip.position}
-          onClose={closeTooltip}
+          onClose={() => setTooltip(null)}
         />
       )}
     </div>

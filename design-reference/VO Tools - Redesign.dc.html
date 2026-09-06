@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.544.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; background: #d8dade; font-family: Inter, system-ui, sans-serif; font-variant-numeric: tabular-nums; }
+  a { color: #262626; text-decoration: none; }
+  a:hover { color: #131313; }
+  input, select, button, textarea { font-family: inherit; }
+  input[type=range] { accent-color: #262626; }
+  input[type=checkbox], input[type=radio] { accent-color: #262626; }
+</style>
+</helmet>
+
+<section style="display:flex; flex-direction:column; gap:20px; padding:48px 48px 0">
+  <div style="display:flex; align-items:baseline; gap:16px">
+    <div style="font:700 12px/1 Inter,sans-serif; letter-spacing:0.14em; text-transform:uppercase; color:#131313">Turn 3 — the remaining states</div>
+    <div style="font:400 12px/1.5 Inter,sans-serif; color:#5f6167">Compare mode, the pronunciation view, and first run for each tab.</div>
+  </div>
+
+  <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start">
+
+    <!-- ══════════ 3a — compare mode ══════════ -->
+    <div id="3a" style="display:flex; flex-direction:column; gap:10px">
+      <div style="display:flex; align-items:center; gap:10px">
+        <span style="font:700 11px/1 Inter,sans-serif; background:#131313; color:#fff; padding:5px 7px; letter-spacing:0.08em">3a</span>
+        <span style="font:500 13px Inter,sans-serif; color:#131313">Analysis · Compare — two scripts, one delta table</span>
+      </div>
+      <div data-screen-label="3a Compare" style="width:1360px; background:#F2F3F5; border:1px solid #C9CCD1; overflow:hidden; color:#333438; display:flex; flex-direction:column">
+
+        <div style="height:44px; box-sizing:border-box; background:#131313; padding:0 16px; display:flex; align-items:center; justify-content:space-between">
+          <div style="display:flex; align-items:center; gap:24px">
+            <div style="font:700 12px Inter,sans-serif; letter-spacing:0.16em; color:#fff">VO TOOLS</div>
+            <div style="display:flex; align-items:center; gap:4px">
+              <a href="#3a" style="height:44px; display:flex; align-items:center; padding:0 12px; font:500 12px Inter,sans-serif; background:#F2F3F5; color:#131313">Analysis</a>
+              <a href="#2c" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">Teleprompter</a>
+              <a href="#2d" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">Convert</a>
+              <a href="#2e" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">ACX</a>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:1px solid #3A3A3A; background:transparent; color:#B9BCC2; cursor:pointer"><i data-lucide="moon" style="width:13px;height:13px"></i></button>
+            <a href="#3a" style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; box-sizing:border-box; border:1px solid #3A3A3A; font:400 12px Inter,sans-serif; color:#E4E6E9"><i data-lucide="message-circle" style="width:13px;height:13px"></i>Discord</a>
+            <a href="#3a" style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; box-sizing:border-box; background:#fff; color:#131313; font:500 12px Inter,sans-serif"><i data-lucide="heart" style="width:13px;height:13px;fill:currentColor"></i>Support</a>
+          </div>
+        </div>
+
+        <div style="background:#fff; border-bottom:1px solid #E4E6E9; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:16px">
+          <div style="display:flex; align-items:center; gap:10px">
+            <i data-lucide="git-compare" style="width:14px;height:14px;color:#6E7076"></i>
+            <input value="Vantage Series — :30 radio" style="border:none; outline:none; font:600 15px Inter,sans-serif; color:#131313; width:280px">
+            <span style="display:flex; align-items:center; gap:6px; font:400 11px Inter,sans-serif; color:#6E7076"><span style="width:5px; height:5px; border-radius:99px; background:#167A4B"></span>SAVED</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <div style="display:flex; border:1px solid #C9CCD1; height:26px">
+              <button style="padding:0 10px; border:none; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer">Single</button>
+              <button style="padding:0 10px; border:none; border-left:1px solid #C9CCD1; background:#262626; color:#fff; font:500 11px Inter,sans-serif; cursor:pointer">Compare</button>
+            </div>
+            <button style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; border:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer"><i data-lucide="rotate-ccw" style="width:13px;height:13px"></i>Reset</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 340px; gap:1px; background:#E4E6E9">
+          <div style="background:#fff; height:660px; box-sizing:border-box; display:flex; flex-direction:column">
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1px; background:#E4E6E9; border-bottom:1px solid #E4E6E9">
+              <div style="background:#fff; display:flex; flex-direction:column; height:240px">
+                <div style="height:30px; box-sizing:border-box; border-bottom:1px solid #E4E6E9; padding:0 14px; display:flex; align-items:center; justify-content:space-between">
+                  <span style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">ORIGINAL</span>
+                  <span style="font:400 11px Inter,sans-serif; color:#6E7076">412 CHARS</span>
+                </div>
+                <div style="flex:1; padding:16px 18px; font:400 14px/1.7 Inter,sans-serif; color:#333438; white-space:pre-wrap; overflow:hidden">Introducing the Vantage Series. Engineered for the way you actually work — and priced at $1,250 for a limited time.
+
+Every unit ships with a 10,000-hour warranty. That's a full 15% longer than anything else in its class.</div>
+              </div>
+              <div style="background:#fff; display:flex; flex-direction:column; height:240px">
+                <div style="height:30px; box-sizing:border-box; border-bottom:1px solid #E4E6E9; padding:0 14px; display:flex; align-items:center; justify-content:space-between">
+                  <span style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#131313">REVISED</span>
+                  <span style="font:400 11px Inter,sans-serif; color:#6E7076">377 CHARS</span>
+                </div>
+                <div style="flex:1; padding:16px 18px; font:400 14px/1.7 Inter,sans-serif; color:#333438; white-space:pre-wrap; overflow:hidden">Meet the Vantage Series. Built for the way you actually work — and priced at $1,195 through October.
+
+Every unit ships with a 10,000-hour warranty. That's 15% longer than anything else in its class.</div>
+              </div>
+            </div>
+
+            <div style="height:30px; box-sizing:border-box; border-bottom:1px solid #E4E6E9; padding:0 14px; display:flex; align-items:center; justify-content:space-between; background:#FAFBFC">
+              <span style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">DIFFERENCE</span>
+              <div style="display:flex; align-items:center; gap:14px; font:400 11px Inter,sans-serif; color:#6E7076">
+                <span style="display:flex; align-items:center; gap:6px"><span style="width:9px; height:9px; background:#E8F2EC; border:1px solid #167A4B"></span>ADDED</span>
+                <span style="display:flex; align-items:center; gap:6px"><span style="width:9px; height:9px; background:#FBEAE8; border:1px solid #B3261E"></span>REMOVED</span>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1px; background:#E4E6E9; flex:1">
+              <div style="background:#fff; padding:16px 18px; font:400 14px/1.8 Inter,sans-serif; color:#333438; overflow:hidden">
+                <span style="background:#FBEAE8; color:#B3261E; text-decoration:line-through">Introducing</span> the Vantage Series. <span style="background:#FBEAE8; color:#B3261E; text-decoration:line-through">Engineered</span> for the way you actually work — and priced at $1,<span style="background:#FBEAE8; color:#B3261E; text-decoration:line-through">250</span> <span style="background:#FBEAE8; color:#B3261E; text-decoration:line-through">for a limited time</span>.<br><br>Every unit ships with a 10,000-hour warranty. That's <span style="background:#FBEAE8; color:#B3261E; text-decoration:line-through">a full </span>15% longer than anything else in its class.
+              </div>
+              <div style="background:#fff; padding:16px 18px; font:400 14px/1.8 Inter,sans-serif; color:#333438; overflow:hidden">
+                <span style="background:#E8F2EC; color:#167A4B">Meet</span> the Vantage Series. <span style="background:#E8F2EC; color:#167A4B">Built</span> for the way you actually work — and priced at $1,<span style="background:#E8F2EC; color:#167A4B">195</span> <span style="background:#E8F2EC; color:#167A4B">through October</span>.<br><br>Every unit ships with a 10,000-hour warranty. That's 15% longer than anything else in its class.
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#fff; display:flex; flex-direction:column">
+            <div style="padding:14px 16px 12px; border-bottom:1px solid #E4E6E9">
+              <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076; margin-bottom:10px">DELTA</div>
+              <div style="display:grid; grid-template-columns:1fr 62px 62px 58px; gap:6px; align-items:center; height:24px; font:600 10px Inter,sans-serif; letter-spacing:0.1em; color:#6E7076; border-bottom:1px solid #E4E6E9">
+                <span></span><span style="text-align:right">ORIG</span><span style="text-align:right">REV</span><span style="text-align:right">Δ</span>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 62px 62px 58px; gap:6px; align-items:center; height:32px; border-bottom:1px solid #F2F3F5">
+                <span style="font:400 12px Inter,sans-serif; color:#333438">Spoken words</span>
+                <span style="font:400 12px Inter,sans-serif; color:#333438; text-align:right">78</span>
+                <span style="font:600 13px Inter,sans-serif; color:#131313; text-align:right">72</span>
+                <span style="font:600 12px Inter,sans-serif; color:#B3261E; text-align:right">−6</span>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 62px 62px 58px; gap:6px; align-items:center; height:32px; border-bottom:1px solid #F2F3F5">
+                <span style="font:400 12px Inter,sans-serif; color:#333438">Words only</span>
+                <span style="font:400 12px Inter,sans-serif; color:#333438; text-align:right">0:31</span>
+                <span style="font:600 13px Inter,sans-serif; color:#131313; text-align:right">0:29</span>
+                <span style="font:600 12px Inter,sans-serif; color:#B3261E; text-align:right">−0:02</span>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 62px 62px 58px; gap:6px; align-items:center; height:32px; border-bottom:1px solid #F2F3F5">
+                <span style="font:400 12px Inter,sans-serif; color:#333438">Pauses</span>
+                <span style="font:400 12px Inter,sans-serif; color:#333438; text-align:right">+2.4s</span>
+                <span style="font:600 13px Inter,sans-serif; color:#131313; text-align:right">+2.0s</span>
+                <span style="font:600 12px Inter,sans-serif; color:#B3261E; text-align:right">−0.4s</span>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 62px 62px 58px; gap:6px; align-items:center; height:36px">
+                <span style="font:600 13px Inter,sans-serif; color:#131313">Total time</span>
+                <span style="font:400 12px Inter,sans-serif; color:#333438; text-align:right">0:34</span>
+                <span style="font:600 18px Inter,sans-serif; color:#131313; text-align:right">0:31</span>
+                <span style="font:600 12px Inter,sans-serif; color:#B3261E; text-align:right">−0:03</span>
+              </div>
+            </div>
+
+            <div style="padding:14px 16px; border-bottom:1px solid #E4E6E9">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
+                <span style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">READING SPEED</span>
+                <span style="font:600 12px Inter,sans-serif; color:#131313">150 WPM</span>
+              </div>
+              <input type="range" min="75" max="160" value="150" style="width:100%; height:4px">
+            </div>
+
+            <div style="border-bottom:1px solid #E4E6E9">
+              <div style="padding:12px 16px 8px; font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">TEXT EXPANSION</div>
+              <div style="padding:0 16px 12px; display:flex; flex-wrap:wrap; gap:6px">
+                <sc-for list="{{ expansions }}" as="e" hint-placeholder-count="6">
+                  <label style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border:1px solid {{ e.chipBorder }}; background:{{ e.chipBg }}; cursor:pointer">
+                    <input type="checkbox" checked="{{ e.on }}" style="width:12px; height:12px; margin:0">
+                    <span style="font:400 11px Inter,sans-serif; color:#333438">{{ e.label }}</span>
+                  </label>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="padding:12px 16px; display:flex; flex-direction:column; gap:8px">
+              <div style="display:flex; align-items:center; justify-content:space-between">
+                <span style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">QUOTE · REVISED</span>
+                <select style="height:24px; border:1px solid #C9CCD1; background:#fff; font:400 11px Inter,sans-serif; color:#333438; padding:0 4px"><option>Per word</option><option>Per minute</option><option>Per project</option></select>
+              </div>
+              <div style="display:flex; align-items:baseline; justify-content:space-between"><span style="font:400 12px Inter,sans-serif; color:#6E7076">Base (72 × $0.10)</span><span style="font:400 12px Inter,sans-serif; color:#333438">$7.20</span></div>
+              <div style="display:flex; align-items:baseline; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid #E4E6E9"><span style="font:400 12px Inter,sans-serif; color:#6E7076">Minimum fee applied</span><span style="font:400 12px Inter,sans-serif; color:#333438">$50.00</span></div>
+              <div style="display:flex; align-items:baseline; justify-content:space-between"><span style="font:600 13px Inter,sans-serif; color:#131313">Initial recording</span><span style="font:600 20px Inter,sans-serif; color:#131313">$50.00</span></div>
+              <div style="display:flex; align-items:baseline; justify-content:space-between"><span style="font:400 12px Inter,sans-serif; color:#6E7076">Revision / pickup</span><span style="font:400 12px Inter,sans-serif; color:#333438">$75.00</span></div>
+              <button style="margin-top:4px; height:32px; border:none; background:#262626; color:#fff; font:500 12px Inter,sans-serif; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer"><i data-lucide="download" style="width:14px;height:14px"></i>Download quote PDF</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:28px; box-sizing:border-box; background:#131313; padding:0 16px; display:flex; align-items:center; justify-content:space-between; font:400 11px Inter,sans-serif; color:#B9BCC2">
+          <div style="display:flex; gap:20px"><span style="color:#fff">72 WORDS</span><span>0:31 TOTAL</span><span>−6 WORDS VS ORIGINAL</span><span>150 WPM</span></div>
+          <div style="display:flex; gap:20px"><span>QUOTE $50.00</span><span>AUTOSAVED</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 3b — pronunciation ══════════ -->
+    <div id="3b" style="display:flex; flex-direction:column; gap:10px">
+      <div style="display:flex; align-items:center; gap:10px">
+        <span style="font:700 11px/1 Inter,sans-serif; background:#131313; color:#fff; padding:5px 7px; letter-spacing:0.08em">3b</span>
+        <span style="font:500 13px Inter,sans-serif; color:#131313">Analysis · Pronunciation view — click a word, get ARPABET</span>
+      </div>
+      <div data-screen-label="3b Pronunciation" style="width:1360px; background:#F2F3F5; border:1px solid #C9CCD1; overflow:hidden; color:#333438; display:flex; flex-direction:column">
+
+        <div style="height:44px; box-sizing:border-box; background:#131313; padding:0 16px; display:flex; align-items:center; justify-content:space-between">
+          <div style="display:flex; align-items:center; gap:24px">
+            <div style="font:700 12px Inter,sans-serif; letter-spacing:0.16em; color:#fff">VO TOOLS</div>
+            <div style="display:flex; align-items:center; gap:4px">
+              <a href="#3b" style="height:44px; display:flex; align-items:center; padding:0 12px; font:500 12px Inter,sans-serif; background:#F2F3F5; color:#131313">Analysis</a>
+              <a href="#2c" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">Teleprompter</a>
+              <a href="#2d" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">Convert</a>
+              <a href="#2e" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">ACX</a>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:1px solid #3A3A3A; background:transparent; color:#B9BCC2; cursor:pointer"><i data-lucide="moon" style="width:13px;height:13px"></i></button>
+            <a href="#3b" style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; box-sizing:border-box; border:1px solid #3A3A3A; font:400 12px Inter,sans-serif; color:#E4E6E9"><i data-lucide="message-circle" style="width:13px;height:13px"></i>Discord</a>
+            <a href="#3b" style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; box-sizing:border-box; background:#fff; color:#131313; font:500 12px Inter,sans-serif"><i data-lucide="heart" style="width:13px;height:13px;fill:currentColor"></i>Support</a>
+          </div>
+        </div>
+
+        <div style="background:#fff; border-bottom:1px solid #E4E6E9; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:16px">
+          <div style="display:flex; align-items:center; gap:10px">
+            <i data-lucide="book-open" style="width:14px;height:14px;color:#6E7076"></i>
+            <input value="Vantage Series — :30 radio" style="border:none; outline:none; font:600 15px Inter,sans-serif; color:#131313; width:280px">
+            <span style="display:flex; align-items:center; gap:6px; font:400 11px Inter,sans-serif; color:#6E7076"><span style="width:5px; height:5px; border-radius:99px; background:#167A4B"></span>SAVED</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <div style="display:flex; border:1px solid #C9CCD1; height:26px">
+              <button style="padding:0 10px; border:none; background:#262626; color:#fff; font:500 11px Inter,sans-serif; cursor:pointer">Single</button>
+              <button style="padding:0 10px; border:none; border-left:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer">Compare</button>
+            </div>
+            <button style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; border:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer"><i data-lucide="rotate-ccw" style="width:13px;height:13px"></i>Reset</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 340px; gap:1px; background:#E4E6E9">
+          <div style="background:#fff; display:flex; flex-direction:column; height:520px; position:relative">
+            <div style="height:32px; box-sizing:border-box; border-bottom:1px solid #E4E6E9; padding:0 14px; display:flex; align-items:center; justify-content:space-between">
+              <div style="display:flex; gap:2px">
+                <button style="height:32px; padding:0 10px; border:none; background:transparent; font:400 11px Inter,sans-serif; color:#6E7076; cursor:pointer">Edit</button>
+                <button style="height:32px; padding:0 10px; border:none; background:transparent; font:500 11px Inter,sans-serif; color:#131313; box-shadow:inset 0 -2px 0 #262626; cursor:pointer">Pronunciation</button>
+              </div>
+              <span style="font:400 11px Inter,sans-serif; color:#6E7076">CLICK A WORD</span>
+            </div>
+
+            <div style="flex:1; padding:24px 28px; font:400 15px/1.9 Inter,sans-serif; color:#333438">
+              Introducing the <span style="background:#F2F3F5; box-shadow:0 1px 0 #C9CCD1">Vantage</span> Series. Engineered for the way you actually work — and priced at $1,250 for a limited time.<br><br>
+              Every unit ships with a 10,000-hour <span style="background:#131313; color:#fff">warranty</span>. That's a full 15% longer than anything else in its class.<br><br>
+              Visit vantage.example.com to reserve yours before October 12th.
+            </div>
+
+            <div style="position:absolute; left:290px; top:148px; width:250px; background:#fff; border:1px solid #131313; box-shadow:0 8px 24px rgba(19,19,19,0.14)">
+              <div style="padding:10px 12px; border-bottom:1px solid #E4E6E9; display:flex; align-items:baseline; justify-content:space-between">
+                <span style="font:600 13px Inter,sans-serif; color:#131313">warranty</span>
+                <button style="width:20px; height:20px; border:none; background:transparent; color:#6E7076; display:flex; align-items:center; justify-content:center; cursor:pointer"><i data-lucide="copy" style="width:13px;height:13px"></i></button>
+              </div>
+              <div style="padding:10px 12px">
+                <div style="font:500 14px Inter,sans-serif; letter-spacing:0.04em; color:#131313">W AO1 R AH0 N T IY0</div>
+                <div style="font:400 10px Inter,sans-serif; letter-spacing:0.1em; color:#6E7076; margin-top:6px">ARPABET · NORTH AMERICAN ENGLISH</div>
+              </div>
+            </div>
+
+            <div style="height:30px; box-sizing:border-box; border-top:1px solid #E4E6E9; background:#FAFBFC; padding:0 14px; display:flex; align-items:center; font:400 11px Inter,sans-serif; color:#6E7076">
+              WORDS FOUND IN THE DICTIONARY UNDERLINE ON HOVER · ESC CLOSES · COPY BUTTON PUTS THE NOTATION ON YOUR CLIPBOARD
+            </div>
+          </div>
+
+          <div style="background:#fff; display:flex; flex-direction:column">
+            <div style="padding:16px; border-bottom:1px solid #E4E6E9">
+              <div style="display:flex; align-items:flex-end; justify-content:space-between">
+                <div>
+                  <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">SPOKEN WORDS</div>
+                  <div style="font:600 40px/1 Inter,sans-serif; color:#131313; margin-top:6px">78</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">TOTAL</div>
+                  <div style="font:600 40px/1 Inter,sans-serif; color:#131313; margin-top:6px">0:34</div>
+                </div>
+              </div>
+              <div style="display:flex; gap:16px; margin-top:10px; font:400 11px Inter,sans-serif; color:#6E7076"><span>WORDS ONLY 0:31</span><span>PAUSES +2.4s / 6</span></div>
+            </div>
+
+            <div style="padding:14px 16px; border-bottom:1px solid #E4E6E9">
+              <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076; margin-bottom:10px">LOOKED UP</div>
+              <div style="display:flex; flex-direction:column">
+                <div style="display:flex; align-items:center; justify-content:space-between; height:28px; border-bottom:1px solid #F2F3F5"><span style="font:400 12px Inter,sans-serif; color:#131313">warranty</span><span style="font:400 11px Inter,sans-serif; letter-spacing:0.04em; color:#6E7076">W AO1 R AH0 N T IY0</span></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; height:28px; border-bottom:1px solid #F2F3F5"><span style="font:400 12px Inter,sans-serif; color:#131313">Vantage</span><span style="font:400 11px Inter,sans-serif; letter-spacing:0.04em; color:#6E7076">V AE1 N T IH0 JH</span></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; height:28px"><span style="font:400 12px Inter,sans-serif; color:#131313">October</span><span style="font:400 11px Inter,sans-serif; letter-spacing:0.04em; color:#6E7076">AA0 K T OW1 B ER0</span></div>
+              </div>
+            </div>
+
+            <div style="padding:14px 16px">
+              <p style="margin:0; font:400 12px/1.55 Inter,sans-serif; color:#333438">Only words in the North American dictionary respond to a click. Names and coined product words usually will not — mark those in the script yourself.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:28px; box-sizing:border-box; background:#131313; padding:0 16px; display:flex; align-items:center; justify-content:space-between; font:400 11px Inter,sans-serif; color:#B9BCC2">
+          <div style="display:flex; gap:20px"><span style="color:#fff">78 WORDS</span><span>0:34 TOTAL</span><span>150 WPM</span><span>PRONUNCIATION VIEW</span></div>
+          <div style="display:flex; gap:20px"><span>3 LOOKUPS</span><span>AUTOSAVED</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 3c — first run ══════════ -->
+    <div id="3c" style="display:flex; flex-direction:column; gap:10px">
+      <div style="display:flex; align-items:center; gap:10px">
+        <span style="font:700 11px/1 Inter,sans-serif; background:#131313; color:#fff; padding:5px 7px; letter-spacing:0.08em">3c</span>
+        <span style="font:500 13px Inter,sans-serif; color:#131313">First run — Analysis with nothing in it yet</span>
+      </div>
+      <div data-screen-label="3c First run" style="width:1360px; background:#F2F3F5; border:1px solid #C9CCD1; overflow:hidden; color:#333438; display:flex; flex-direction:column">
+
+        <div style="height:44px; box-sizing:border-box; background:#131313; padding:0 16px; display:flex; align-items:center; justify-content:space-between">
+          <div style="display:flex; align-items:center; gap:24px">
+            <div style="font:700 12px Inter,sans-serif; letter-spacing:0.16em; color:#fff">VO TOOLS</div>
+            <div style="display:flex; align-items:center; gap:4px">
+              <a href="#3c" style="height:44px; display:flex; align-items:center; padding:0 12px; font:500 12px Inter,sans-serif; background:#F2F3F5; color:#131313">Analysis</a>
+              <a href="#2c" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">Teleprompter</a>
+              <a href="#2d" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">Convert</a>
+              <a href="#2e" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">ACX</a>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:1px solid #3A3A3A; background:transparent; color:#B9BCC2; cursor:pointer"><i data-lucide="moon" style="width:13px;height:13px"></i></button>
+            <a href="#3c" style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; box-sizing:border-box; border:1px solid #3A3A3A; font:400 12px Inter,sans-serif; color:#E4E6E9"><i data-lucide="message-circle" style="width:13px;height:13px"></i>Discord</a>
+            <a href="#3c" style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; box-sizing:border-box; background:#fff; color:#131313; font:500 12px Inter,sans-serif"><i data-lucide="heart" style="width:13px;height:13px;fill:currentColor"></i>Support</a>
+          </div>
+        </div>
+
+        <div style="background:#fff; border-bottom:1px solid #E4E6E9; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:16px">
+          <div style="display:flex; align-items:center; gap:10px">
+            <i data-lucide="file-text" style="width:14px;height:14px;color:#6E7076"></i>
+            <span style="font:400 15px Inter,sans-serif; color:#6E7076">Untitled script</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <div style="display:flex; border:1px solid #E4E6E9; height:26px">
+              <button style="padding:0 10px; border:none; background:#F2F3F5; color:#6E7076; font:500 11px Inter,sans-serif; cursor:pointer">Single</button>
+              <button style="padding:0 10px; border:none; border-left:1px solid #E4E6E9; background:#fff; color:#8A8D93; font:400 11px Inter,sans-serif; cursor:not-allowed">Compare</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 340px; gap:1px; background:#E4E6E9">
+          <div style="background:#fff; display:flex; flex-direction:column; height:420px">
+            <div style="height:32px; box-sizing:border-box; border-bottom:1px solid #E4E6E9; padding:0 14px; display:flex; align-items:center; justify-content:space-between">
+              <div style="display:flex; gap:2px">
+                <button style="height:32px; padding:0 10px; border:none; background:transparent; font:500 11px Inter,sans-serif; color:#131313; box-shadow:inset 0 -2px 0 #262626; cursor:pointer">Edit</button>
+                <button style="height:32px; padding:0 10px; border:none; background:transparent; font:400 11px Inter,sans-serif; color:#8A8D93; cursor:not-allowed">Pronunciation</button>
+              </div>
+              <span style="font:400 11px Inter,sans-serif; color:#6E7076">0 CHARS</span>
+            </div>
+            <div style="flex:1; padding:24px 28px; font:400 15px/1.8 Inter,sans-serif; color:#6E7076">Paste your script. Numbers, dates, currencies and measurements are counted the way you would read them aloud — $1,250 counts as five words, not one.</div>
+            <div style="padding:0 28px 24px; display:flex; gap:8px">
+              <button style="display:flex; align-items:center; gap:8px; height:32px; padding:0 12px; border:1px solid #C9CCD1; background:#fff; color:#333438; font:500 12px Inter,sans-serif; cursor:pointer"><i data-lucide="file-text" style="width:14px;height:14px"></i>Paste from clipboard</button>
+              <button style="display:flex; align-items:center; gap:8px; height:32px; padding:0 12px; border:1px solid #C9CCD1; background:#fff; color:#333438; font:500 12px Inter,sans-serif; cursor:pointer"><i data-lucide="upload" style="width:14px;height:14px"></i>Open a .txt file</button>
+              <button style="display:flex; align-items:center; gap:8px; height:32px; padding:0 12px; border:1px solid #C9CCD1; background:#fff; color:#333438; font:500 12px Inter,sans-serif; cursor:pointer">Load a sample script</button>
+            </div>
+            <div style="padding:0 28px 20px; font:400 11px Inter,sans-serif; letter-spacing:0.06em; color:#6E7076">PROPOSED ADDITIONS — THE CURRENT BUILD ONLY ACCEPTS PASTED OR TYPED TEXT</div>
+          </div>
+
+          <div style="background:#fff; display:flex; flex-direction:column">
+            <div style="padding:16px; border-bottom:1px solid #E4E6E9">
+              <div style="display:flex; align-items:flex-end; justify-content:space-between">
+                <div>
+                  <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">SPOKEN WORDS</div>
+                  <div style="font:600 40px/1 Inter,sans-serif; color:#8A8D93; margin-top:6px">0</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">TOTAL</div>
+                  <div style="font:600 40px/1 Inter,sans-serif; color:#8A8D93; margin-top:6px">0:00</div>
+                </div>
+              </div>
+            </div>
+            <div style="padding:14px 16px; border-bottom:1px solid #E4E6E9">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
+                <span style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">READING SPEED</span>
+                <span style="font:600 12px Inter,sans-serif; color:#131313">150 WPM</span>
+              </div>
+              <input type="range" min="75" max="160" value="150" style="width:100%; height:4px">
+              <div style="font:400 11px/1.5 Inter,sans-serif; color:#6E7076; margin-top:8px">Set this to your own pace once and it sticks. Most read-throughs land between 140 and 160.</div>
+            </div>
+            <div style="padding:14px 16px; border-bottom:1px solid #E4E6E9">
+              <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076; margin-bottom:10px">TEXT EXPANSION</div>
+              <div style="display:flex; flex-wrap:wrap; gap:6px">
+                <sc-for list="{{ expansions }}" as="e" hint-placeholder-count="6">
+                  <label style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border:1px solid {{ e.chipBorder }}; background:{{ e.chipBg }}; cursor:pointer">
+                    <input type="checkbox" checked="{{ e.on }}" style="width:12px; height:12px; margin:0">
+                    <span style="font:400 11px Inter,sans-serif; color:#333438">{{ e.label }}</span>
+                  </label>
+                </sc-for>
+              </div>
+            </div>
+            <div style="padding:14px 16px">
+              <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076; margin-bottom:8px">QUOTE</div>
+              <p style="margin:0; font:400 12px/1.55 Inter,sans-serif; color:#6E7076">Add a script and set a rate to see a quote, then export it as a PDF with your client and project on it.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:28px; box-sizing:border-box; background:#131313; padding:0 16px; display:flex; align-items:center; justify-content:space-between; font:400 11px Inter,sans-serif; color:#B9BCC2">
+          <div style="display:flex; gap:20px"><span>0 WORDS</span><span>0:00 TOTAL</span><span>150 WPM</span></div>
+          <div style="display:flex; gap:20px"><span>NOTHING TO SAVE YET</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 3d / 3e — empty convert & acx ══════════ -->
+    <div style="display:flex; gap:48px; align-items:flex-start; flex-wrap:wrap">
+      <div id="3d" style="display:flex; flex-direction:column; gap:10px">
+        <div style="display:flex; align-items:center; gap:10px">
+          <span style="font:700 11px/1 Inter,sans-serif; background:#131313; color:#fff; padding:5px 7px; letter-spacing:0.08em">3d</span>
+          <span style="font:500 13px Inter,sans-serif; color:#131313">Convert — empty queue</span>
+        </div>
+        <div data-screen-label="3d Convert empty" style="width:656px; background:#fff; border:1px solid #C9CCD1; overflow:hidden">
+          <div style="height:36px; box-sizing:border-box; border-bottom:1px solid #E4E6E9; padding:0 14px; display:flex; align-items:center; justify-content:space-between">
+            <span style="font:600 13px Inter,sans-serif; color:#131313">Conversion queue</span>
+            <span style="font:400 11px Inter,sans-serif; color:#6E7076">0 FILES · MAX 50 MB</span>
+          </div>
+          <div style="padding:20px">
+            <label style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; height:180px; border:1px dashed #C9CCD1; background:#FAFBFC; cursor:pointer">
+              <i data-lucide="upload" style="width:22px;height:22px;color:#6E7076"></i>
+              <span style="font:500 14px Inter,sans-serif; color:#333438">Drop audio files here</span>
+              <span style="font:400 12px Inter,sans-serif; color:#6E7076">or click to browse — several at once is fine</span>
+              <span style="font:400 10px Inter,sans-serif; letter-spacing:0.08em; color:#6E7076; margin-top:4px">WAV · MP3 · OGG · FLAC · M4A · AIFF · WMA · AAC</span>
+            </label>
+            <div style="margin-top:16px; padding:12px 14px; border:1px solid #E4E6E9; background:#FAFBFC">
+              <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076; margin-bottom:6px">DEFAULTS</div>
+              <div style="font:400 12px/1.6 Inter,sans-serif; color:#333438">Standard definition 16-bit WAV, 8 kHz mono, medium volume, no phone filter. Change any of it in the rail before converting.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="3e" style="display:flex; flex-direction:column; gap:10px">
+        <div style="display:flex; align-items:center; gap:10px">
+          <span style="font:700 11px/1 Inter,sans-serif; background:#131313; color:#fff; padding:5px 7px; letter-spacing:0.08em">3e</span>
+          <span style="font:500 13px Inter,sans-serif; color:#131313">ACX — nothing analyzed yet</span>
+        </div>
+        <div data-screen-label="3e ACX empty" style="width:656px; background:#fff; border:1px solid #C9CCD1; overflow:hidden">
+          <div style="height:36px; box-sizing:border-box; border-bottom:1px solid #E4E6E9; padding:0 14px; display:flex; align-items:center; justify-content:space-between">
+            <span style="font:600 13px Inter,sans-serif; color:#131313">Compliance batch</span>
+            <span style="font:400 11px Inter,sans-serif; color:#6E7076">0 ANALYZED</span>
+          </div>
+          <div style="padding:20px">
+            <label style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; height:180px; border:1px dashed #C9CCD1; background:#FAFBFC; cursor:pointer">
+              <i data-lucide="upload" style="width:22px;height:22px;color:#6E7076"></i>
+              <span style="font:500 14px Inter,sans-serif; color:#333438">Drop audiobook files here</span>
+              <span style="font:400 12px Inter,sans-serif; color:#6E7076">a chapter at a time, or the whole book</span>
+              <span style="font:400 10px Inter,sans-serif; letter-spacing:0.08em; color:#6E7076; margin-top:4px">MP3 · WAV · FLAC</span>
+            </label>
+            <div style="margin-top:16px; border:1px solid #E4E6E9">
+              <div style="padding:10px 14px; border-bottom:1px solid #E4E6E9; font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">WHAT GETS MEASURED</div>
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:0 14px; height:28px; border-bottom:1px solid #F2F3F5"><span style="font:400 12px Inter,sans-serif; color:#333438">MP3, constant bit rate</span><span style="font:400 11px Inter,sans-serif; color:#131313">≥ 192 kbps</span></div>
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:0 14px; height:28px; border-bottom:1px solid #F2F3F5"><span style="font:400 12px Inter,sans-serif; color:#333438">Sample rate</span><span style="font:400 11px Inter,sans-serif; color:#131313">44.1 kHz</span></div>
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:0 14px; height:28px; border-bottom:1px solid #F2F3F5"><span style="font:400 12px Inter,sans-serif; color:#333438">Integrated loudness</span><span style="font:400 11px Inter,sans-serif; color:#131313">−23 to −18 dB</span></div>
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:0 14px; height:28px"><span style="font:400 12px Inter,sans-serif; color:#333438">Peak amplitude</span><span style="font:400 11px Inter,sans-serif; color:#131313">≤ −3 dB</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section style="display:flex; flex-direction:column; gap:20px; padding:48px 48px 0">
+  <div style="display:flex; align-items:baseline; gap:16px">
+    <div style="font:700 12px/1 Inter,sans-serif; letter-spacing:0.14em; text-transform:uppercase; color:#131313">Turn 2 — the workspace, applied to every tool</div>
+    <div style="font:400 12px/1.5 Inter,sans-serif; color:#5f6167">Same shell as <a href="#1b">1b</a> (the Analysis tab): top tabs, one persistent script document, contextual right rail, live status bar.</div>
+  </div>
+
+  <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start">
+
+    <!-- ══════════ 2a — landing ══════════ -->
+    <div id="2a" style="display:flex; flex-direction:column; gap:10px">
+      <div style="display:flex; align-items:center; gap:10px">
+        <span style="font:700 11px/1 Inter,sans-serif; background:#131313; color:#fff; padding:5px 7px; letter-spacing:0.08em">2a</span>
+        <span style="font:500 13px Inter,sans-serif; color:#131313">Landing — the tool picker as a list, not cards</span>
+      </div>
+      <div data-screen-label="2a Home" style="width:1360px; background:#F2F3F5; border:1px solid #C9CCD1; overflow:hidden; color:#333438">
+        <div style="height:48px; box-sizing:border-box; background:#fff; border-bottom:1px solid #E4E6E9; padding:0 20px; display:flex; align-items:center; justify-content:space-between">
+          <div style="font:700 13px Inter,sans-serif; letter-spacing:0.16em; color:#131313">VO TOOLS</div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="width:28px; height:28px; display:flex; align-items:center; justify-content:center; border:1px solid #E4E6E9; background:#fff; color:#6E7076; cursor:pointer"><i data-lucide="moon" style="width:14px;height:14px"></i></button>
+            <a href="#2a" style="display:flex; align-items:center; gap:6px; height:28px; padding:0 10px; box-sizing:border-box; border:1px solid #C9CCD1; font:500 12px Inter,sans-serif; color:#333438"><i data-lucide="message-circle" style="width:13px;height:13px"></i>Discord</a>
+            <a href="#2a" style="display:flex; align-items:center; gap:6px; height:28px; padding:0 12px; box-sizing:border-box; background:#262626; color:#fff; font:500 12px Inter,sans-serif"><i data-lucide="heart" style="width:13px;height:13px;fill:currentColor"></i>Support</a>
+          </div>
+        </div>
+
+        <div style="background:#fff; border-bottom:1px solid #E4E6E9; padding:72px 20px 56px">
+          <div style="max-width:1000px; margin:0 auto">
+            <h1 style="margin:0; font:600 52px/1.05 Inter,sans-serif; color:#131313; letter-spacing:-0.02em; max-width:720px">Four tools for the working voice actor.</h1>
+            <p style="margin:20px 0 0; font:400 15px/1.6 Inter,sans-serif; color:#333438; max-width:520px">Script timing and quoting, a studio teleprompter with a phone remote, telephony format conversion, and ACX compliance checking. Free, no account, runs in the browser.</p>
+            <div style="display:flex; gap:10px; margin-top:28px">
+              <a href="#1b" style="display:flex; align-items:center; gap:8px; height:36px; padding:0 16px; box-sizing:border-box; background:#262626; color:#fff; font:500 13px Inter,sans-serif">Open the workspace<i data-lucide="arrow-right" style="width:15px;height:15px"></i></a>
+              <a href="#2a" style="display:flex; align-items:center; height:36px; padding:0 16px; box-sizing:border-box; border:1px solid #C9CCD1; color:#333438; font:500 13px Inter,sans-serif">Read the source</a>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#fff; border-bottom:1px solid #E4E6E9">
+          <div style="max-width:1000px; margin:0 auto">
+            <div style="display:grid; grid-template-columns:200px 1fr 300px 90px; align-items:center; gap:24px; padding:22px 20px; border-bottom:1px solid #E4E6E9">
+              <div style="display:flex; align-items:center; gap:10px"><i data-lucide="calculator" style="width:16px;height:16px;color:#131313"></i><span style="font:600 15px Inter,sans-serif; color:#131313">Script Analysis</span></div>
+              <div style="font:400 13px/1.5 Inter,sans-serif; color:#333438">Word count, read time at your speed, pause detection, quoting and PDF.</div>
+              <div style="font:400 11px Inter,sans-serif; color:#6E7076">WORDS · TIMING · PRICING · DIFF</div>
+              <a href="#1b" style="font:500 13px Inter,sans-serif; color:#131313; display:flex; align-items:center; gap:6px; justify-content:flex-end">Open<i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+            </div>
+            <div style="display:grid; grid-template-columns:200px 1fr 300px 90px; align-items:center; gap:24px; padding:22px 20px; border-bottom:1px solid #E4E6E9">
+              <div style="display:flex; align-items:center; gap:10px"><i data-lucide="scroll-text" style="width:16px;height:16px;color:#131313"></i><span style="font:600 15px Inter,sans-serif; color:#131313">Teleprompter</span></div>
+              <div style="font:400 13px/1.5 Inter,sans-serif; color:#333438">Fullscreen auto-scroll with mirror mode and a phone remote over QR.</div>
+              <div style="font:400 11px Inter,sans-serif; color:#6E7076">FULLSCREEN · SPEED · REMOTE · MIRROR</div>
+              <a href="#2c" style="font:500 13px Inter,sans-serif; color:#131313; display:flex; align-items:center; gap:6px; justify-content:flex-end">Open<i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+            </div>
+            <div style="display:grid; grid-template-columns:200px 1fr 300px 90px; align-items:center; gap:24px; padding:22px 20px; border-bottom:1px solid #E4E6E9">
+              <div style="display:flex; align-items:center; gap:10px"><i data-lucide="audio-waveform" style="width:16px;height:16px;color:#131313"></i><span style="font:600 15px Inter,sans-serif; color:#131313">Telephony Converter</span></div>
+              <div style="font:400 13px/1.5 Inter,sans-serif; color:#333438">Batch convert to IVR and VoIP formats with volume and phone filtering.</div>
+              <div style="font:400 11px Inter,sans-serif; color:#6E7076">µ-LAW · A-LAW · PCM · G.722 · RAW</div>
+              <a href="#2d" style="font:500 13px Inter,sans-serif; color:#131313; display:flex; align-items:center; gap:6px; justify-content:flex-end">Open<i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+            </div>
+            <div style="display:grid; grid-template-columns:200px 1fr 300px 90px; align-items:center; gap:24px; padding:22px 20px">
+              <div style="display:flex; align-items:center; gap:10px"><i data-lucide="check-circle-2" style="width:16px;height:16px;color:#131313"></i><span style="font:600 15px Inter,sans-serif; color:#131313">ACX Compliance</span></div>
+              <div style="font:400 13px/1.5 Inter,sans-serif; color:#333438">Check audiobook files against ACX limits, then export the report as CSV.</div>
+              <div style="font:400 11px Inter,sans-serif; color:#6E7076">BITRATE · 44.1K · RMS · PEAK · CSV</div>
+              <a href="#2e" style="font:500 13px Inter,sans-serif; color:#131313; display:flex; align-items:center; gap:6px; justify-content:flex-end">Open<i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#fff; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; font:400 11px Inter,sans-serif; color:#6E7076">
+          <div style="display:flex; gap:16px"><a href="#2a" style="color:#6E7076">VOTRAINER</a><a href="#2a" style="color:#6E7076">TREVOR O'HARE</a><a href="#2a" style="color:#6E7076">REALVOTALENT</a></div>
+          <div style="display:flex; gap:16px"><a href="#2a" style="color:#6E7076">DISCORD</a><a href="#2a" style="color:#6E7076">SOURCE</a><a href="#2a" style="color:#6E7076">SUPPORT</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 2c — teleprompter ══════════ -->
+    <div id="2c" style="display:flex; flex-direction:column; gap:10px">
+      <div style="display:flex; align-items:center; gap:10px">
+        <span style="font:700 11px/1 Inter,sans-serif; background:#131313; color:#fff; padding:5px 7px; letter-spacing:0.08em">2c</span>
+        <span style="font:500 13px Inter,sans-serif; color:#131313">Workspace · Teleprompter tab — same script, playback rail</span>
+      </div>
+      <div data-screen-label="2c Teleprompter" style="width:1360px; background:#F2F3F5; border:1px solid #C9CCD1; overflow:hidden; color:#333438; display:flex; flex-direction:column">
+
+        <div style="height:44px; box-sizing:border-box; background:#131313; padding:0 16px; display:flex; align-items:center; justify-content:space-between">
+          <div style="display:flex; align-items:center; gap:24px">
+            <div style="font:700 12px Inter,sans-serif; letter-spacing:0.16em; color:#fff">VO TOOLS</div>
+            <div style="display:flex; align-items:center; gap:4px">
+              <a href="#1b" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">Analysis</a>
+              <a href="#2c" style="height:44px; display:flex; align-items:center; padding:0 12px; font:500 12px Inter,sans-serif; background:#F2F3F5; color:#131313">Teleprompter</a>
+              <a href="#2d" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">Convert</a>
+              <a href="#2e" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">ACX</a>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:1px solid #3A3A3A; background:transparent; color:#B9BCC2; cursor:pointer"><i data-lucide="moon" style="width:13px;height:13px"></i></button>
+            <a href="#2c" style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; box-sizing:border-box; border:1px solid #3A3A3A; font:400 12px Inter,sans-serif; color:#E4E6E9"><i data-lucide="message-circle" style="width:13px;height:13px"></i>Discord</a>
+            <a href="#2c" style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; box-sizing:border-box; background:#fff; color:#131313; font:500 12px Inter,sans-serif"><i data-lucide="heart" style="width:13px;height:13px;fill:currentColor"></i>Support</a>
+          </div>
+        </div>
+
+        <div style="background:#fff; border-bottom:1px solid #E4E6E9; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:16px">
+          <div style="display:flex; align-items:center; gap:10px">
+            <i data-lucide="file-text" style="width:14px;height:14px;color:#6E7076"></i>
+            <input value="Vantage Series — :30 radio" style="border:none; outline:none; font:600 15px Inter,sans-serif; color:#131313; width:280px">
+            <span style="display:flex; align-items:center; gap:6px; font:400 11px Inter,sans-serif; color:#6E7076"><span style="width:5px; height:5px; border-radius:99px; background:#167A4B"></span>SAVED</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; border:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer"><i data-lucide="flip-horizontal-2" style="width:13px;height:13px"></i>Mirror off</button>
+            <button style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; border:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer"><i data-lucide="rotate-ccw" style="width:13px;height:13px"></i>Reset</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 340px; gap:1px; background:#E4E6E9">
+          <div style="background:#fff; display:flex; flex-direction:column; height:640px">
+            <div style="height:32px; box-sizing:border-box; border-bottom:1px solid #E4E6E9; padding:0 14px; display:flex; align-items:center; justify-content:space-between">
+              <div style="display:flex; gap:2px">
+                <button style="height:32px; padding:0 10px; border:none; background:transparent; font:500 11px Inter,sans-serif; color:#131313; box-shadow:inset 0 -2px 0 #262626; cursor:pointer">Edit</button>
+                <button style="height:32px; padding:0 10px; border:none; background:transparent; font:400 11px Inter,sans-serif; color:#6E7076; cursor:pointer">Pronunciation</button>
+              </div>
+              <span style="font:400 11px Inter,sans-serif; color:#6E7076">412 CHARS</span>
+            </div>
+            <div style="flex:1; padding:24px 28px; font:400 15px/1.8 Inter,sans-serif; color:#333438; white-space:pre-wrap; overflow:hidden">Introducing the Vantage Series. Engineered for the way you actually work — and priced at $1,250 for a limited time.
+
+Every unit ships with a 10,000-hour warranty. That's a full 15% longer than anything else in its class.
+
+Visit vantage.example.com to reserve yours before October 12th.</div>
+          </div>
+
+          <div style="background:#fff; display:flex; flex-direction:column">
+            <div style="padding:16px; border-bottom:1px solid #E4E6E9">
+              <div style="display:flex; align-items:flex-end; justify-content:space-between">
+                <div>
+                  <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">SCROLL SPEED</div>
+                  <div style="font:600 40px/1 Inter,sans-serif; color:#131313; margin-top:6px">150</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">EST. RUN</div>
+                  <div style="font:600 40px/1 Inter,sans-serif; color:#131313; margin-top:6px">0:31</div>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px; margin-top:12px">
+                <input type="range" min="75" max="200" value="150" style="flex:1; min-width:0; height:4px">
+                <input value="150" style="width:52px; box-sizing:border-box; height:26px; border:1px solid #C9CCD1; padding:0 6px; font:400 12px Inter,sans-serif; text-align:right; outline:none; color:#131313">
+                <span style="font:400 10px Inter,sans-serif; color:#6E7076">WPM</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-top:6px; font:400 10px Inter,sans-serif; color:#6E7076"><span>75</span><span>200</span></div>
+            </div>
+
+            <div style="padding:16px; border-bottom:1px solid #E4E6E9">
+              <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076; margin-bottom:12px">PHONE REMOTE</div>
+              <div style="display:flex; gap:14px; align-items:flex-start">
+                <div style="width:96px; height:96px; border:1px solid #E4E6E9; background:repeating-linear-gradient(45deg,#EDEFF2 0 5px,#F7F8FA 5px 10px); display:flex; align-items:center; justify-content:center; text-align:center; font:400 9px Inter,sans-serif; color:#6E7076">QR<br>CODE</div>
+                <div style="flex:1; min-width:0">
+                  <div style="font:400 11px Inter,sans-serif; color:#6E7076">ROOM</div>
+                  <div style="font:600 18px Inter,sans-serif; color:#131313; letter-spacing:0.08em">4F2A9C</div>
+                  <div style="display:flex; align-items:center; gap:6px; margin-top:8px; font:400 11px Inter,sans-serif; color:#6E7076"><i data-lucide="wifi-off" style="width:13px;height:13px"></i>WAITING FOR PHONE</div>
+                  <div style="font:400 11px/1.5 Inter,sans-serif; color:#6E7076; margin-top:8px">Scan to control play, speed, text size and mirror from your phone.</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="padding:16px; border-bottom:1px solid #E4E6E9">
+              <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076; margin-bottom:10px">KEYBOARD</div>
+              <div style="display:flex; flex-direction:column; gap:6px">
+                <div style="display:flex; align-items:center; justify-content:space-between"><span style="font:400 12px Inter,sans-serif; color:#333438">Play / pause</span><kbd style="border:1px solid #C9CCD1; padding:2px 6px; font:400 10px Inter,sans-serif; color:#333438">SPACE</kbd></div>
+                <div style="display:flex; align-items:center; justify-content:space-between"><span style="font:400 12px Inter,sans-serif; color:#333438">Adjust speed</span><kbd style="border:1px solid #C9CCD1; padding:2px 6px; font:400 10px Inter,sans-serif; color:#333438">↑ ↓</kbd></div>
+                <div style="display:flex; align-items:center; justify-content:space-between"><span style="font:400 12px Inter,sans-serif; color:#333438">Text size</span><kbd style="border:1px solid #C9CCD1; padding:2px 6px; font:400 10px Inter,sans-serif; color:#333438">+ −</kbd></div>
+                <div style="display:flex; align-items:center; justify-content:space-between"><span style="font:400 12px Inter,sans-serif; color:#333438">Mirror</span><kbd style="border:1px solid #C9CCD1; padding:2px 6px; font:400 10px Inter,sans-serif; color:#333438">M</kbd></div>
+                <div style="display:flex; align-items:center; justify-content:space-between"><span style="font:400 12px Inter,sans-serif; color:#333438">Reset to start</span><kbd style="border:1px solid #C9CCD1; padding:2px 6px; font:400 10px Inter,sans-serif; color:#333438">HOME</kbd></div>
+                <div style="display:flex; align-items:center; justify-content:space-between"><span style="font:400 12px Inter,sans-serif; color:#333438">Exit fullscreen</span><kbd style="border:1px solid #C9CCD1; padding:2px 6px; font:400 10px Inter,sans-serif; color:#333438">ESC</kbd></div>
+              </div>
+            </div>
+
+            <div style="padding:16px; margin-top:auto">
+              <button style="width:100%; box-sizing:border-box; height:40px; border:none; background:#262626; color:#fff; font:500 13px Inter,sans-serif; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer"><i data-lucide="play" style="width:15px;height:15px;fill:currentColor"></i>Start teleprompter</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:28px; box-sizing:border-box; background:#131313; padding:0 16px; display:flex; align-items:center; justify-content:space-between; font:400 11px Inter,sans-serif; color:#B9BCC2">
+          <div style="display:flex; gap:20px"><span style="color:#fff">78 WORDS</span><span>EST 0:31</span><span>150 WPM</span><span>MIRROR OFF</span></div>
+          <div style="display:flex; gap:20px"><span>ROOM 4F2A9C</span><span>REMOTE WAITING</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 2d — convert ══════════ -->
+    <div id="2d" style="display:flex; flex-direction:column; gap:10px">
+      <div style="display:flex; align-items:center; gap:10px">
+        <span style="font:700 11px/1 Inter,sans-serif; background:#131313; color:#fff; padding:5px 7px; letter-spacing:0.08em">2d</span>
+        <span style="font:500 13px Inter,sans-serif; color:#131313">Workspace · Convert tab — batch queue, settings rail</span>
+      </div>
+      <div data-screen-label="2d Convert" style="width:1360px; background:#F2F3F5; border:1px solid #C9CCD1; overflow:hidden; color:#333438; display:flex; flex-direction:column">
+
+        <div style="height:44px; box-sizing:border-box; background:#131313; padding:0 16px; display:flex; align-items:center; justify-content:space-between">
+          <div style="display:flex; align-items:center; gap:24px">
+            <div style="font:700 12px Inter,sans-serif; letter-spacing:0.16em; color:#fff">VO TOOLS</div>
+            <div style="display:flex; align-items:center; gap:4px">
+              <a href="#1b" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">Analysis</a>
+              <a href="#2c" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">Teleprompter</a>
+              <a href="#2d" style="height:44px; display:flex; align-items:center; padding:0 12px; font:500 12px Inter,sans-serif; background:#F2F3F5; color:#131313">Convert</a>
+              <a href="#2e" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">ACX</a>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:1px solid #3A3A3A; background:transparent; color:#B9BCC2; cursor:pointer"><i data-lucide="moon" style="width:13px;height:13px"></i></button>
+            <a href="#2d" style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; box-sizing:border-box; border:1px solid #3A3A3A; font:400 12px Inter,sans-serif; color:#E4E6E9"><i data-lucide="message-circle" style="width:13px;height:13px"></i>Discord</a>
+            <a href="#2d" style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; box-sizing:border-box; background:#fff; color:#131313; font:500 12px Inter,sans-serif"><i data-lucide="heart" style="width:13px;height:13px;fill:currentColor"></i>Support</a>
+          </div>
+        </div>
+
+        <div style="background:#fff; border-bottom:1px solid #E4E6E9; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:16px">
+          <div style="display:flex; align-items:center; gap:10px">
+            <i data-lucide="audio-waveform" style="width:14px;height:14px;color:#6E7076"></i>
+            <span style="font:600 15px Inter,sans-serif; color:#131313">Conversion queue</span>
+            <span style="font:400 11px Inter,sans-serif; color:#6E7076">3 FILES · 12.4 MB · MAX 50 MB</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; border:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer"><i data-lucide="rotate-ccw" style="width:13px;height:13px"></i>Clear queue</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 340px; gap:1px; background:#E4E6E9">
+          <div style="background:#fff; padding:16px; height:560px; box-sizing:border-box">
+            <label style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; height:96px; border:1px dashed #C9CCD1; background:#FAFBFC; cursor:pointer">
+              <i data-lucide="upload" style="width:18px;height:18px;color:#6E7076"></i>
+              <span style="font:500 13px Inter,sans-serif; color:#333438">Drop audio files, or click to browse</span>
+              <span style="font:400 10px Inter,sans-serif; color:#6E7076">WAV · MP3 · OGG · FLAC · M4A · AIFF · WMA · AAC</span>
+            </label>
+
+            <div style="margin-top:16px; border:1px solid #E4E6E9">
+              <div style="display:grid; grid-template-columns:1fr 110px 40px; gap:12px; padding:0 12px; height:30px; align-items:center; border-bottom:1px solid #E4E6E9; background:#FAFBFC; font:600 10px Inter,sans-serif; letter-spacing:0.12em; color:#6E7076">
+                <span>FILE</span><span style="text-align:right">SIZE</span><span></span>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 110px 40px; gap:12px; padding:0 12px; height:38px; align-items:center; border-bottom:1px solid #E4E6E9">
+                <span style="font:400 13px Inter,sans-serif; color:#131313">greeting-main.wav</span>
+                <span style="font:400 12px Inter,sans-serif; color:#333438; text-align:right">4.812 MB</span>
+                <button style="justify-self:end; width:24px; height:24px; border:none; background:transparent; color:#6E7076; display:flex; align-items:center; justify-content:center; cursor:pointer"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 110px 40px; gap:12px; padding:0 12px; height:38px; align-items:center; border-bottom:1px solid #E4E6E9">
+                <span style="font:400 13px Inter,sans-serif; color:#131313">menu-options.wav</span>
+                <span style="font:400 12px Inter,sans-serif; color:#333438; text-align:right">5.104 MB</span>
+                <button style="justify-self:end; width:24px; height:24px; border:none; background:transparent; color:#6E7076; display:flex; align-items:center; justify-content:center; cursor:pointer"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 110px 40px; gap:12px; padding:0 12px; height:38px; align-items:center">
+                <span style="font:400 13px Inter,sans-serif; color:#131313">hold-music.mp3</span>
+                <span style="font:400 12px Inter,sans-serif; color:#333438; text-align:right">2.487 MB</span>
+                <button style="justify-self:end; width:24px; height:24px; border:none; background:transparent; color:#6E7076; display:flex; align-items:center; justify-content:center; cursor:pointer"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
+              </div>
+            </div>
+
+            <div style="margin-top:16px; padding:12px 14px; border:1px solid #E4E6E9; background:#FAFBFC; display:flex; align-items:center; gap:10px">
+              <i data-lucide="info" style="width:14px;height:14px;color:#6E7076"></i>
+              <span style="font:400 12px Inter,sans-serif; color:#333438">Output: <span style="font-family:Inter,sans-serif; font-size:11px">STANDARD DEFINITION 16-BIT WAV · 8KHZ MONO · MEDIUM</span>. A single file downloads as WAV; several download as a ZIP.</span>
+            </div>
+          </div>
+
+          <div style="background:#fff; display:flex; flex-direction:column">
+            <div style="padding:14px 16px; border-bottom:1px solid #E4E6E9">
+              <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076; margin-bottom:10px">OUTPUT FORMAT</div>
+              <div style="display:flex; flex-direction:column">
+                <label style="display:flex; align-items:center; gap:8px; height:30px; cursor:pointer; border-bottom:1px solid #F2F3F5"><input type="radio" name="f2d" style="width:13px;height:13px;margin:0"><span style="flex:1; font:400 12px Inter,sans-serif; color:#333438">µ-law WAV</span><span style="font:400 10px Inter,sans-serif; color:#6E7076">8K MONO</span></label>
+                <label style="display:flex; align-items:center; gap:8px; height:30px; cursor:pointer; border-bottom:1px solid #F2F3F5"><input type="radio" name="f2d" style="width:13px;height:13px;margin:0"><span style="flex:1; font:400 12px Inter,sans-serif; color:#333438">A-law WAV</span><span style="font:400 10px Inter,sans-serif; color:#6E7076">8K MONO</span></label>
+                <label style="display:flex; align-items:center; gap:8px; height:30px; cursor:pointer; border-bottom:1px solid #F2F3F5"><input type="radio" name="f2d" style="width:13px;height:13px;margin:0"><span style="flex:1; font:400 12px Inter,sans-serif; color:#333438">Low definition 8-bit WAV</span><span style="font:400 10px Inter,sans-serif; color:#6E7076">8-BIT PCM</span></label>
+                <label style="display:flex; align-items:center; gap:8px; height:30px; cursor:pointer; border-bottom:1px solid #F2F3F5; background:#F2F3F5"><input type="radio" name="f2d" checked="{{ true }}" style="width:13px;height:13px;margin:0"><span style="flex:1; font:500 12px Inter,sans-serif; color:#131313">Standard definition 16-bit WAV</span><span style="font:400 10px Inter,sans-serif; color:#333438">16-BIT PCM</span></label>
+                <label style="display:flex; align-items:center; gap:8px; height:30px; cursor:pointer; border-bottom:1px solid #F2F3F5"><input type="radio" name="f2d" style="width:13px;height:13px;margin:0"><span style="flex:1; font:400 12px Inter,sans-serif; color:#333438">High definition WAV</span><span style="font:400 10px Inter,sans-serif; color:#6E7076">16K MONO</span></label>
+                <label style="display:flex; align-items:center; gap:8px; height:30px; cursor:pointer; border-bottom:1px solid #F2F3F5"><input type="radio" name="f2d" style="width:13px;height:13px;margin:0"><span style="flex:1; font:400 12px Inter,sans-serif; color:#333438">Asterisk G.722</span><span style="font:400 10px Inter,sans-serif; color:#6E7076">16K G.722</span></label>
+                <label style="display:flex; align-items:center; gap:8px; height:30px; cursor:pointer"><input type="radio" name="f2d" style="width:13px;height:13px;margin:0"><span style="flex:1; font:400 12px Inter,sans-serif; color:#333438">Asterisk RAW</span><span style="font:400 10px Inter,sans-serif; color:#6E7076">8K SLN</span></label>
+              </div>
+            </div>
+
+            <div style="padding:14px 16px; border-bottom:1px solid #E4E6E9">
+              <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076; margin-bottom:10px">VOLUME</div>
+              <div style="display:flex; border:1px solid #C9CCD1; height:28px">
+                <button style="flex:1; border:none; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer">Quiet</button>
+                <button style="flex:1; border:none; border-left:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer">Lower</button>
+                <button style="flex:1; border:none; border-left:1px solid #C9CCD1; background:#262626; color:#fff; font:500 11px Inter,sans-serif; cursor:pointer">Medium</button>
+                <button style="flex:1; border:none; border-left:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer">High</button>
+                <button style="flex:1; border:none; border-left:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer">Max</button>
+              </div>
+            </div>
+
+            <div style="padding:14px 16px; border-bottom:1px solid #E4E6E9">
+              <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076; margin-bottom:10px">OPTIONS</div>
+              <label style="display:flex; gap:8px; align-items:flex-start; cursor:pointer">
+                <input type="checkbox" style="width:13px;height:13px;margin:2px 0 0">
+                <span>
+                  <span style="display:block; font:500 12px Inter,sans-serif; color:#333438">Optimize for phone</span>
+                  <span style="display:block; font:400 10px Inter,sans-serif; color:#6E7076">BANDPASS 300–3400 HZ</span>
+                </span>
+              </label>
+            </div>
+
+            <div style="padding:16px; margin-top:auto">
+              <button style="width:100%; box-sizing:border-box; height:40px; border:none; background:#262626; color:#fff; font:500 13px Inter,sans-serif; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer"><i data-lucide="download" style="width:15px;height:15px"></i>Convert 3 files</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:28px; box-sizing:border-box; background:#131313; padding:0 16px; display:flex; align-items:center; justify-content:space-between; font:400 11px Inter,sans-serif; color:#B9BCC2">
+          <div style="display:flex; gap:20px"><span style="color:#fff">3 FILES</span><span>12.4 MB</span><span>PCM16 · 8K MONO</span><span>MEDIUM</span></div>
+          <div style="display:flex; gap:20px"><span>BANDPASS OFF</span><span>READY</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 2e — ACX ══════════ -->
+    <div id="2e" style="display:flex; flex-direction:column; gap:10px">
+      <div style="display:flex; align-items:center; gap:10px">
+        <span style="font:700 11px/1 Inter,sans-serif; background:#131313; color:#fff; padding:5px 7px; letter-spacing:0.08em">2e</span>
+        <span style="font:500 13px Inter,sans-serif; color:#131313">Workspace · ACX tab — results table reads like a measurement report</span>
+      </div>
+      <div data-screen-label="2e ACX" style="width:1360px; background:#F2F3F5; border:1px solid #C9CCD1; overflow:hidden; color:#333438; display:flex; flex-direction:column">
+
+        <div style="height:44px; box-sizing:border-box; background:#131313; padding:0 16px; display:flex; align-items:center; justify-content:space-between">
+          <div style="display:flex; align-items:center; gap:24px">
+            <div style="font:700 12px Inter,sans-serif; letter-spacing:0.16em; color:#fff">VO TOOLS</div>
+            <div style="display:flex; align-items:center; gap:4px">
+              <a href="#1b" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">Analysis</a>
+              <a href="#2c" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">Teleprompter</a>
+              <a href="#2d" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#B9BCC2">Convert</a>
+              <a href="#2e" style="height:44px; display:flex; align-items:center; padding:0 12px; font:500 12px Inter,sans-serif; background:#F2F3F5; color:#131313">ACX</a>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:1px solid #3A3A3A; background:transparent; color:#B9BCC2; cursor:pointer"><i data-lucide="moon" style="width:13px;height:13px"></i></button>
+            <a href="#2e" style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; box-sizing:border-box; border:1px solid #3A3A3A; font:400 12px Inter,sans-serif; color:#E4E6E9"><i data-lucide="message-circle" style="width:13px;height:13px"></i>Discord</a>
+            <a href="#2e" style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; box-sizing:border-box; background:#fff; color:#131313; font:500 12px Inter,sans-serif"><i data-lucide="heart" style="width:13px;height:13px;fill:currentColor"></i>Support</a>
+          </div>
+        </div>
+
+        <div style="background:#fff; border-bottom:1px solid #E4E6E9; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:16px">
+          <div style="display:flex; align-items:center; gap:10px">
+            <i data-lucide="check-circle-2" style="width:14px;height:14px;color:#6E7076"></i>
+            <span style="font:600 15px Inter,sans-serif; color:#131313">Compliance batch</span>
+            <span style="font:400 11px Inter,sans-serif; color:#6E7076">2 ANALYZED · 1 PASS · 1 FAIL</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; border:1px solid #C9CCD1; background:#fff; color:#333438; font:400 11px Inter,sans-serif; cursor:pointer"><i data-lucide="download" style="width:13px;height:13px"></i>Export CSV</button>
+            <button style="display:flex; align-items:center; gap:6px; height:26px; padding:0 12px; border:none; background:#262626; color:#fff; font:500 11px Inter,sans-serif; cursor:pointer">Analyze all</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 340px; gap:1px; background:#E4E6E9">
+          <div style="background:#fff; padding:16px; height:560px; box-sizing:border-box">
+            <label style="display:flex; align-items:center; justify-content:center; gap:8px; height:64px; border:1px dashed #C9CCD1; background:#FAFBFC; cursor:pointer">
+              <i data-lucide="upload" style="width:16px;height:16px;color:#6E7076"></i>
+              <span style="font:500 13px Inter,sans-serif; color:#333438">Drop audiobook files, or click to browse</span>
+              <span style="font:400 10px Inter,sans-serif; color:#6E7076">MP3 · WAV · FLAC</span>
+            </label>
+
+            <div style="margin-top:16px; border:1px solid #E4E6E9">
+              <div style="display:grid; grid-template-columns:1fr 76px 90px 90px 86px 86px 96px 32px; gap:8px; padding:0 12px; height:30px; align-items:center; border-bottom:1px solid #E4E6E9; background:#FAFBFC; font:600 10px Inter,sans-serif; letter-spacing:0.1em; color:#6E7076">
+                <span>FILE</span><span>STATUS</span><span style="text-align:right">BITRATE</span><span style="text-align:right">RATE</span><span style="text-align:right">RMS</span><span style="text-align:right">PEAK</span><span style="text-align:right">DURATION</span><span></span>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 76px 90px 90px 86px 86px 96px 32px; gap:8px; padding:10px 12px; align-items:center; border-bottom:1px solid #E4E6E9">
+                <div><div style="font:400 13px Inter,sans-serif; color:#131313">chapter-01.mp3</div><div style="font:400 10px Inter,sans-serif; color:#6E7076">38.14 MB · MONO · CBR</div></div>
+                <span style="font:600 11px Inter,sans-serif; color:#167A4B; border:1px solid #167A4B; padding:2px 6px; justify-self:start">PASS</span>
+                <span style="font:400 12px Inter,sans-serif; color:#333438; text-align:right">192k</span>
+                <span style="font:400 12px Inter,sans-serif; color:#333438; text-align:right">44.1k</span>
+                <span style="font:400 12px Inter,sans-serif; color:#333438; text-align:right">−20.1</span>
+                <span style="font:400 12px Inter,sans-serif; color:#333438; text-align:right">−3.4</span>
+                <div style="text-align:right"><div style="font:400 12px Inter,sans-serif; color:#333438">42:18</div><div style="font:400 10px Inter,sans-serif; color:#6E7076">0.6 / 1.2s</div></div>
+                <button style="justify-self:end; width:24px; height:24px; border:none; background:transparent; color:#6E7076; display:flex; align-items:center; justify-content:center; cursor:pointer"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 76px 90px 90px 86px 86px 96px 32px; gap:8px; padding:10px 12px; align-items:center">
+                <div><div style="font:400 13px Inter,sans-serif; color:#131313">chapter-02.mp3</div><div style="font:400 10px Inter,sans-serif; color:#6E7076">41.02 MB · MONO · CBR</div></div>
+                <span style="font:600 11px Inter,sans-serif; color:#B3261E; border:1px solid #B3261E; padding:2px 6px; justify-self:start">FAIL</span>
+                <span style="font:400 12px Inter,sans-serif; color:#333438; text-align:right">256k</span>
+                <span style="font:400 12px Inter,sans-serif; color:#333438; text-align:right">44.1k</span>
+                <span style="font:600 12px Inter,sans-serif; color:#B3261E; text-align:right">−16.8</span>
+                <span style="font:600 12px Inter,sans-serif; color:#B3261E; text-align:right">−1.9</span>
+                <div style="text-align:right"><div style="font:400 12px Inter,sans-serif; color:#333438">45:03</div><div style="font:400 10px Inter,sans-serif; color:#6E7076">0.2 / 0.4s</div></div>
+                <button style="justify-self:end; width:24px; height:24px; border:none; background:transparent; color:#6E7076; display:flex; align-items:center; justify-content:center; cursor:pointer"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
+              </div>
+            </div>
+
+            <div style="margin-top:12px; padding:10px 12px; border:1px solid #E4E6E9; background:#FAFBFC; display:flex; align-items:flex-start; gap:8px">
+              <i data-lucide="x-circle" style="width:14px;height:14px;color:#B3261E"></i>
+              <div>
+                <div style="font:500 12px Inter,sans-serif; color:#131313">chapter-02.mp3 — 2 measurements out of range</div>
+                <div style="font:400 11px Inter,sans-serif; color:#6E7076; margin-top:2px">RMS −16.8 dB (LIMIT −23 TO −18) · PEAK −1.9 dB (LIMIT ≤ −3)</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#fff; display:flex; flex-direction:column">
+            <div style="padding:14px 16px; border-bottom:1px solid #E4E6E9">
+              <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076; margin-bottom:10px">ACX REQUIREMENTS</div>
+              <div style="display:flex; flex-direction:column">
+                <div style="display:flex; align-items:center; justify-content:space-between; height:30px; border-bottom:1px solid #F2F3F5"><span style="font:400 12px Inter,sans-serif; color:#333438">MP3, constant bit rate</span><span style="font:400 11px Inter,sans-serif; color:#131313">≥ 192 kbps</span></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; height:30px; border-bottom:1px solid #F2F3F5"><span style="font:400 12px Inter,sans-serif; color:#333438">Sample rate</span><span style="font:400 11px Inter,sans-serif; color:#131313">44.1 kHz</span></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; height:30px; border-bottom:1px solid #F2F3F5"><span style="font:400 12px Inter,sans-serif; color:#333438">Integrated loudness</span><span style="font:400 11px Inter,sans-serif; color:#131313">−23 to −18 dB</span></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; height:30px; border-bottom:1px solid #F2F3F5"><span style="font:400 12px Inter,sans-serif; color:#333438">Peak amplitude</span><span style="font:400 11px Inter,sans-serif; color:#131313">≤ −3 dB</span></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; height:30px"><span style="font:400 12px Inter,sans-serif; color:#333438">Lead / trail silence</span><span style="font:400 11px Inter,sans-serif; color:#6E7076">measured, not scored</span></div>
+              </div>
+            </div>
+
+            <div style="padding:14px 16px; border-bottom:1px solid #E4E6E9">
+              <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076; margin-bottom:10px">RESOURCES</div>
+              <div style="display:flex; flex-direction:column; gap:8px">
+                <a href="#2e" style="display:flex; align-items:center; gap:8px; font:400 12px Inter,sans-serif; color:#131313"><i data-lucide="external-link" style="width:13px;height:13px"></i>Official ACX audio requirements</a>
+                <a href="#2e" style="display:flex; align-items:center; gap:8px; font:400 12px Inter,sans-serif; color:#131313"><i data-lucide="external-link" style="width:13px;height:13px"></i>Understanding the ACX requirements</a>
+                <a href="#2e" style="display:flex; align-items:center; gap:8px; font:400 12px Inter,sans-serif; color:#131313"><i data-lucide="external-link" style="width:13px;height:13px"></i>The ACX producer&apos;s checklist</a>
+                <a href="#2e" style="display:flex; align-items:center; gap:8px; font:400 12px Inter,sans-serif; color:#131313"><i data-lucide="external-link" style="width:13px;height:13px"></i>ACX Audio Lab</a>
+              </div>
+            </div>
+
+            <div style="padding:14px 16px">
+              <div style="font:600 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076; margin-bottom:8px">ANALYSIS ONLY</div>
+              <p style="margin:0; font:400 12px/1.55 Inter,sans-serif; color:#333438">Files are measured, never modified. A failing file has to be re-mastered in your editor, then checked again.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:28px; box-sizing:border-box; background:#131313; padding:0 16px; display:flex; align-items:center; justify-content:space-between; font:400 11px Inter,sans-serif; color:#B9BCC2">
+          <div style="display:flex; gap:20px"><span style="color:#fff">2 ANALYZED</span><span>1 PASS</span><span>1 FAIL</span></div>
+          <div style="display:flex; gap:20px"><span>87:21 TOTAL RUNTIME</span><span>REPORT READY</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 2f + 2g — fullscreen & remote ══════════ -->
+    <div style="display:flex; gap:48px; align-items:flex-start">
+      <div id="2f" style="display:flex; flex-direction:column; gap:10px">
+        <div style="display:flex; align-items:center; gap:10px">
+          <span style="font:700 11px/1 Inter,sans-serif; background:#131313; color:#fff; padding:5px 7px; letter-spacing:0.08em">2f</span>
+          <span style="font:500 13px Inter,sans-serif; color:#131313">Teleprompter, running</span>
+        </div>
+        <div data-screen-label="2f Teleprompter fullscreen" style="width:880px; height:560px; background:#0A0A0A; border:1px solid #C9CCD1; position:relative; overflow:hidden">
+          <div style="position:absolute; top:0; left:0; right:0; height:44px; box-sizing:border-box; padding:0 20px; display:flex; align-items:center; justify-content:space-between; background:linear-gradient(to bottom,rgba(0,0,0,0.95),rgba(0,0,0,0))">
+            <div style="display:flex; gap:24px; font:400 11px Inter,sans-serif; color:#B9BCC2">
+              <span>ELAPSED <span style="color:#fff; font-weight:600">0:12</span></span>
+              <span>REMAINING <span style="color:#fff; font-weight:600">0:19</span></span>
+              <span>SPEED <span style="color:#fff; font-weight:600">1.0×</span></span>
+              <span>TEXT <span style="color:#fff; font-weight:600">M</span></span>
+              <span>MIRROR <span style="color:#fff; font-weight:600">OFF</span></span>
+            </div>
+            <button style="width:26px; height:26px; border:1px solid #333; background:transparent; color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer"><i data-lucide="x" style="width:14px;height:14px"></i></button>
+          </div>
+
+          <div style="position:absolute; top:0; left:0; right:0; height:2px; background:#262626"><div style="width:38%; height:2px; background:#fff"></div></div>
+
+          <div style="height:100%; display:flex; align-items:center; justify-content:center; padding:0 60px; box-sizing:border-box">
+            <p style="margin:0; max-width:720px; text-align:center; font:500 46px/1.4 Inter,sans-serif; color:#fff">Engineered for the way you actually work.</p>
+          </div>
+
+          <div style="position:absolute; bottom:0; left:0; right:0; padding:20px; box-sizing:border-box; background:linear-gradient(to top,#0A0A0A 0%,#0A0A0A 55%,rgba(10,10,10,0) 100%)">
+            <div style="display:flex; align-items:center; justify-content:center; gap:10px">
+              <button style="width:44px; height:44px; border:1px solid #333; background:transparent; color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer"><i data-lucide="rotate-ccw" style="width:18px;height:18px"></i></button>
+              <button style="width:44px; height:44px; border:1px solid #333; background:transparent; color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer"><i data-lucide="flip-horizontal-2" style="width:18px;height:18px"></i></button>
+              <div style="display:flex; border:1px solid #333">
+                <button style="width:44px; height:44px; border:none; background:transparent; color:#fff; font:400 16px Inter,sans-serif; cursor:pointer">−</button>
+                <span style="width:64px; height:44px; display:flex; align-items:center; justify-content:center; border-left:1px solid #333; border-right:1px solid #333; font:600 12px Inter,sans-serif; color:#fff">1.0×</span>
+                <button style="width:44px; height:44px; border:none; background:transparent; color:#fff; font:400 16px Inter,sans-serif; cursor:pointer">+</button>
+              </div>
+              <button style="width:56px; height:56px; border:none; background:#fff; color:#0A0A0A; display:flex; align-items:center; justify-content:center; cursor:pointer"><i data-lucide="pause" style="width:22px;height:22px;fill:currentColor"></i></button>
+              <div style="display:flex; border:1px solid #333">
+                <button style="width:44px; height:44px; border:none; background:transparent; color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer"><i data-lucide="type" style="width:14px;height:14px"></i></button>
+                <span style="width:64px; height:44px; display:flex; align-items:center; justify-content:center; border-left:1px solid #333; border-right:1px solid #333; font:600 12px Inter,sans-serif; color:#fff">MED</span>
+                <button style="width:44px; height:44px; border:none; background:transparent; color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer"><i data-lucide="type" style="width:19px;height:19px"></i></button>
+              </div>
+            </div>
+            <div style="margin-top:12px; text-align:center; font:400 10px Inter,sans-serif; letter-spacing:0.08em; color:#8A8D93">SPACE PLAY · ↑↓ SPEED · +− TEXT · M MIRROR · HOME RESET · ESC EXIT</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="2g" style="display:flex; flex-direction:column; gap:10px">
+        <div style="display:flex; align-items:center; gap:10px">
+          <span style="font:700 11px/1 Inter,sans-serif; background:#131313; color:#fff; padding:5px 7px; letter-spacing:0.08em">2g</span>
+          <span style="font:500 13px Inter,sans-serif; color:#131313">Phone remote</span>
+        </div>
+        <div data-screen-label="2g Phone remote" style="width:390px; height:720px; background:#0A0A0A; border:1px solid #C9CCD1; display:flex; flex-direction:column; overflow:hidden">
+          <div style="padding:14px 16px; border-bottom:1px solid #262626; display:flex; align-items:center; justify-content:space-between">
+            <div>
+              <div style="font:700 11px Inter,sans-serif; letter-spacing:0.16em; color:#fff">VO TOOLS · REMOTE</div>
+              <div style="font:400 11px Inter,sans-serif; color:#8A8D93; margin-top:3px">ROOM 4F2A9C</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px; font:400 11px Inter,sans-serif; color:#fff"><i data-lucide="wifi" style="width:13px;height:13px"></i>LINKED</div>
+          </div>
+
+          <div style="padding:16px; display:flex; flex-direction:column; gap:16px; flex:1">
+            <div>
+              <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:8px">
+                <span style="font:400 10px Inter,sans-serif; letter-spacing:0.12em; color:#8A8D93">PROGRESS</span>
+                <span style="font:600 12px Inter,sans-serif; color:#fff">38%</span>
+              </div>
+              <div style="height:4px; background:#262626"><div style="width:38%; height:4px; background:#fff"></div></div>
+              <div style="display:flex; justify-content:space-between; margin-top:8px; font:400 11px Inter,sans-serif; color:#8A8D93"><span>0:12 ELAPSED</span><span>0:19 LEFT</span></div>
+            </div>
+
+            <button style="width:100%; box-sizing:border-box; height:120px; border:none; background:#fff; color:#0A0A0A; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; cursor:pointer">
+              <i data-lucide="pause" style="width:36px;height:36px;fill:currentColor"></i>
+              <span style="font:600 13px Inter,sans-serif; letter-spacing:0.16em">PAUSE</span>
+            </button>
+
+            <div>
+              <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:8px">
+                <span style="font:400 10px Inter,sans-serif; letter-spacing:0.12em; color:#8A8D93">SPEED</span>
+                <span style="font:600 20px Inter,sans-serif; color:#fff">1.2×</span>
+              </div>
+              <div style="display:flex; gap:8px">
+                <button style="flex:1; height:56px; border:1px solid #333; background:transparent; color:#fff; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer"><i data-lucide="chevron-down" style="width:18px;height:18px"></i><span style="font:600 11px Inter,sans-serif; letter-spacing:0.1em">SLOWER</span></button>
+                <button style="flex:1; height:56px; border:1px solid #333; background:transparent; color:#fff; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer"><i data-lucide="chevron-up" style="width:18px;height:18px"></i><span style="font:600 11px Inter,sans-serif; letter-spacing:0.1em">FASTER</span></button>
+              </div>
+            </div>
+
+            <div>
+              <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:8px">
+                <span style="font:400 10px Inter,sans-serif; letter-spacing:0.12em; color:#8A8D93">TEXT SIZE</span>
+                <span style="font:600 20px Inter,sans-serif; color:#fff">M</span>
+              </div>
+              <div style="display:flex; gap:8px">
+                <button style="flex:1; height:56px; border:1px solid #333; background:transparent; color:#fff; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer"><i data-lucide="type" style="width:14px;height:14px"></i><span style="font:600 11px Inter,sans-serif; letter-spacing:0.1em">SMALLER</span></button>
+                <button style="flex:1; height:56px; border:1px solid #333; background:transparent; color:#fff; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer"><i data-lucide="type" style="width:20px;height:20px"></i><span style="font:600 11px Inter,sans-serif; letter-spacing:0.1em">BIGGER</span></button>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:8px; margin-top:auto">
+              <button style="flex:1; height:56px; border:1px solid #333; background:transparent; color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer"><i data-lucide="flip-horizontal-2" style="width:18px;height:18px"></i><span style="font:600 11px Inter,sans-serif; letter-spacing:0.1em">MIRROR OFF</span></button>
+              <button style="flex:1; height:56px; border:1px solid #333; background:transparent; color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer"><i data-lucide="rotate-ccw" style="width:18px;height:18px"></i><span style="font:600 11px Inter,sans-serif; letter-spacing:0.1em">RESTART</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section style="display:flex; flex-direction:column; gap:20px; padding:48px">
+  <div style="display:flex; align-items:baseline; gap:16px">
+    <div style="font:700 12px/1 Inter,sans-serif; letter-spacing:0.14em; text-transform:uppercase; color:#131313">Turn 1 — Script Analysis, three directions</div>
+    <div style="font:400 12px/1.5 Inter,sans-serif; color:#5f6167">Monochrome ink, dense pro-tool spacing, Inter with tabular figures. <a href="#1a">1a</a> and <a href="#1c">1c</a> keep separate pages; <a href="#1b">1b</a> is the unified workspace.</div>
+  </div>
+
+  <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start">
+
+    <!-- ══════════ 1a ══════════ -->
+    <div id="1a" style="display:flex; flex-direction:column; gap:10px">
+      <div style="display:flex; align-items:center; gap:10px">
+        <span style="font:700 11px/1 Inter,sans-serif; background:#131313; color:#fff; padding:5px 7px; letter-spacing:0.08em">1a</span>
+        <span style="font:500 13px Inter,sans-serif; color:#131313">Separate page — metrics as an instrument panel</span>
+      </div>
+
+      <div data-screen-label="1a Script Analysis" style="width:1360px; background:#F2F3F5; border:1px solid #C9CCD1; overflow:hidden; color:#333438">
+
+        <!-- top bar -->
+        <div style="height:48px; box-sizing:border-box; background:#fff; border-bottom:1px solid #E4E6E9; padding:0 20px; display:flex; align-items:center; justify-content:space-between">
+          <div style="display:flex; align-items:center; gap:28px">
+            <div style="font:700 13px Inter,sans-serif; letter-spacing:0.16em; color:#131313">VO TOOLS</div>
+            <div style="display:flex; align-items:center; gap:2px">
+              <a href="#1a" style="padding:6px 10px; font:500 13px Inter,sans-serif; color:#131313; box-shadow:inset 0 -2px 0 #262626">Script</a>
+              <a href="#1a" style="padding:6px 10px; font:400 13px Inter,sans-serif; color:#6E7076">Teleprompter</a>
+              <a href="#1a" style="padding:6px 10px; font:400 13px Inter,sans-serif; color:#6E7076">Convert</a>
+              <a href="#1a" style="padding:6px 10px; font:400 13px Inter,sans-serif; color:#6E7076">ACX</a>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="width:28px; height:28px; display:flex; align-items:center; justify-content:center; border:1px solid #E4E6E9; background:#fff; color:#6E7076; cursor:pointer"><i data-lucide="moon" style="width:14px;height:14px"></i></button>
+            <a href="#1a" style="display:flex; align-items:center; gap:6px; height:28px; padding:0 10px; box-sizing:border-box; border:1px solid #C9CCD1; font:500 12px Inter,sans-serif; color:#333438"><i data-lucide="message-circle" style="width:13px;height:13px"></i>Discord</a>
+            <a href="#1a" style="display:flex; align-items:center; gap:6px; height:28px; padding:0 12px; box-sizing:border-box; background:#262626; color:#fff; font:500 12px Inter,sans-serif"><i data-lucide="heart" style="width:13px;height:13px;fill:currentColor"></i>Support</a>
+          </div>
+        </div>
+
+        <!-- page header -->
+        <div style="background:#fff; border-bottom:1px solid #E4E6E9; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px">
+          <div style="display:flex; align-items:baseline; gap:12px">
+            <h1 style="margin:0; font:600 19px Inter,sans-serif; color:#131313; letter-spacing:-0.01em">Script Analysis</h1>
+            <span style="font:400 12px Inter,sans-serif; color:#6E7076">Word count, timing and pricing</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px">
+            <span style="display:flex; align-items:center; gap:6px; font:400 11px Inter,sans-serif; color:#6E7076"><span style="width:5px; height:5px; border-radius:99px; background:#167A4B"></span>SAVED 2M AGO</span>
+            <div style="display:flex; border:1px solid #C9CCD1; height:28px">
+              <button style="padding:0 12px; border:none; background:#262626; color:#fff; font:500 12px Inter,sans-serif; cursor:pointer">Single</button>
+              <button style="padding:0 12px; border:none; border-left:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 12px Inter,sans-serif; cursor:pointer">Compare</button>
+            </div>
+            <button style="display:flex; align-items:center; gap:6px; height:28px; padding:0 10px; border:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 12px Inter,sans-serif; cursor:pointer"><i data-lucide="rotate-ccw" style="width:13px;height:13px"></i>Reset</button>
+          </div>
+        </div>
+
+        <!-- body -->
+        <div style="display:grid; grid-template-columns:1fr 372px; gap:16px; padding:16px 20px; align-items:stretch">
+
+          <!-- editor -->
+          <div style="background:#fff; border:1px solid #E4E6E9; display:flex; flex-direction:column; min-height:668px">
+            <div style="height:34px; box-sizing:border-box; border-bottom:1px solid #E4E6E9; padding:0 12px; display:flex; align-items:center; justify-content:space-between">
+              <span style="font:700 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">SCRIPT</span>
+              <div style="display:flex; align-items:center; gap:12px">
+                <span style="font:400 11px Inter,sans-serif; color:#6E7076">412 CHARS</span>
+                <div style="display:flex; border:1px solid #E4E6E9; height:22px">
+                  <button style="padding:0 8px; border:none; background:#F2F3F5; color:#131313; font:500 11px Inter,sans-serif; cursor:pointer">Edit</button>
+                  <button style="padding:0 8px; border:none; border-left:1px solid #E4E6E9; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer">Pronunciation</button>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1; padding:20px 24px; font:400 15px/1.75 Inter,sans-serif; color:#333438; white-space:pre-wrap; overflow:hidden">Introducing the Vantage Series. Engineered for the way you actually work — and priced at $1,250 for a limited time.
+
+Every unit ships with a 10,000-hour warranty. That's a full 15% longer than anything else in its class.
+
+Visit vantage.example.com to reserve yours before October 12th.</div>
+            <div style="height:30px; box-sizing:border-box; border-top:1px solid #E4E6E9; background:#FAFBFC; padding:0 12px; display:flex; align-items:center; gap:20px; font:400 11px Inter,sans-serif; color:#6E7076">
+              <span>78 WORDS</span><span>412 CHARS</span><span>6 PAUSES</span><span style="margin-left:auto; color:#6E7076">EXPANSION: NUMBERS, DATES, CURRENCIES, PERCENTAGES, MEASUREMENTS</span>
+            </div>
+          </div>
+
+          <!-- rail -->
+          <div style="display:flex; flex-direction:column; gap:12px">
+
+            <div style="background:#fff; border:1px solid #E4E6E9">
+              <div style="padding:14px 16px 12px; border-bottom:1px solid #E4E6E9">
+                <div style="font:700 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">SPOKEN WORDS</div>
+                <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-top:6px">
+                  <div style="font:700 44px/1 Inter,sans-serif; color:#131313">78</div>
+                  <div style="font:400 11px Inter,sans-serif; color:#6E7076; padding-bottom:4px">AT 150 WPM</div>
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr">
+                <div style="padding:12px 16px; border-right:1px solid #E4E6E9; border-bottom:1px solid #E4E6E9">
+                  <div style="font:700 10px Inter,sans-serif; letter-spacing:0.12em; color:#6E7076">READ TIME</div>
+                  <div style="font:700 20px Inter,sans-serif; color:#333438; margin-top:4px">0:31</div>
+                  <div style="font:400 10px Inter,sans-serif; color:#6E7076">WORDS ONLY</div>
+                </div>
+                <div style="padding:12px 16px; border-bottom:1px solid #E4E6E9">
+                  <div style="font:700 10px Inter,sans-serif; letter-spacing:0.12em; color:#6E7076">PAUSES</div>
+                  <div style="font:700 20px Inter,sans-serif; color:#333438; margin-top:4px">+2.4s</div>
+                  <div style="font:400 10px Inter,sans-serif; color:#6E7076">6 DETECTED</div>
+                </div>
+                <div style="grid-column:span 2; padding:12px 16px; background:#131313; display:flex; align-items:baseline; justify-content:space-between">
+                  <div style="font:700 10px Inter,sans-serif; letter-spacing:0.14em; color:#9A9CA2">TOTAL TIME</div>
+                  <div style="font:700 26px Inter,sans-serif; color:#fff">0:34</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background:#fff; border:1px solid #E4E6E9; padding:14px 16px">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
+                <span style="font:700 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">READING SPEED</span>
+                <span style="font:700 12px Inter,sans-serif; color:#131313">150 WPM</span>
+              </div>
+              <input type="range" min="75" max="160" value="150" style="width:100%; height:4px">
+              <div style="display:flex; justify-content:space-between; margin-top:6px; font:400 10px Inter,sans-serif; color:#6E7076"><span>75</span><span>160</span></div>
+            </div>
+
+            <div style="background:#fff; border:1px solid #E4E6E9; padding:14px 16px">
+              <div style="font:700 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076; margin-bottom:10px">TEXT EXPANSION</div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px 12px">
+                <sc-for list="{{ expansions }}" as="e" hint-placeholder-count="6">
+                  <label style="display:flex; gap:8px; align-items:flex-start; cursor:pointer">
+                    <input type="checkbox" checked="{{ e.on }}" style="margin:2px 0 0; width:13px; height:13px">
+                    <span>
+                      <span style="display:block; font:500 12px Inter,sans-serif; color:#333438">{{ e.label }}</span>
+                      <span style="display:block; font:400 10px/1.4 Inter,sans-serif; color:#6E7076">{{ e.example }}</span>
+                    </span>
+                  </label>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background:#fff; border:1px solid #E4E6E9">
+              <div style="padding:12px 16px; border-bottom:1px solid #E4E6E9; display:flex; align-items:center; justify-content:space-between">
+                <span style="font:700 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">QUOTE</span>
+                <div style="display:flex; border:1px solid #E4E6E9; height:22px">
+                  <button style="padding:0 8px; border:none; background:#F2F3F5; color:#131313; font:500 11px Inter,sans-serif; cursor:pointer">Per word</button>
+                  <button style="padding:0 8px; border:none; border-left:1px solid #E4E6E9; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer">Per min</button>
+                  <button style="padding:0 8px; border:none; border-left:1px solid #E4E6E9; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer">Project</button>
+                </div>
+              </div>
+
+              <div style="padding:12px 16px; display:flex; flex-direction:column; gap:8px; border-bottom:1px solid #E4E6E9">
+                <label style="display:flex; align-items:center; justify-content:space-between; gap:12px">
+                  <span style="font:400 12px Inter,sans-serif; color:#6E7076">Rate per word</span>
+                  <span style="display:flex; align-items:center; border:1px solid #C9CCD1; height:26px"><span style="padding:0 6px; font:400 11px Inter,sans-serif; color:#6E7076; border-right:1px solid #E4E6E9">$</span><input value="0.10" style="width:56px; border:none; height:24px; padding:0 6px; font:400 12px Inter,sans-serif; color:#131313; text-align:right; outline:none"></span>
+                </label>
+                <label style="display:flex; align-items:center; justify-content:space-between; gap:12px">
+                  <span style="font:400 12px Inter,sans-serif; color:#6E7076">Minimum session fee</span>
+                  <span style="display:flex; align-items:center; border:1px solid #C9CCD1; height:26px"><span style="padding:0 6px; font:400 11px Inter,sans-serif; color:#6E7076; border-right:1px solid #E4E6E9">$</span><input value="50" style="width:56px; border:none; height:24px; padding:0 6px; font:400 12px Inter,sans-serif; color:#131313; text-align:right; outline:none"></span>
+                </label>
+                <label style="display:flex; align-items:center; justify-content:space-between; gap:12px">
+                  <span style="font:400 12px Inter,sans-serif; color:#6E7076">Revision surcharge</span>
+                  <span style="display:flex; align-items:center; border:1px solid #C9CCD1; height:26px"><input value="50" style="width:56px; border:none; height:24px; padding:0 6px; font:400 12px Inter,sans-serif; color:#131313; text-align:right; outline:none"><span style="padding:0 6px; font:400 11px Inter,sans-serif; color:#6E7076; border-left:1px solid #E4E6E9">%</span></span>
+                </label>
+              </div>
+
+              <div style="padding:12px 16px; border-bottom:1px solid #E4E6E9">
+                <div style="display:flex; align-items:baseline; justify-content:space-between; padding-bottom:6px">
+                  <span style="font:400 12px Inter,sans-serif; color:#6E7076">Base (78 × $0.10)</span>
+                  <span style="font:400 12px Inter,sans-serif; color:#333438">$7.80</span>
+                </div>
+                <div style="display:flex; align-items:baseline; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid #E4E6E9">
+                  <span style="font:400 12px Inter,sans-serif; color:#6E7076">Minimum fee applied</span>
+                  <span style="font:400 12px Inter,sans-serif; color:#333438">$50.00</span>
+                </div>
+                <div style="display:flex; align-items:baseline; justify-content:space-between; padding-top:8px">
+                  <span style="font:600 13px Inter,sans-serif; color:#131313">Initial recording</span>
+                  <span style="font:700 22px Inter,sans-serif; color:#131313">$50.00</span>
+                </div>
+                <div style="display:flex; align-items:baseline; justify-content:space-between; margin-top:4px">
+                  <span style="font:400 12px Inter,sans-serif; color:#6E7076">Revision / pickup</span>
+                  <span style="font:400 12px Inter,sans-serif; color:#333438">$75.00</span>
+                </div>
+              </div>
+
+              <div style="padding:12px 16px; display:flex; flex-direction:column; gap:8px">
+                <input placeholder="Client name" style="box-sizing:border-box; height:26px; border:1px solid #C9CCD1; padding:0 8px; font:400 12px Inter,sans-serif; color:#131313; outline:none">
+                <input placeholder="Project name" style="box-sizing:border-box; height:26px; border:1px solid #C9CCD1; padding:0 8px; font:400 12px Inter,sans-serif; color:#131313; outline:none">
+                <button style="height:32px; border:none; background:#262626; color:#fff; font:500 12px Inter,sans-serif; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer"><i data-lucide="download" style="width:14px;height:14px"></i>Download quote PDF</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid #E4E6E9; background:#fff; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; font:400 11px Inter,sans-serif; color:#6E7076">
+          <div style="display:flex; gap:16px"><a href="#1a" style="color:#6E7076">VOTRAINER</a><a href="#1a" style="color:#6E7076">TREVOR O'HARE</a><a href="#1a" style="color:#6E7076">REALVOTALENT</a></div>
+          <div style="display:flex; gap:16px"><a href="#1a" style="color:#6E7076">DISCORD</a><a href="#1a" style="color:#6E7076">SOURCE</a><a href="#1a" style="color:#6E7076">SUPPORT</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 1b ══════════ -->
+    <div id="1b" style="display:flex; flex-direction:column; gap:10px">
+      <div style="display:flex; align-items:center; gap:10px">
+        <span style="font:700 11px/1 Inter,sans-serif; background:#131313; color:#fff; padding:5px 7px; letter-spacing:0.08em">1b</span>
+        <span style="font:500 13px Inter,sans-serif; color:#131313">Unified workspace — one script, four tools, persistent status bar</span>
+      </div>
+
+      <div data-screen-label="1b Workspace" style="width:1360px; background:#F2F3F5; border:1px solid #C9CCD1; overflow:hidden; color:#333438; display:flex; flex-direction:column">
+
+        <div style="height:44px; box-sizing:border-box; background:#131313; padding:0 16px; display:flex; align-items:center; justify-content:space-between">
+          <div style="display:flex; align-items:center; gap:24px">
+            <div style="font:700 12px Inter,sans-serif; letter-spacing:0.16em; color:#fff">VO TOOLS</div>
+            <div style="display:flex; align-items:center; gap:4px">
+              <a href="#1b" style="height:44px; display:flex; align-items:center; padding:0 12px; font:500 12px Inter,sans-serif; color:#fff; background:#F2F3F5; color:#131313">Analysis</a>
+              <a href="#1b" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#6E7076">Teleprompter</a>
+              <a href="#1b" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#6E7076">Convert</a>
+              <a href="#1b" style="height:44px; display:flex; align-items:center; padding:0 12px; font:400 12px Inter,sans-serif; color:#6E7076">ACX</a>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:1px solid #3A3A3A; background:transparent; color:#6E7076; cursor:pointer"><i data-lucide="moon" style="width:13px;height:13px"></i></button>
+            <a href="#1b" style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; box-sizing:border-box; border:1px solid #3A3A3A; font:400 12px Inter,sans-serif; color:#E4E6E9"><i data-lucide="message-circle" style="width:13px;height:13px"></i>Discord</a>
+            <a href="#1b" style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; box-sizing:border-box; background:#fff; color:#131313; font:500 12px Inter,sans-serif"><i data-lucide="heart" style="width:13px;height:13px;fill:currentColor"></i>Support</a>
+          </div>
+        </div>
+
+        <div style="background:#fff; border-bottom:1px solid #E4E6E9; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:16px">
+          <div style="display:flex; align-items:center; gap:10px">
+            <i data-lucide="file-text" style="width:14px;height:14px;color:#6E7076"></i>
+            <input value="Vantage Series — :30 radio" style="border:none; outline:none; font:600 15px Inter,sans-serif; color:#131313; width:280px">
+            <span style="display:flex; align-items:center; gap:6px; font:400 11px Inter,sans-serif; color:#6E7076"><span style="width:5px; height:5px; border-radius:99px; background:#167A4B"></span>SAVED</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <div style="display:flex; border:1px solid #C9CCD1; height:26px">
+              <button style="padding:0 10px; border:none; background:#262626; color:#fff; font:500 11px Inter,sans-serif; cursor:pointer">Single</button>
+              <button style="padding:0 10px; border:none; border-left:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer">Compare</button>
+            </div>
+            <button style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; border:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer"><i data-lucide="scroll-text" style="width:13px;height:13px"></i>Send to teleprompter</button>
+            <button style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; border:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer"><i data-lucide="rotate-ccw" style="width:13px;height:13px"></i>Reset</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 340px; gap:1px; background:#E4E6E9; flex:1">
+
+          <div style="background:#fff; display:flex; flex-direction:column; height:640px">
+            <div style="height:32px; box-sizing:border-box; border-bottom:1px solid #E4E6E9; padding:0 14px; display:flex; align-items:center; justify-content:space-between">
+              <div style="display:flex; gap:2px">
+                <button style="height:32px; padding:0 10px; border:none; background:transparent; font:500 11px Inter,sans-serif; color:#131313; box-shadow:inset 0 -2px 0 #262626; cursor:pointer">Edit</button>
+                <button style="height:32px; padding:0 10px; border:none; background:transparent; font:400 11px Inter,sans-serif; color:#6E7076; cursor:pointer">Pronunciation</button>
+              </div>
+              <span style="font:400 11px Inter,sans-serif; color:#6E7076">412 CHARS</span>
+            </div>
+            <div style="flex:1; padding:24px 28px; font:400 15px/1.8 Inter,sans-serif; color:#333438; white-space:pre-wrap; overflow:hidden">Introducing the Vantage Series. Engineered for the way you actually work — and priced at $1,250 for a limited time.
+
+Every unit ships with a 10,000-hour warranty. That's a full 15% longer than anything else in its class.
+
+Visit vantage.example.com to reserve yours before October 12th.</div>
+          </div>
+
+          <div style="background:#fff; display:flex; flex-direction:column">
+            <div style="padding:16px; border-bottom:1px solid #E4E6E9">
+              <div style="display:flex; align-items:flex-end; justify-content:space-between">
+                <div>
+                  <div style="font:700 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">SPOKEN WORDS</div>
+                  <div style="font:700 40px/1 Inter,sans-serif; color:#131313; margin-top:6px">78</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font:700 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">TOTAL</div>
+                  <div style="font:700 40px/1 Inter,sans-serif; color:#131313; margin-top:6px">0:34</div>
+                </div>
+              </div>
+              <div style="display:flex; gap:16px; margin-top:10px; font:400 11px Inter,sans-serif; color:#6E7076">
+                <span>WORDS ONLY 0:31</span><span>PAUSES +2.4s / 6</span>
+              </div>
+            </div>
+
+            <div style="padding:14px 16px; border-bottom:1px solid #E4E6E9">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
+                <span style="font:700 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">READING SPEED</span>
+                <span style="font:700 12px Inter,sans-serif; color:#131313">150 WPM</span>
+              </div>
+              <input type="range" min="75" max="160" value="150" style="width:100%; height:4px">
+            </div>
+
+            <div style="border-bottom:1px solid #E4E6E9">
+              <div style="padding:12px 16px 8px; font:700 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">TEXT EXPANSION</div>
+              <div style="padding:0 16px 12px; display:flex; flex-wrap:wrap; gap:6px">
+                <sc-for list="{{ expansions }}" as="e" hint-placeholder-count="6">
+                  <label style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border:1px solid {{ e.chipBorder }}; background:{{ e.chipBg }}; cursor:pointer">
+                    <input type="checkbox" checked="{{ e.on }}" style="width:12px; height:12px; margin:0">
+                    <span style="font:400 11px Inter,sans-serif; color:#333438">{{ e.label }}</span>
+                  </label>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="flex:1">
+              <div style="padding:12px 16px 8px; display:flex; align-items:center; justify-content:space-between">
+                <span style="font:700 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">QUOTE</span>
+                <select style="height:24px; border:1px solid #C9CCD1; background:#fff; font:400 11px Inter,sans-serif; color:#333438; padding:0 4px"><option>Per word</option><option>Per minute</option><option>Per project</option></select>
+              </div>
+              <div style="padding:0 16px 12px; display:flex; flex-direction:column; gap:6px">
+                <label style="display:flex; align-items:center; justify-content:space-between"><span style="font:400 12px Inter,sans-serif; color:#6E7076">Rate / word</span><input value="$0.10" style="width:70px; height:24px; border:1px solid #C9CCD1; padding:0 6px; font:400 11px Inter,sans-serif; text-align:right; outline:none; color:#131313"></label>
+                <label style="display:flex; align-items:center; justify-content:space-between"><span style="font:400 12px Inter,sans-serif; color:#6E7076">Minimum fee</span><input value="$50" style="width:70px; height:24px; border:1px solid #C9CCD1; padding:0 6px; font:400 11px Inter,sans-serif; text-align:right; outline:none; color:#131313"></label>
+                <label style="display:flex; align-items:center; justify-content:space-between"><span style="font:400 12px Inter,sans-serif; color:#6E7076">Revision surcharge</span><input value="50%" style="width:70px; height:24px; border:1px solid #C9CCD1; padding:0 6px; font:400 11px Inter,sans-serif; text-align:right; outline:none; color:#131313"></label>
+              </div>
+              <div style="margin:0 16px; border-top:1px solid #E4E6E9; padding:10px 0; display:flex; align-items:baseline; justify-content:space-between">
+                <span style="font:600 13px Inter,sans-serif; color:#131313">Initial recording</span>
+                <span style="font:700 20px Inter,sans-serif; color:#131313">$50.00</span>
+              </div>
+              <div style="margin:0 16px 12px; display:flex; align-items:baseline; justify-content:space-between; font:400 11px Inter,sans-serif; color:#6E7076">
+                <span>MIN FEE APPLIED · BASE $7.80</span><span>PICKUP $75.00</span>
+              </div>
+              <div style="padding:0 16px 16px; display:flex; flex-direction:column; gap:8px">
+                <div style="display:flex; gap:8px">
+                  <input placeholder="Client" style="flex:1; min-width:0; box-sizing:border-box; height:26px; border:1px solid #C9CCD1; padding:0 8px; font:400 12px Inter,sans-serif; outline:none; color:#131313">
+                  <input placeholder="Project" style="flex:1; min-width:0; box-sizing:border-box; height:26px; border:1px solid #C9CCD1; padding:0 8px; font:400 12px Inter,sans-serif; outline:none; color:#131313">
+                </div>
+                <button style="height:30px; border:none; background:#262626; color:#fff; font:500 12px Inter,sans-serif; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer"><i data-lucide="download" style="width:14px;height:14px"></i>Download quote PDF</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:28px; box-sizing:border-box; background:#131313; padding:0 16px; display:flex; align-items:center; justify-content:space-between; font:400 11px Inter,sans-serif; color:#B9BCC2">
+          <div style="display:flex; gap:20px"><span style="color:#fff">78 WORDS</span><span>0:34 TOTAL</span><span>150 WPM</span><span>6 PAUSES</span></div>
+          <div style="display:flex; gap:20px"><span>QUOTE $50.00</span><span>AUTOSAVED</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 1c ══════════ -->
+    <div id="1c" style="display:flex; flex-direction:column; gap:10px">
+      <div style="display:flex; align-items:center; gap:10px">
+        <span style="font:700 11px/1 Inter,sans-serif; background:#131313; color:#fff; padding:5px 7px; letter-spacing:0.08em">1c</span>
+        <span style="font:500 13px Inter,sans-serif; color:#131313">Separate page — script first, metrics as a ribbon, settings in a drawer</span>
+      </div>
+
+      <div data-screen-label="1c Script Analysis ribbon" style="width:1360px; background:#F2F3F5; border:1px solid #C9CCD1; overflow:hidden; color:#333438">
+
+        <div style="height:48px; box-sizing:border-box; background:#fff; border-bottom:1px solid #E4E6E9; padding:0 20px; display:flex; align-items:center; justify-content:space-between">
+          <div style="display:flex; align-items:center; gap:28px">
+            <div style="font:700 13px Inter,sans-serif; letter-spacing:0.16em; color:#131313">VO TOOLS</div>
+            <div style="display:flex; align-items:center; gap:2px">
+              <a href="#1c" style="padding:6px 10px; font:500 13px Inter,sans-serif; color:#131313; box-shadow:inset 0 -2px 0 #262626">Script</a>
+              <a href="#1c" style="padding:6px 10px; font:400 13px Inter,sans-serif; color:#6E7076">Teleprompter</a>
+              <a href="#1c" style="padding:6px 10px; font:400 13px Inter,sans-serif; color:#6E7076">Convert</a>
+              <a href="#1c" style="padding:6px 10px; font:400 13px Inter,sans-serif; color:#6E7076">ACX</a>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="width:28px; height:28px; display:flex; align-items:center; justify-content:center; border:1px solid #E4E6E9; background:#fff; color:#6E7076; cursor:pointer"><i data-lucide="moon" style="width:14px;height:14px"></i></button>
+            <a href="#1c" style="display:flex; align-items:center; gap:6px; height:28px; padding:0 10px; box-sizing:border-box; border:1px solid #C9CCD1; font:500 12px Inter,sans-serif; color:#333438"><i data-lucide="message-circle" style="width:13px;height:13px"></i>Discord</a>
+            <a href="#1c" style="display:flex; align-items:center; gap:6px; height:28px; padding:0 12px; box-sizing:border-box; background:#262626; color:#fff; font:500 12px Inter,sans-serif"><i data-lucide="heart" style="width:13px;height:13px;fill:currentColor"></i>Support</a>
+          </div>
+        </div>
+
+        <!-- metric ribbon -->
+        <div style="background:#fff; border-bottom:1px solid #E4E6E9; display:flex; align-items:stretch">
+          <div style="padding:14px 20px; display:flex; flex-direction:column; justify-content:center; min-width:250px">
+            <h1 style="margin:0; font:600 17px Inter,sans-serif; color:#131313">Script Analysis</h1>
+            <span style="font:400 11px Inter,sans-serif; color:#6E7076; margin-top:2px">SAVED 2M AGO</span>
+          </div>
+          <div style="flex:1; display:grid; grid-template-columns:repeat(5,1fr); border-left:1px solid #E4E6E9">
+            <div style="padding:12px 18px; border-right:1px solid #E4E6E9">
+              <div style="font:700 10px Inter,sans-serif; letter-spacing:0.12em; color:#6E7076">SPOKEN WORDS</div>
+              <div style="font:700 30px/1.2 Inter,sans-serif; color:#131313">78</div>
+            </div>
+            <div style="padding:12px 18px; border-right:1px solid #E4E6E9">
+              <div style="font:700 10px Inter,sans-serif; letter-spacing:0.12em; color:#6E7076">WORDS ONLY</div>
+              <div style="font:700 30px/1.2 Inter,sans-serif; color:#6E7076">0:31</div>
+            </div>
+            <div style="padding:12px 18px; border-right:1px solid #E4E6E9">
+              <div style="font:700 10px Inter,sans-serif; letter-spacing:0.12em; color:#6E7076">PAUSES (6)</div>
+              <div style="font:700 30px/1.2 Inter,sans-serif; color:#6E7076">+2.4s</div>
+            </div>
+            <div style="padding:12px 18px; border-right:1px solid #E4E6E9; background:#131313">
+              <div style="font:700 10px Inter,sans-serif; letter-spacing:0.12em; color:#9A9CA2">TOTAL TIME</div>
+              <div style="font:700 30px/1.2 Inter,sans-serif; color:#fff">0:34</div>
+            </div>
+            <div style="padding:12px 18px">
+              <div style="font:700 10px Inter,sans-serif; letter-spacing:0.12em; color:#6E7076">QUOTE</div>
+              <div style="font:700 30px/1.2 Inter,sans-serif; color:#131313">$50</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- toolbar -->
+        <div style="background:#FAFBFC; border-bottom:1px solid #E4E6E9; padding:8px 20px; display:flex; align-items:center; justify-content:space-between">
+          <div style="display:flex; align-items:center; gap:16px">
+            <div style="display:flex; border:1px solid #C9CCD1; height:26px; background:#fff">
+              <button style="padding:0 10px; border:none; background:#262626; color:#fff; font:500 11px Inter,sans-serif; cursor:pointer">Single</button>
+              <button style="padding:0 10px; border:none; border-left:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer">Compare</button>
+            </div>
+            <div style="display:flex; border:1px solid #C9CCD1; height:26px; background:#fff">
+              <button style="padding:0 10px; border:none; background:#F2F3F5; color:#131313; font:500 11px Inter,sans-serif; cursor:pointer">Edit</button>
+              <button style="padding:0 10px; border:none; border-left:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer">Pronunciation</button>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px">
+              <span style="font:700 10px Inter,sans-serif; letter-spacing:0.12em; color:#6E7076">SPEED</span>
+              <input type="range" min="75" max="160" value="150" style="width:120px; height:4px">
+              <span style="font:700 11px Inter,sans-serif; color:#131313">150 WPM</span>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; border:1px solid #C9CCD1; background:#fff; color:#333438; font:400 11px Inter,sans-serif; cursor:pointer"><i data-lucide="sparkles" style="width:13px;height:13px"></i>Expansion (5 on)</button>
+            <button style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; border:1px solid #262626; background:#262626; color:#fff; font:500 11px Inter,sans-serif; cursor:pointer"><i data-lucide="dollar-sign" style="width:13px;height:13px"></i>Quote</button>
+            <button style="display:flex; align-items:center; gap:6px; height:26px; padding:0 10px; border:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer"><i data-lucide="rotate-ccw" style="width:13px;height:13px"></i>Reset</button>
+          </div>
+        </div>
+
+        <!-- body: script + open quote drawer -->
+        <div style="display:flex; align-items:stretch; height:600px">
+          <div style="flex:1; background:#fff; border-right:1px solid #E4E6E9; padding:32px 0; overflow:hidden">
+            <div style="max-width:720px; margin:0 auto; font:400 16px/1.85 Inter,sans-serif; color:#333438; white-space:pre-wrap; padding:0 24px">Introducing the Vantage Series. Engineered for the way you actually work — and priced at $1,250 for a limited time.
+
+Every unit ships with a 10,000-hour warranty. That's a full 15% longer than anything else in its class.
+
+Visit vantage.example.com to reserve yours before October 12th.</div>
+          </div>
+
+          <div style="width:344px; background:#fff; display:flex; flex-direction:column">
+            <div style="height:34px; box-sizing:border-box; border-bottom:1px solid #E4E6E9; padding:0 16px; display:flex; align-items:center; justify-content:space-between">
+              <span style="font:700 10px Inter,sans-serif; letter-spacing:0.14em; color:#6E7076">QUOTE</span>
+              <button style="width:20px; height:20px; border:none; background:transparent; color:#6E7076; display:flex; align-items:center; justify-content:center; cursor:pointer"><i data-lucide="x" style="width:14px;height:14px"></i></button>
+            </div>
+
+            <div style="padding:14px 16px; border-bottom:1px solid #E4E6E9">
+              <div style="display:flex; border:1px solid #C9CCD1; height:26px; margin-bottom:10px">
+                <button style="flex:1; border:none; background:#262626; color:#fff; font:500 11px Inter,sans-serif; cursor:pointer">Per word</button>
+                <button style="flex:1; border:none; border-left:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer">Per min</button>
+                <button style="flex:1; border:none; border-left:1px solid #C9CCD1; background:#fff; color:#6E7076; font:400 11px Inter,sans-serif; cursor:pointer">Project</button>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px">
+                <label style="display:flex; align-items:center; justify-content:space-between"><span style="font:400 12px Inter,sans-serif; color:#6E7076">Rate per word</span><input value="$0.10" style="width:72px; height:26px; border:1px solid #C9CCD1; padding:0 6px; font:400 12px Inter,sans-serif; text-align:right; outline:none; color:#131313"></label>
+                <label style="display:flex; align-items:center; justify-content:space-between"><span style="font:400 12px Inter,sans-serif; color:#6E7076">Minimum session fee</span><input value="$50" style="width:72px; height:26px; border:1px solid #C9CCD1; padding:0 6px; font:400 12px Inter,sans-serif; text-align:right; outline:none; color:#131313"></label>
+                <label style="display:flex; align-items:center; justify-content:space-between"><span style="font:400 12px Inter,sans-serif; color:#6E7076">Revision surcharge</span><input value="50%" style="width:72px; height:26px; border:1px solid #C9CCD1; padding:0 6px; font:400 12px Inter,sans-serif; text-align:right; outline:none; color:#131313"></label>
+              </div>
+            </div>
+
+            <div style="padding:14px 16px; border-bottom:1px solid #E4E6E9">
+              <div style="display:flex; align-items:baseline; justify-content:space-between; padding-bottom:6px"><span style="font:400 12px Inter,sans-serif; color:#6E7076">Base (78 × $0.10)</span><span style="font:400 12px Inter,sans-serif">$7.80</span></div>
+              <div style="display:flex; align-items:baseline; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid #E4E6E9"><span style="font:400 12px Inter,sans-serif; color:#6E7076">Minimum fee applied</span><span style="font:400 12px Inter,sans-serif">$50.00</span></div>
+              <div style="display:flex; align-items:baseline; justify-content:space-between; padding-top:8px"><span style="font:600 13px Inter,sans-serif; color:#131313">Initial recording</span><span style="font:700 22px Inter,sans-serif; color:#131313">$50.00</span></div>
+              <div style="display:flex; align-items:baseline; justify-content:space-between; margin-top:4px"><span style="font:400 12px Inter,sans-serif; color:#6E7076">Revision / pickup</span><span style="font:400 12px Inter,sans-serif">$75.00</span></div>
+            </div>
+
+            <div style="padding:14px 16px; display:flex; flex-direction:column; gap:8px">
+              <input placeholder="Client name" style="box-sizing:border-box; height:26px; border:1px solid #C9CCD1; padding:0 8px; font:400 12px Inter,sans-serif; outline:none; color:#131313">
+              <input placeholder="Project name" style="box-sizing:border-box; height:26px; border:1px solid #C9CCD1; padding:0 8px; font:400 12px Inter,sans-serif; outline:none; color:#131313">
+              <button style="height:32px; border:none; background:#262626; color:#fff; font:500 12px Inter,sans-serif; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer"><i data-lucide="download" style="width:14px;height:14px"></i>Download quote PDF</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid #E4E6E9; background:#fff; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; font:400 11px Inter,sans-serif; color:#6E7076">
+          <div style="display:flex; gap:16px"><a href="#1c" style="color:#6E7076">VOTRAINER</a><a href="#1c" style="color:#6E7076">TREVOR O'HARE</a><a href="#1c" style="color:#6E7076">REALVOTALENT</a></div>
+          <div style="display:flex; gap:16px"><a href="#1c" style="color:#6E7076">DISCORD</a><a href="#1c" style="color:#6E7076">SOURCE</a><a href="#1c" style="color:#6E7076">SUPPORT</a></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() { this.icons(); }
+  componentDidUpdate() { this.icons(); }
+  icons() {
+    const run = () => window.lucide && window.lucide.createIcons();
+    run(); setTimeout(run, 300); setTimeout(run, 1200);
+  }
+  renderVals() {
+    const on = { chipBg: '#F2F3F5', chipBorder: '#C9CCD1' };
+    const off = { chipBg: '#fff', chipBorder: '#E4E6E9' };
+    return {
+      expansions: [
+        { label: 'Numbers', example: '10,000 → ten thousand', on: true, ...on },
+        { label: 'Dates', example: '01/12/25 → January twelfth', on: true, ...on },
+        { label: 'Currencies', example: '$1,250 → one thousand…', on: true, ...on },
+        { label: 'Percentages', example: '15% → fifteen percent', on: true, ...on },
+        { label: 'URLs', example: 'example.com → example dot com', on: false, ...off },
+        { label: 'Measurements', example: '5\'10" → five feet ten inches', on: true, ...on }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

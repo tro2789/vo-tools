@@ -34,16 +34,27 @@ const formatTime = (seconds: number): string => {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
-// Text size configurations (1=smallest, 7=largest)
+/**
+ * Text size configurations (1=smallest, 7=largest).
+ * `px` scales the design's 46px default (size 3) across the hook's seven steps.
+ */
 const TEXT_SIZE_CONFIG = {
-  1: { size: 'text-3xl', label: 'XS' },
-  2: { size: 'text-4xl', label: 'Small' },
-  3: { size: 'text-5xl', label: 'Medium' },
-  4: { size: 'text-6xl', label: 'Large' },
-  5: { size: 'text-7xl', label: 'XL' },
-  6: { size: 'text-8xl', label: '2XL' },
-  7: { size: 'text-9xl', label: '3XL' },
+  1: { px: 29, short: 'XS', label: 'XS' },
+  2: { px: 35, short: 'S', label: 'SMALL' },
+  3: { px: 46, short: 'M', label: 'MED' },
+  4: { px: 58, short: 'L', label: 'LARGE' },
+  5: { px: 69, short: 'XL', label: 'XL' },
+  6: { px: 92, short: '2XL', label: '2XL' },
+  7: { px: 123, short: '3XL', label: '3XL' },
 };
+
+const BORDER = '#333';
+
+const stageButton =
+  'flex items-center justify-center border border-[#333] bg-transparent text-white transition-colors hover:bg-[#1A1A1A] disabled:cursor-not-allowed disabled:opacity-40';
+
+const groupButton =
+  'flex h-11 w-11 items-center justify-center border-none bg-transparent text-white transition-colors hover:bg-[#1A1A1A] disabled:cursor-not-allowed disabled:opacity-40';
 
 export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
   script,
@@ -98,56 +109,57 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
   // Split script into lines for processing
   const lines = script.split('\n');
   const remainingTime = Math.max(0, estimatedTotalTime - elapsedTime);
-  
+  const progress = estimatedTotalTime > 0 ? Math.min(1, elapsedTime / estimatedTotalTime) : 0;
+
   // Get text size configuration
   const sizeConfig = TEXT_SIZE_CONFIG[textSize as keyof typeof TEXT_SIZE_CONFIG] || TEXT_SIZE_CONFIG[3];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col">
-      {/* Top bar with timing and controls */}
+    <div className="fixed inset-0 z-50 flex flex-col bg-stage">
+      {/* Top overlay: timings and exit */}
       <div
-        className={`absolute top-0 left-0 right-0 z-10 transition-all duration-300 ${
-          showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
+        className={`absolute top-0 right-0 left-0 z-10 flex h-11 items-center justify-between gap-4 px-5 transition-all duration-300 ${
+          showControls ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-full opacity-0'
         }`}
+        style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.95), rgba(0,0,0,0))' }}
       >
-        <div className="bg-linear-to-b from-black/90 to-transparent p-4">
-          <div className="max-w-5xl mx-auto flex items-center justify-between">
-            {/* Timing info */}
-            <div className="flex items-center gap-6 text-white">
-              <div className="text-sm">
-                <span className="text-gray-400">Elapsed:</span>{' '}
-                <span className="font-mono font-semibold text-white">{formatTime(elapsedTime)}</span>
-              </div>
-              <div className="text-sm">
-                <span className="text-gray-400">Remaining:</span>{' '}
-                <span className="font-mono font-semibold text-white">{formatTime(remainingTime)}</span>
-              </div>
-              <div className="text-sm">
-                <span className="text-gray-400">Speed:</span>{' '}
-                <span className="font-mono font-semibold text-white">{speedMultiplier.toFixed(1)}x</span>
-              </div>
-              <div className="text-sm">
-                <span className="text-gray-400">Text:</span>{' '}
-                <span className="font-mono font-semibold text-white">{sizeConfig.label}</span>
-              </div>
-            </div>
-
-            {/* Exit button */}
-            <button
-              onClick={onExit}
-              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white"
-              title="Exit (Esc)"
-            >
-              <X size={20} />
-            </button>
-          </div>
+        <div className="scrollbar-hide flex gap-4 overflow-x-auto text-[11px] whitespace-nowrap text-[#B9BCC2] md:gap-6">
+          <span>
+            ELAPSED <span className="font-semibold text-white">{formatTime(elapsedTime)}</span>
+          </span>
+          <span>
+            REMAINING <span className="font-semibold text-white">{formatTime(remainingTime)}</span>
+          </span>
+          <span>
+            SPEED <span className="font-semibold text-white">{speedMultiplier.toFixed(1)}×</span>
+          </span>
+          <span>
+            TEXT <span className="font-semibold text-white">{sizeConfig.short}</span>
+          </span>
+          <span>
+            MIRROR <span className="font-semibold text-white">{isMirrored ? 'ON' : 'OFF'}</span>
+          </span>
         </div>
+        <button
+          type="button"
+          onClick={onExit}
+          aria-label="Exit fullscreen"
+          title="Exit (Esc)"
+          className={`h-[26px] w-[26px] shrink-0 ${stageButton}`}
+        >
+          <X width={14} height={14} aria-hidden="true" />
+        </button>
+      </div>
+
+      {/* Progress line */}
+      <div className="absolute top-0 right-0 left-0 z-20 h-[2px] bg-[#262626]">
+        <div className="h-[2px] bg-white" style={{ width: `${progress * 100}%` }} />
       </div>
 
       {/* Scrolling script content */}
       <div
         ref={contentRef}
-        className="flex-1 overflow-y-auto scrollbar-hide"
+        className="scrollbar-hide flex-1 overflow-y-auto"
         style={{
           scrollBehavior: 'auto',
           transform: isMirrored ? 'scaleX(-1)' : 'none',
@@ -157,14 +169,16 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
         <div className="h-[45vh]"></div>
 
         {/* Script content */}
-        <div className="max-w-4xl mx-auto px-8">
+        <div className="mx-auto max-w-[720px] px-6 md:px-[60px]">
           {lines.map((line, index) => (
             <p
               key={index}
-              className={`text-center transition-all duration-300 leading-relaxed mb-6 font-semibold ${sizeConfig.size}`}
+              className="mb-6 text-center text-white transition-all duration-300"
               style={{
+                fontSize: `${sizeConfig.px}px`,
+                lineHeight: 1.4,
+                fontWeight: 500,
                 minHeight: '60px',
-                color: '#FFFFFF',
               }}
             >
               {line || '\u00A0'}
@@ -178,90 +192,109 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
 
       {/* Bottom control bar */}
       <div
-        className={`absolute bottom-0 left-0 right-0 z-10 transition-all duration-300 ${
-          showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'
+        className={`absolute right-0 bottom-0 left-0 z-10 p-5 transition-all duration-300 ${
+          showControls ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-full opacity-0'
         }`}
         style={{
-          background: 'linear-gradient(to top, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 50%, rgba(0, 0, 0, 0.9) 70%, rgba(0, 0, 0, 0.5) 85%, transparent 100%)'
+          background:
+            'linear-gradient(to top, #0A0A0A 0%, #0A0A0A 55%, rgba(10,10,10,0) 100%)',
         }}
       >
-        <div className="p-3 sm:p-6 pb-safe">
-          <div className="max-w-5xl mx-auto">
-            {/* Control buttons */}
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-              <button
-                onClick={onReset}
-                className="p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white shrink-0"
-                title="Reset to beginning (Home)"
-              >
-                <RotateCcw size={20} />
-              </button>
+        <div className="flex flex-wrap items-center justify-center gap-[10px]">
+          <button
+            type="button"
+            onClick={onReset}
+            aria-label="Reset to beginning"
+            title="Reset to beginning (Home)"
+            className={`h-11 w-11 ${stageButton}`}
+          >
+            <RotateCcw width={18} height={18} aria-hidden="true" />
+          </button>
 
-              <button
-                onClick={onToggleMirror}
-                className={`p-3 rounded-lg transition-colors text-white shrink-0 ${
-                  isMirrored ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-white/10 hover:bg-white/20'
-                }`}
-                title="Mirror mode for physical teleprompters (M)"
-              >
-                <FlipHorizontal2 size={20} />
-              </button>
+          <button
+            type="button"
+            onClick={onToggleMirror}
+            aria-pressed={isMirrored}
+            aria-label="Mirror"
+            title="Mirror mode for physical teleprompters (M)"
+            className={`h-11 w-11 ${stageButton}`}
+          >
+            <FlipHorizontal2 width={18} height={18} aria-hidden="true" />
+          </button>
 
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  onClick={() => onAdjustSpeed(-0.1)}
-                  className="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white font-medium"
-                  title="Slow down (Arrow Down)"
-                >
-                  −
-                </button>
-                <button
-                  onClick={() => onAdjustSpeed(0.1)}
-                  className="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white font-medium"
-                  title="Speed up (Arrow Up)"
-                >
-                  +
-                </button>
-              </div>
-
-              <button
-                onClick={onTogglePlayPause}
-                className="w-14 h-14 flex items-center justify-center rounded-full bg-cyan-500 hover:bg-cyan-600 transition-colors text-white shadow-lg shrink-0"
-                title="Play/Pause (Space)"
-              >
-                {isPlaying ? <Pause size={28} fill="currentColor" /> : <Play size={28} fill="currentColor" />}
-              </button>
-
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  onClick={() => onAdjustTextSize(-1)}
-                  disabled={textSize <= 1}
-                  className="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Decrease text size (-)"
-                >
-                  <Type size={16} />
-                </button>
-                <button
-                  onClick={() => onAdjustTextSize(1)}
-                  disabled={textSize >= 7}
-                  className="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Increase text size (+)"
-                >
-                  <Type size={16} />
-                </button>
-              </div>
-            </div>
-
-            {/* Keyboard shortcuts hint */}
-            <div className="mt-3 text-center text-gray-400 text-xs sm:text-sm overflow-x-auto whitespace-nowrap scrollbar-hide">
-              <span className="inline-block mx-1 sm:mx-2">Space: Play/Pause</span>
-              <span className="inline-block mx-1 sm:mx-2">↑↓: Speed</span>
-              <span className="inline-block mx-1 sm:mx-2">+−: Text</span>
-              <span className="inline-block mx-1 sm:mx-2">M: Mirror</span>
-              <span className="inline-block mx-1 sm:mx-2">Home: Reset</span>
-              <span className="inline-block mx-1 sm:mx-2">Esc: Exit</span>
-            </div>
+          <div className="flex border" style={{ borderColor: BORDER }}>
+            <button
+              type="button"
+              onClick={() => onAdjustSpeed(-0.1)}
+              aria-label="Slow down"
+              title="Slow down (Arrow Down)"
+              className={`${groupButton} text-[16px]`}
+            >
+              −
+            </button>
+            <span
+              className="flex h-11 w-16 items-center justify-center border-x text-[12px] font-semibold text-white"
+              style={{ borderColor: BORDER }}
+            >
+              {speedMultiplier.toFixed(1)}×
+            </span>
+            <button
+              type="button"
+              onClick={() => onAdjustSpeed(0.1)}
+              aria-label="Speed up"
+              title="Speed up (Arrow Up)"
+              className={`${groupButton} text-[16px]`}
+            >
+              +
+            </button>
           </div>
+
+          <button
+            type="button"
+            onClick={onTogglePlayPause}
+            aria-label={isPlaying ? 'Pause' : 'Play'}
+            title="Play/Pause (Space)"
+            className="flex h-14 w-14 shrink-0 items-center justify-center border-none bg-white text-stage"
+          >
+            {isPlaying ? (
+              <Pause width={22} height={22} className="fill-current" aria-hidden="true" />
+            ) : (
+              <Play width={22} height={22} className="fill-current" aria-hidden="true" />
+            )}
+          </button>
+
+          <div className="flex border" style={{ borderColor: BORDER }}>
+            <button
+              type="button"
+              onClick={() => onAdjustTextSize(-1)}
+              disabled={textSize <= 1}
+              aria-label="Decrease text size"
+              title="Decrease text size (-)"
+              className={groupButton}
+            >
+              <Type width={14} height={14} aria-hidden="true" />
+            </button>
+            <span
+              className="flex h-11 w-16 items-center justify-center border-x text-[12px] font-semibold text-white"
+              style={{ borderColor: BORDER }}
+            >
+              {sizeConfig.label}
+            </span>
+            <button
+              type="button"
+              onClick={() => onAdjustTextSize(1)}
+              disabled={textSize >= 7}
+              aria-label="Increase text size"
+              title="Increase text size (+)"
+              className={groupButton}
+            >
+              <Type width={19} height={19} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-3 hidden text-center text-[10px] tracking-[0.08em] text-[#8A8D93] md:block">
+          SPACE PLAY · ↑↓ SPEED · +− TEXT · M MIRROR · HOME RESET · ESC EXIT
         </div>
       </div>
     </div>

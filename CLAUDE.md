@@ -14,20 +14,39 @@ Professional tools for voice actors and audio engineers.
 
 ## Design System
 
-Mirrors the light theme of realvotalent.com:
-- **Font**: Inter (via next/font/google)
-- **Accent**: Cyan (`#0085d8` primary, `--color-cyan-*` palette in globals.css)
-- **Neutrals**: Gray scale (Tailwind `gray-*`)
-- **Light bg**: `#f5f7fa`, white cards, gray-200 borders
-- **Dark bg**: `#000d15` (ink-950), `#072030` (space-900 cards), `gray-700/50` borders
+Monochrome, flat, dense — no accent colour and no border radius. The design contract is
+`design-reference/REDESIGN-SPEC.md`, drawn from `design-reference/VO Tools - Redesign.dc.html`.
 
-When editing components, use `gray-*` for neutrals and `cyan-*` for accents. Do not use `stone-*` or `gold-*`.
+- **Font**: Inter (via next/font/google), `font-variant-numeric: tabular-nums` on body.
+- **Tokens**: CSS variables on `:root` / `.dark` in `app/globals.css`, exposed to Tailwind via
+  `@theme inline`. Use the token classes, never hex: `bg-page`, `bg-panel`, `bg-subtle`,
+  `border-line`, `border-line-strong`, `border-line-faint`, `text-ink`, `text-body`,
+  `text-muted`, `text-disabled`, `bg-button`, `bg-bar`, `text-bar-text`, `text-bar-bright`,
+  `border-bar-line`, `text-bar-muted`, `text-ok`, `bg-ok-bg`, `text-bad`, `bg-bad-bg`,
+  `bg-stage`. Primary buttons are `bg-button text-panel` so they invert correctly in dark mode.
+- **No cyan, no `rounded-*`, no shadows, no gradients.** The only radius is the 5px saved dot;
+  the only gradients are the teleprompter fullscreen fades.
+- Section labels 10px/600/0.14em uppercase muted. Status meta 11px uppercase muted. Body 12px,
+  panel copy 13–15px, big metrics 40px/1 weight 600. Controls 26–32px, rail primary action 40px.
+- Focus is a global `outline: 1px solid var(--ink)` with 2px offset; range/checkbox/radio use
+  `accent-color: var(--button)`.
+- **Shell components** live in `components/shell/` (barrel export in `index.ts`): `TopBar`,
+  `DocumentBar`, `SavedIndicator`, `Workspace`, `StatusBar`, `RailSection`, `SectionLabel`,
+  `Segmented`, `Button`, `IconButton`, `Chip`, `Kbd`, `DropZone`, `Pill`. Build pages from these
+  rather than re-creating bars and rails ad hoc. `TopBar` is rendered once from `app/layout.tsx`
+  (landing variant on `/`, dark workspace variant elsewhere, hidden on `/remote`).
+- **Shared script document**: `hooks/useScriptDocument.ts` holds the one script that Analysis and
+  Teleprompter share — localStorage key `vo-tools-script-doc`, `{ title, text, updatedAt }`, via
+  `useSyncExternalStore` plus the `storage` event. `readScriptDocument()` is the non-React
+  accessor.
+- `components/Footer.tsx` is used by the landing page only.
 
 ## Project Structure
 
 ```
 app/                    # Next.js App Router pages
-  page.tsx              # Homepage
+  page.tsx              # Landing (hero + tool list)
+  globals.css           # Tailwind v4 config + design tokens
   sitemap.ts            # Auto-generated sitemap.xml (all public pages)
   script-analysis/      # Script word count, timing, pricing
   telephony-converter/  # Audio format conversion for IVR/VoIP
@@ -39,18 +58,21 @@ app/                    # Next.js App Router pages
     acx-check/          # ACX compliance analysis (direct FFmpeg)
     health/             # Health check endpoint
 components/             # React components
-  Navigation.tsx        # Sticky nav (hidden on homepage)
-  Footer.tsx            # Site footer
-  ThemeToggle.tsx       # Dark/light mode toggle
+  shell/                # Design-system shell (TopBar, DocumentBar, Workspace,
+                        #   StatusBar, RailSection, SectionLabel, Segmented,
+                        #   Button, IconButton, Chip, Kbd, DropZone, Pill,
+                        #   SavedIndicator) — barrel export in index.ts
+  Footer.tsx            # Landing-page footer
+  ThemeToggle.tsx       # Dark/light toggle (variant: 'bar' | 'light')
   ScriptCalculator.tsx  # Main script analysis component
   acx/                  # ACX checker components
   teleprompter/         # Teleprompter components
   editor/               # Script editor components
-  analysis/             # Analysis sidebar, speed control
-  pricing/              # Pricing calculator
-  comparison/           # Script diff/comparison
-  pronunciation/        # Pronunciation guide
-  settings/             # Expansion settings
+  analysis/             # MetricsBlock, SpeedControl, format.ts (m:ss clock)
+  pricing/              # QuoteSection (rail quote form + PDF button)
+  comparison/           # DeltaTable, DiffPanes (compare mode)
+  pronunciation/        # ScriptTextDisplay, PronunciationTooltip, LookedUpList
+  settings/             # ExpansionSettings (chips)
 lib/                    # Utilities
   audio/                # Audio processing modules
     ffmpeg.ts           # FFmpeg/FFprobe wrappers (uses execFile, safe from injection)
@@ -58,6 +80,8 @@ lib/                    # Utilities
     acx-analyzer.ts     # ACX compliance analysis
   types/                # TypeScript type definitions
 hooks/                  # React hooks
+  useScriptDocument.ts  # Shared script document (localStorage, cross-tab)
+design-reference/       # Redesign spec + Claude Design HTML exports
 server.mjs              # Custom server (Next.js + Socket.IO, single port)
 ```
 
@@ -91,3 +115,13 @@ node server.mjs         # Production server (after build)
 
 Vitest, node environment. `npm test` runs 8 files / 139 tests over `utils/*` (text analysis, pause detection, pricing, comparison, pronunciation) and `lib/audio/*` (ffmpeg parsing with `execFile` mocked, ACX analyzer). Config: `vitest.config.mts`. Known quirk pinned by tests: `calculateSpokenWordCount` collapses contractions and hyphenated numbers into one token. Not covered: `pdfGenerator.ts`, `lib/api/converter.ts`, API route handlers.
 CI: `.gitea/workflows/ci.yml` runs `npm ci` and the checks above on every push (Node 24, added 2026-08-23). Lint is not in CI because of 9 pre-existing ESLint errors in untouched files.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

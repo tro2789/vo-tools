@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { Navigation } from '@/components/Navigation';
+import { TopBar } from '@/components/shell';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -26,14 +26,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased bg-[#f5f7fa] dark:bg-[#000d15] transition-colors duration-300`}>
+      <body className={`${inter.variable} font-sans antialiased bg-page transition-colors duration-300`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <Navigation />
+          <TopBar />
           {children}
         </ThemeProvider>
       </body>

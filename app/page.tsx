@@ -1,123 +1,115 @@
 import Link from 'next/link';
-import { Calculator, AudioWaveform, ScrollText, ArrowRight, MessageCircle, Heart, CheckCircle2 } from 'lucide-react';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import {
+  ArrowRight,
+  AudioWaveform,
+  Calculator,
+  CheckCircle2,
+  ScrollText,
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { Footer } from '@/components/Footer';
 
-const tools = [
+interface Tool {
+  href: string;
+  icon: LucideIcon;
+  name: string;
+  description: string;
+  tags: string;
+}
+
+const tools: Tool[] = [
   {
     href: '/script-analysis',
     icon: Calculator,
-    title: 'Script Analysis',
-    description: 'Analyze scripts for word count, timing, and pricing. Quickly estimate project scope and calculate rates.',
-    features: ['Word & character count', 'Timing calculation', 'Pricing calculator', 'Script comparison'],
-  },
-  {
-    href: '/telephony-converter',
-    icon: AudioWaveform,
-    title: 'Telephony Converter',
-    description: 'Convert audio files to telephony-compatible formats for IVR systems, VoIP, and phone systems.',
-    features: ['Multiple formats', 'Batch conversion', 'Volume control', 'Bandpass filter'],
+    name: 'Script Analysis',
+    description: 'Word count, read time at your speed, pause detection, quoting and PDF.',
+    tags: 'WORDS · TIMING · PRICING · DIFF',
   },
   {
     href: '/teleprompter',
     icon: ScrollText,
-    title: 'Teleprompter',
-    description: 'Professional teleprompter with auto-scrolling, speed control, and phone remote for studio sessions.',
-    features: ['Fullscreen mode', 'Speed control', 'Phone remote', 'Mirror mode'],
+    name: 'Teleprompter',
+    description: 'Fullscreen auto-scroll with mirror mode and a phone remote over QR.',
+    tags: 'FULLSCREEN · SPEED · REMOTE · MIRROR',
+  },
+  {
+    href: '/telephony-converter',
+    icon: AudioWaveform,
+    name: 'Telephony Converter',
+    description: 'Batch convert to IVR and VoIP formats with volume and phone filtering.',
+    tags: 'µ-LAW · A-LAW · PCM · G.722 · RAW',
   },
   {
     href: '/acx-check',
     icon: CheckCircle2,
-    title: 'ACX Compliance',
-    description: 'Analyze audiobook files for ACX technical requirements. Check format, loudness, and noise floor.',
-    features: ['Format & bitrate', 'LUFS analysis', 'Batch processing', 'CSV export'],
+    name: 'ACX Compliance',
+    description: 'Check audiobook files against ACX limits, then export the report as CSV.',
+    tags: 'BITRATE · 44.1K · RMS · PEAK · CSV',
   },
 ];
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#f5f7fa] dark:bg-[#000d15]">
-      {/* Top Navigation */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
-        <div className="max-w-5xl mx-auto flex justify-end gap-2">
-          <ThemeToggle />
-          <a
-            href="https://discord.gg/gYg69PbHfR"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/60 text-gray-600 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-300 dark:hover:border-cyan-600"
-          >
-            <MessageCircle size={15} />
-            <span className="hidden sm:inline">Discord</span>
-          </a>
-          <a
-            href="https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all bg-cyan-600 text-white hover:bg-cyan-500 shadow-lg shadow-cyan-600/20"
-          >
-            <Heart size={15} className="fill-current" />
-            <span className="hidden sm:inline">Support</span>
-          </a>
+    <main className="min-h-screen bg-page">
+      <section className="border-b border-line bg-panel px-5 pt-[72px] pb-14">
+        <div className="mx-auto max-w-[1000px]">
+          <h1 className="max-w-[720px] text-[36px] leading-[1.05] font-semibold tracking-[-0.02em] text-ink sm:text-[52px]">
+            Four tools for the working voice actor.
+          </h1>
+          <p className="mt-5 max-w-[520px] text-[15px] leading-[1.6] text-body">
+            Script timing and quoting, a studio teleprompter with a phone remote, telephony
+            format conversion, and ACX compliance checking. Free, no account, runs in the
+            browser.
+          </p>
+          <div className="mt-7 flex flex-wrap gap-[10px]">
+            <Link
+              href="/script-analysis"
+              className="flex h-9 items-center gap-2 bg-button px-4 text-[13px] font-medium text-panel"
+            >
+              Open the workspace
+              <ArrowRight width={15} height={15} aria-hidden="true" />
+            </Link>
+            <a
+              href="https://github.com/tro2789/vo-tools"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-9 items-center border border-line-strong px-4 text-[13px] font-medium text-body"
+            >
+              Read the source
+            </a>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Hero */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 pb-12 sm:pb-16 text-center animate-fade-in-up">
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 dark:text-gray-50">
-          VO{' '}
-          <span className="bg-gradient-to-r from-cyan-500 to-cyan-700 dark:from-cyan-400 dark:to-cyan-600 bg-clip-text text-transparent">Tools</span>
-        </h1>
-        <div className="w-12 h-px bg-cyan-500/40 mx-auto mt-5 mb-5" />
-        <p className="text-base sm:text-lg text-gray-500 dark:text-gray-400 max-w-md mx-auto leading-relaxed">
-          Professional-grade tools designed for voice actors and audio engineers
-        </p>
-      </div>
-
-      {/* Tool Cards */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="grid lg:grid-cols-2 gap-4 sm:gap-5">
+      <section className="border-b border-line bg-panel">
+        <div className="mx-auto max-w-[1000px]">
           {tools.map((tool, index) => {
             const Icon = tool.icon;
             return (
-              <Link key={tool.href} href={tool.href}>
-                <div
-                  className="group relative bg-white dark:bg-[#072030] rounded-xl border border-gray-200 dark:border-gray-700/50 p-5 sm:p-6 transition-all duration-200 hover:border-cyan-400/50 dark:hover:border-cyan-600/40 hover:shadow-lg cursor-pointer h-full animate-fade-in-up"
-                  style={{ animationDelay: `${index * 80 + 100}ms` }}
-                >
-                  <div className="flex gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-cyan-50 dark:bg-cyan-950/40 flex items-center justify-center shrink-0 group-hover:bg-cyan-100 dark:group-hover:bg-cyan-900/40 transition-colors">
-                      <Icon className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-50 mb-1.5">
-                        {tool.title}
-                      </h2>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 leading-relaxed">
-                        {tool.description}
-                      </p>
-                      <div className="flex flex-wrap gap-1.5 mb-4">
-                        {tool.features.map((feature) => (
-                          <span
-                            key={feature}
-                            className="text-[11px] px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800/60 text-gray-500 dark:text-gray-400"
-                          >
-                            {feature}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="flex items-center gap-1.5 text-cyan-600 dark:text-cyan-400 text-sm font-medium group-hover:gap-2.5 transition-all">
-                        <span>Open Tool</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
-                    </div>
-                  </div>
+              <div
+                key={tool.href}
+                className={`grid grid-cols-1 items-center gap-3 px-5 py-[22px] lg:grid-cols-[200px_1fr_300px_90px] lg:gap-6 ${
+                  index < tools.length - 1 ? 'border-b border-line' : ''
+                }`}
+              >
+                <div className="flex items-center gap-[10px]">
+                  <Icon width={16} height={16} className="shrink-0 text-ink" aria-hidden="true" />
+                  <span className="text-[15px] font-semibold text-ink">{tool.name}</span>
                 </div>
-              </Link>
+                <div className="text-[13px] leading-[1.5] text-body">{tool.description}</div>
+                <div className="text-[11px] text-muted">{tool.tags}</div>
+                <Link
+                  href={tool.href}
+                  className="flex items-center gap-[6px] text-[13px] font-medium text-ink lg:justify-end"
+                >
+                  Open
+                  <ArrowRight width={14} height={14} aria-hidden="true" />
+                </Link>
+              </div>
             );
           })}
         </div>
-      </div>
+      </section>
 
       <Footer />
     </main>

@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.544.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; background: #dfe5ec; font-family: Inter, system-ui, sans-serif; }
+  a { color: #0085d8; text-decoration: none; }
+  a:hover { color: #0070b8; }
+  textarea, input, select, button { font-family: inherit; }
+</style>
+</helmet>
+<div style="display:flex; flex-direction:column; gap:56px; padding:48px; align-items:flex-start">
+
+  <div style="font:600 13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:0.08em; text-transform:uppercase; color:#64748b">Recreation of vo-tools @ main — light theme, filled states</div>
+
+  <!-- ═══ HOME ═══ -->
+  <div style="display:flex; flex-direction:column; gap:10px">
+    <div style="font:600 12px/1 ui-monospace,Menlo,monospace; letter-spacing:0.08em; color:#64748b">app/page.tsx — HOME</div>
+    <div data-screen-label="Home" style="width:1280px; background:#f5f7fa; border:1px solid #cbd5e1; overflow:hidden">
+      <div style="width:100%; padding:16px 32px; box-sizing:border-box">
+        <div style="max-width:1024px; margin:0 auto; display:flex; justify-content:flex-end; gap:8px">
+          <button style="padding:8px; border:none; border-radius:8px; background:#f3f4f6; color:#6b7280; display:flex; align-items:center; cursor:pointer"><i data-lucide="moon" style="width:18px;height:18px"></i></button>
+          <a href="#" style="display:flex; align-items:center; gap:6px; padding:8px 16px; border-radius:8px; font-weight:500; font-size:14px; border:1px solid #e5e7eb; background:#fff; color:#4b5563"><i data-lucide="message-circle" style="width:15px;height:15px"></i><span>Discord</span></a>
+          <a href="#" style="display:flex; align-items:center; gap:6px; padding:8px 16px; border-radius:8px; font-weight:500; font-size:14px; background:#0085d8; color:#fff; box-shadow:0 10px 15px -3px rgba(0,133,216,0.2)"><i data-lucide="heart" style="width:15px;height:15px;fill:currentColor"></i><span>Support</span></a>
+        </div>
+      </div>
+
+      <div style="max-width:1024px; margin:0 auto; padding:64px 32px 64px; text-align:center">
+        <h1 style="margin:0; font-size:72px; font-weight:700; letter-spacing:-0.025em; color:#111827; line-height:1">VO <span style="background:linear-gradient(to right,#3bb4ff,#0070b8); -webkit-background-clip:text; background-clip:text; color:transparent">Tools</span></h1>
+        <div style="width:48px; height:1px; background:rgba(59,180,255,0.4); margin:20px auto"></div>
+        <p style="margin:0 auto; font-size:18px; color:#6b7280; max-width:448px; line-height:1.625">Professional-grade tools designed for voice actors and audio engineers</p>
+      </div>
+
+      <div style="max-width:1024px; margin:0 auto; padding:0 32px 48px">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px">
+          <sc-for list="{{ tools }}" as="tool" hint-placeholder-count="4">
+            <div style="background:#fff; border-radius:12px; border:1px solid #e5e7eb; padding:24px; height:100%; box-sizing:border-box">
+              <div style="display:flex; gap:16px">
+                <div style="width:40px; height:40px; border-radius:8px; background:#ecfeff; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#0085d8"><i data-lucide="{{ tool.icon }}" style="width:20px;height:20px"></i></div>
+                <div style="flex:1; min-width:0">
+                  <h2 style="margin:0 0 6px; font-size:20px; font-weight:600; color:#111827">{{ tool.title }}</h2>
+                  <p style="margin:0 0 12px; font-size:14px; color:#6b7280; line-height:1.625">{{ tool.description }}</p>
+                  <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px">
+                    <sc-for list="{{ tool.features }}" as="f" hint-placeholder-count="4">
+                      <span style="font-size:11px; padding:2px 8px; border-radius:999px; background:#f3f4f6; color:#6b7280">{{ f }}</span>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:6px; color:#0085d8; font-size:14px; font-weight:500"><span>Open Tool</span><i data-lucide="arrow-right" style="width:16px;height:16px"></i></div>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <footer style="width:100%; margin-top:16px; padding:20px 24px; border-top:1px solid #e5e7eb; box-sizing:border-box">
+        <div style="max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; color:#9ca3af">
+          <div style="display:flex; align-items:center; gap:12px">
+            <a href="#" style="color:#9ca3af">VOTrainer</a><span style="color:#d1d5db">·</span>
+            <a href="#" style="color:#9ca3af">Trevor O&apos;Hare</a><span style="color:#d1d5db">·</span>
+            <a href="#" style="color:#9ca3af">RealVOTalent</a>
+          </div>
+          <div style="display:flex; align-items:center; gap:16px">
+            <a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="message-circle" style="width:14px;height:14px"></i>Discord</a><span style="color:#d1d5db">·</span>
+            <a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="github" style="width:14px;height:14px"></i>Source</a><span style="color:#d1d5db">·</span>
+            <a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="heart" style="width:14px;height:14px"></i>Support</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ═══ SCRIPT ANALYSIS ═══ -->
+  <div style="display:flex; flex-direction:column; gap:10px">
+    <div style="font:600 12px/1 ui-monospace,Menlo,monospace; letter-spacing:0.08em; color:#64748b">components/ScriptCalculator.tsx — SCRIPT ANALYSIS (single mode)</div>
+    <div data-screen-label="Script Analysis" style="width:1280px; background:#f5f7fa; border:1px solid #cbd5e1; overflow:hidden">
+
+      <nav style="width:100%; border-bottom:1px solid #e5e7eb; background:rgba(255,255,255,0.9); padding:12px 24px; box-sizing:border-box">
+        <div style="max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:8px">
+          <a href="#" style="font-size:20px; font-weight:600; color:#111827; letter-spacing:-0.025em">VO Tools</a>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="padding:8px; border:none; border-radius:8px; background:#f3f4f6; color:#6b7280; display:flex; cursor:pointer"><i data-lucide="moon" style="width:18px;height:18px"></i></button>
+            <a href="#" style="display:flex; align-items:center; gap:6px; padding:8px 12px; border-radius:8px; font-weight:500; font-size:14px; border:1px solid #e5e7eb; background:#fff; color:#4b5563"><i data-lucide="message-circle" style="width:16px;height:16px"></i><span>Discord</span></a>
+            <a href="#" style="display:flex; align-items:center; gap:6px; padding:8px 12px; border-radius:8px; font-weight:500; font-size:14px; background:#0085d8; color:#fff"><i data-lucide="heart" style="width:16px;height:16px;fill:currentColor"></i><span>Support</span></a>
+          </div>
+        </div>
+      </nav>
+
+      <div style="width:100%; border-bottom:1px solid #e5e7eb; background:#fff; padding:16px 24px; box-sizing:border-box">
+        <div style="max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:8px">
+          <div>
+            <h1 style="margin:0; font-size:24px; font-weight:700; color:#111827; letter-spacing:-0.025em">Script Analysis</h1>
+            <p style="margin:4px 0 0; font-size:14px; color:#4b5563">Analyze scripts for word count, timing, and pricing</p>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="display:flex; align-items:center; gap:6px; padding:8px 16px; border:none; border-radius:8px; font-weight:500; font-size:14px; background:#f3f4f6; color:#374151; cursor:pointer"><i data-lucide="rotate-ccw" style="width:16px;height:16px"></i><span>Reset</span></button>
+            <button style="display:flex; align-items:center; gap:6px; padding:8px 16px; border:none; border-radius:8px; font-weight:500; font-size:14px; background:#f3f4f6; color:#374151; cursor:pointer"><i data-lucide="file-text" style="width:16px;height:16px"></i><span>Single</span></button>
+          </div>
+        </div>
+      </div>
+
+      <main style="max-width:1280px; margin:0 auto; padding:16px 24px">
+        <div style="display:grid; grid-template-columns:repeat(12,1fr); gap:16px">
+
+          <div style="grid-column:span 8; display:flex; flex-direction:column; gap:16px">
+            <div style="background:#fff; border-radius:16px; border:1px solid #e5e7eb; display:flex; flex-direction:column; height:620px; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,0.05)">
+              <div style="padding:12px 20px; border-bottom:1px solid #f3f4f6; display:flex; align-items:center; justify-content:space-between; background:rgba(249,250,251,0.5)">
+                <div style="display:flex; align-items:center; gap:8px; color:#6b7280">
+                  <i data-lucide="type" style="width:14px;height:14px"></i>
+                  <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em">Script Input</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px">
+                  <div style="font:400 12px ui-monospace,Menlo,monospace; color:#9ca3af">412 chars</div>
+                  <div style="display:flex; align-items:center; gap:4px; background:#f3f4f6; border-radius:8px; padding:2px">
+                    <button style="padding:4px 8px; border:none; border-radius:4px; font-size:12px; font-weight:500; background:#fff; color:#111827; box-shadow:0 1px 2px rgba(0,0,0,0.05); cursor:pointer"><i data-lucide="type" style="width:12px;height:12px;display:inline"></i><span style="margin-left:4px">Edit</span></button>
+                    <button style="padding:4px 8px; border:none; border-radius:4px; font-size:12px; font-weight:500; background:transparent; color:#4b5563; cursor:pointer"><i data-lucide="book-open" style="width:12px;height:12px;display:inline"></i><span style="margin-left:4px">Pronunciation</span></button>
+                  </div>
+                </div>
+              </div>
+              <div style="flex:1; padding:24px; color:#374151; font-size:18px; line-height:1.625; white-space:pre-wrap">Introducing the Vantage Series. Engineered for the way you actually work — and priced at $1,250 for a limited time.
+
+Every unit ships with a 10,000-hour warranty. That's a full 15% longer than anything else in its class.
+
+Visit vantage.example.com to reserve yours before October 12th.</div>
+            </div>
+          </div>
+
+          <div style="grid-column:span 4; display:flex; flex-direction:column; gap:16px">
+            <div style="background:#fff; border-radius:16px; box-shadow:0 10px 15px -3px rgba(229,231,235,0.5); border:1px solid #f3f4f6; padding:24px">
+              <h2 style="margin:0 0 24px; font-size:12px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:8px"><i data-lucide="info" style="width:14px;height:14px"></i>Analysis</h2>
+
+              <div style="margin-bottom:32px">
+                <div style="font-size:12px; font-weight:500; color:#6b7280; margin-bottom:8px">Spoken Word Count</div>
+                <div style="font-size:48px; font-weight:900; color:#111827; letter-spacing:-0.025em; font-variant-numeric:tabular-nums; line-height:1">78</div>
+              </div>
+
+              <div style="height:1px; width:100%; background:#f3f4f6; margin:24px 0"></div>
+
+              <div style="margin-bottom:32px">
+                <div style="font-size:12px; font-weight:500; color:#6b7280; margin-bottom:8px; display:flex; align-items:center; gap:4px"><i data-lucide="clock" style="width:12px;height:12px"></i>Reading Time (Words Only)</div>
+                <div style="font-size:30px; font-weight:700; color:#374151; letter-spacing:-0.025em; font-variant-numeric:tabular-nums">0:31</div>
+              </div>
+
+              <div style="background:#faf5ff; border-radius:12px; padding:16px; border:1px solid #e9d5ff; margin-bottom:24px">
+                <div style="font-size:12px; font-weight:500; color:#9333ea; margin-bottom:8px; display:flex; align-items:center; gap:4px"><i data-lucide="pause" style="width:12px;height:12px"></i>Detected Pauses</div>
+                <div style="font-size:24px; font-weight:700; color:#7e22ce; font-variant-numeric:tabular-nums">+2.4s</div>
+                <div style="font-size:12px; color:#9333ea; margin-top:4px">6 pauses detected</div>
+              </div>
+
+              <div style="margin-bottom:32px">
+                <div style="font-size:12px; font-weight:500; color:#6b7280; margin-bottom:8px; display:flex; align-items:center; gap:4px"><i data-lucide="clock" style="width:12px;height:12px"></i>Total Time (with Pauses)</div>
+                <div style="font-size:30px; font-weight:700; background:linear-gradient(to bottom right,#3bb4ff,#0085d8); -webkit-background-clip:text; background-clip:text; color:transparent; letter-spacing:-0.025em; font-variant-numeric:tabular-nums">0:34</div>
+              </div>
+
+              <div style="background:#f9fafb; border-radius:12px; padding:20px; border:1px solid #f3f4f6">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px">
+                  <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; color:#374151"><i data-lucide="settings-2" style="width:16px;height:16px"></i>Reading Speed</label>
+                  <span style="font:500 12px ui-monospace,Menlo,monospace; background:#fff; border:1px solid #e5e7eb; padding:4px 8px; border-radius:2px; color:#4b5563">150 WPM</span>
+                </div>
+                <input type="range" min="75" max="160" value="150" style="width:100%; height:8px; accent-color:#3bb4ff">
+                <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:10px; font-weight:700; color:#9ca3af; text-transform:uppercase"><span>Slow (75)</span><span>Fast (160)</span></div>
+              </div>
+
+              <div style="margin-top:24px; background:#f9fafb; border-radius:12px; border:1px solid #f3f4f6; overflow:hidden">
+                <button style="width:100%; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; font-size:14px; font-weight:700; color:#374151; background:transparent; border:none; cursor:pointer">
+                  <span style="display:flex; align-items:center; gap:8px"><i data-lucide="sparkles" style="width:16px;height:16px"></i>Expansion Settings</span>
+                  <span style="color:#9ca3af">▼</span>
+                </button>
+              </div>
+
+              <div style="margin-top:24px; background:#f9fafb; border-radius:12px; border:1px solid #f3f4f6; overflow:hidden">
+                <button style="width:100%; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; font-size:14px; font-weight:700; color:#374151; background:transparent; border:none; cursor:pointer">
+                  <span style="display:flex; align-items:center; gap:8px"><i data-lucide="dollar-sign" style="width:16px;height:16px"></i>Pricing &amp; Quote</span>
+                  <span style="color:#9ca3af; transform:rotate(180deg)">▼</span>
+                </button>
+                <div style="padding:16px 20px 16px; border-top:1px solid #f3f4f6; display:flex; flex-direction:column; gap:16px">
+                  <div>
+                    <label style="display:block; font-size:12px; font-weight:500; color:#4b5563; margin-bottom:8px">Pricing Model</label>
+                    <select style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid #e5e7eb; background:#fff; color:#374151; font-size:14px; box-sizing:border-box"><option>Per Word</option></select>
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:12px; font-weight:500; color:#4b5563; margin-bottom:8px">Rate Per Word ($)</label>
+                    <input type="number" value="0.1" style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid #e5e7eb; background:#fff; color:#374151; font-size:14px; box-sizing:border-box">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:12px; font-weight:500; color:#4b5563; margin-bottom:8px">Minimum Session Fee ($)</label>
+                    <input type="number" value="50" style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid #e5e7eb; background:#fff; color:#374151; font-size:14px; box-sizing:border-box">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:12px; font-weight:500; color:#4b5563; margin-bottom:8px">Revision Surcharge (%)</label>
+                    <input type="number" value="50" style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid #e5e7eb; background:#fff; color:#374151; font-size:14px; box-sizing:border-box">
+                  </div>
+
+                  <div style="height:1px; background:#e5e7eb; margin:0"></div>
+
+                  <div style="background:linear-gradient(to bottom right,#ecfeff,#cffafe); border-radius:12px; padding:16px; border:1px solid #a5f3fc">
+                    <div style="font-size:12px; font-weight:700; color:#0085d8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px">Suggested Quote</div>
+                    <div style="display:flex; flex-direction:column; gap:8px">
+                      <div style="display:flex; justify-content:space-between; align-items:baseline">
+                        <span style="font-size:14px; color:#4b5563">Base Price:</span>
+                        <span style="font-size:18px; font-weight:700; color:#111827">$7.80</span>
+                      </div>
+                      <div style="font-size:12px; color:#6b7280; font-style:italic">Minimum fee applied</div>
+                      <div style="height:1px; background:#a5f3fc; margin:8px 0"></div>
+                      <div style="display:flex; justify-content:space-between; align-items:baseline">
+                        <span style="font-size:14px; font-weight:700; color:#374151">Initial Recording:</span>
+                        <span style="font-size:24px; font-weight:900; background:linear-gradient(to bottom right,#3bb4ff,#0085d8); -webkit-background-clip:text; background-clip:text; color:transparent">$50.00</span>
+                      </div>
+                      <div style="display:flex; justify-content:space-between; align-items:baseline; padding-top:8px; border-top:1px solid #a5f3fc">
+                        <span style="font-size:12px; color:#4b5563">Revision/Pickup:</span>
+                        <span style="font-size:14px; font-weight:600; color:#374151">$75.00</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style="display:block; font-size:12px; font-weight:500; color:#4b5563; margin-bottom:8px">Client Name (for PDF)</label>
+                    <input type="text" placeholder="Client Name" style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid #e5e7eb; background:#fff; color:#374151; font-size:14px; box-sizing:border-box">
+                  </div>
+                  <div>
+                    <label style="display:block; font-size:12px; font-weight:500; color:#4b5563; margin-bottom:8px">Project Name (for PDF)</label>
+                    <input type="text" placeholder="Voiceover Project" style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid #e5e7eb; background:#fff; color:#374151; font-size:14px; box-sizing:border-box">
+                  </div>
+                  <button style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:12px 16px; border:none; border-radius:8px; font-weight:600; font-size:14px; background:linear-gradient(to right,#3bb4ff,#0085d8); color:#fff; box-shadow:0 10px 15px -3px rgba(59,180,255,0.1); cursor:pointer"><i data-lucide="download" style="width:16px;height:16px"></i>Download Quote PDF</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer style="width:100%; margin-top:16px; padding:20px 24px; border-top:1px solid #e5e7eb; box-sizing:border-box">
+        <div style="max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; color:#9ca3af">
+          <div style="display:flex; align-items:center; gap:12px">
+            <a href="#" style="color:#9ca3af">VOTrainer</a><span style="color:#d1d5db">·</span>
+            <a href="#" style="color:#9ca3af">Trevor O&apos;Hare</a><span style="color:#d1d5db">·</span>
+            <a href="#" style="color:#9ca3af">RealVOTalent</a>
+          </div>
+          <div style="display:flex; align-items:center; gap:16px">
+            <a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="message-circle" style="width:14px;height:14px"></i>Discord</a><span style="color:#d1d5db">·</span>
+            <a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="github" style="width:14px;height:14px"></i>Source</a><span style="color:#d1d5db">·</span>
+            <a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="heart" style="width:14px;height:14px"></i>Support</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ═══ TELEPHONY CONVERTER ═══ -->
+  <div style="display:flex; flex-direction:column; gap:10px">
+    <div style="font:600 12px/1 ui-monospace,Menlo,monospace; letter-spacing:0.08em; color:#64748b">app/telephony-converter/page.tsx — TELEPHONY CONVERTER</div>
+    <div data-screen-label="Telephony Converter" style="width:1280px; background:#f9fafb; border:1px solid #cbd5e1; overflow:hidden">
+
+      <nav style="width:100%; border-bottom:1px solid #e5e7eb; background:rgba(255,255,255,0.9); padding:12px 24px; box-sizing:border-box">
+        <div style="max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between">
+          <a href="#" style="font-size:20px; font-weight:600; color:#111827; letter-spacing:-0.025em">VO Tools</a>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="padding:8px; border:none; border-radius:8px; background:#f3f4f6; color:#6b7280; display:flex; cursor:pointer"><i data-lucide="moon" style="width:18px;height:18px"></i></button>
+            <a href="#" style="display:flex; align-items:center; gap:6px; padding:8px 12px; border-radius:8px; font-weight:500; font-size:14px; border:1px solid #e5e7eb; background:#fff; color:#4b5563"><i data-lucide="message-circle" style="width:16px;height:16px"></i><span>Discord</span></a>
+            <a href="#" style="display:flex; align-items:center; gap:6px; padding:8px 12px; border-radius:8px; font-weight:500; font-size:14px; background:#0085d8; color:#fff"><i data-lucide="heart" style="width:16px;height:16px;fill:currentColor"></i><span>Support</span></a>
+          </div>
+        </div>
+      </nav>
+
+      <div style="width:100%; border-bottom:1px solid #e5e7eb; background:#fff; padding:16px 24px; box-sizing:border-box">
+        <div style="max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:8px">
+          <div>
+            <h1 style="margin:0; font-size:24px; font-weight:700; color:#111827; letter-spacing:-0.025em">Telephony Converter</h1>
+            <p style="margin:4px 0 0; font-size:14px; color:#4b5563">Convert media files into telephony-compatible formats for IVR systems and VoIP applications</p>
+          </div>
+          <button style="display:flex; align-items:center; gap:6px; padding:8px 16px; border:none; border-radius:8px; font-weight:500; font-size:14px; background:#f3f4f6; color:#374151; cursor:pointer"><i data-lucide="rotate-ccw" style="width:16px;height:16px"></i><span>Reset</span></button>
+        </div>
+      </div>
+
+      <main style="max-width:1280px; margin:0 auto; padding:16px 24px">
+        <div style="max-width:1024px; margin:0 auto; display:flex; flex-direction:column; gap:16px">
+
+          <div style="background:#fff; border-radius:12px; border:1px solid #e5e7eb; padding:16px; box-shadow:0 1px 2px rgba(0,0,0,0.05)">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; color:#374151">
+              <i data-lucide="upload" style="width:16px;height:16px"></i>
+              <h3 style="margin:0; font-size:16px; font-weight:600; color:#111827">1. Source File</h3>
+            </div>
+            <input type="file" style="width:100%; padding:8px 12px; border:1px solid #e5e7eb; border-radius:8px; background:#fff; color:#111827; font-size:14px; box-sizing:border-box">
+            <p style="margin:6px 0 0; font-size:12px; color:#6b7280">Max total size: 50MB</p>
+            <p style="margin:6px 0 0; font-size:12px; color:#3bb4ff; font-weight:500">✓ 3 files selected</p>
+          </div>
+
+          <div style="background:#fff; border-radius:12px; border:1px solid #e5e7eb; padding:16px; box-shadow:0 1px 2px rgba(0,0,0,0.05)">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; color:#374151">
+              <i data-lucide="settings" style="width:16px;height:16px"></i>
+              <h3 style="margin:0; font-size:16px; font-weight:600; color:#111827">2. Output Format</h3>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px">
+              <sc-for list="{{ formats }}" as="fmt" hint-placeholder-count="7">
+                <label style="display:flex; align-items:center; gap:8px; padding:8px; border-radius:8px; cursor:pointer">
+                  <input type="radio" name="format" checked="{{ fmt.checked }}" style="width:16px; height:16px; accent-color:#3bb4ff">
+                  <span style="color:#374151; font-size:12px">{{ fmt.label }}</span>
+                </label>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+            <div style="background:#fff; border-radius:12px; border:1px solid #e5e7eb; padding:16px; box-shadow:0 1px 2px rgba(0,0,0,0.05)">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; color:#374151">
+                <i data-lucide="volume-2" style="width:16px;height:16px"></i>
+                <h3 style="margin:0; font-size:16px; font-weight:600; color:#111827">3. Volume</h3>
+              </div>
+              <div style="display:flex; flex-wrap:wrap; gap:12px">
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer"><input type="radio" name="vol" style="width:16px;height:16px; accent-color:#3bb4ff"><span style="color:#374151; font-size:12px">Quiet</span></label>
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer"><input type="radio" name="vol" style="width:16px;height:16px; accent-color:#3bb4ff"><span style="color:#374151; font-size:12px">Lower</span></label>
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer"><input type="radio" name="vol" checked="{{ true }}" style="width:16px;height:16px; accent-color:#3bb4ff"><span style="color:#374151; font-size:12px">Medium</span></label>
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer"><input type="radio" name="vol" style="width:16px;height:16px; accent-color:#3bb4ff"><span style="color:#374151; font-size:12px">High</span></label>
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer"><input type="radio" name="vol" style="width:16px;height:16px; accent-color:#3bb4ff"><span style="color:#374151; font-size:12px">Maximum</span></label>
+              </div>
+            </div>
+
+            <div style="background:#fff; border-radius:12px; border:1px solid #e5e7eb; padding:16px; box-shadow:0 1px 2px rgba(0,0,0,0.05)">
+              <h3 style="margin:0 0 12px; font-size:16px; font-weight:600; color:#111827">4. Options</h3>
+              <label style="display:flex; align-items:center; gap:8px; padding:8px; border-radius:8px; cursor:pointer">
+                <input type="checkbox" style="width:16px;height:16px; accent-color:#3bb4ff">
+                <span style="color:#374151; font-size:12px">Optimize Audio for Phone (Bandpass Filter 300-3400Hz)</span>
+              </label>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; padding-top:8px">
+            <button style="display:flex; align-items:center; gap:8px; padding:10px 24px; background:#3bb4ff; border:none; color:#fff; border-radius:8px; font-weight:500; font-size:14px; box-shadow:0 10px 15px -3px rgba(59,180,255,0.1); cursor:pointer"><i data-lucide="download" style="width:16px;height:16px"></i>Convert &amp; Download</button>
+          </div>
+        </div>
+      </main>
+
+      <footer style="width:100%; margin-top:16px; padding:20px 24px; border-top:1px solid #e5e7eb; box-sizing:border-box">
+        <div style="max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#9ca3af">
+          <div style="display:flex; align-items:center; gap:12px">
+            <a href="#" style="color:#9ca3af">VOTrainer</a><span style="color:#d1d5db">·</span><a href="#" style="color:#9ca3af">Trevor O&apos;Hare</a><span style="color:#d1d5db">·</span><a href="#" style="color:#9ca3af">RealVOTalent</a>
+          </div>
+          <div style="display:flex; align-items:center; gap:16px">
+            <a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="message-circle" style="width:14px;height:14px"></i>Discord</a><span style="color:#d1d5db">·</span><a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="github" style="width:14px;height:14px"></i>Source</a><span style="color:#d1d5db">·</span><a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="heart" style="width:14px;height:14px"></i>Support</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ═══ ACX ═══ -->
+  <div style="display:flex; flex-direction:column; gap:10px">
+    <div style="font:600 12px/1 ui-monospace,Menlo,monospace; letter-spacing:0.08em; color:#64748b">components/acx/ACXCheckContainer.tsx — ACX COMPLIANCE (with results)</div>
+    <div data-screen-label="ACX Compliance" style="width:1280px; background:#f9fafb; border:1px solid #cbd5e1; overflow:hidden">
+
+      <nav style="width:100%; border-bottom:1px solid #e5e7eb; background:rgba(255,255,255,0.9); padding:12px 24px; box-sizing:border-box">
+        <div style="max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between">
+          <a href="#" style="font-size:20px; font-weight:600; color:#111827; letter-spacing:-0.025em">VO Tools</a>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="padding:8px; border:none; border-radius:8px; background:#f3f4f6; color:#6b7280; display:flex; cursor:pointer"><i data-lucide="moon" style="width:18px;height:18px"></i></button>
+            <a href="#" style="display:flex; align-items:center; gap:6px; padding:8px 12px; border-radius:8px; font-weight:500; font-size:14px; border:1px solid #e5e7eb; background:#fff; color:#4b5563"><i data-lucide="message-circle" style="width:16px;height:16px"></i><span>Discord</span></a>
+            <a href="#" style="display:flex; align-items:center; gap:6px; padding:8px 12px; border-radius:8px; font-weight:500; font-size:14px; background:#0085d8; color:#fff"><i data-lucide="heart" style="width:16px;height:16px;fill:currentColor"></i><span>Support</span></a>
+          </div>
+        </div>
+      </nav>
+
+      <div style="width:100%; border-bottom:1px solid #e5e7eb; background:#fff; padding:16px 24px; box-sizing:border-box">
+        <div style="max-width:1280px; margin:0 auto">
+          <h1 style="margin:0; font-size:24px; font-weight:700; color:#111827; letter-spacing:-0.025em">ACX Audio Compliance Checker</h1>
+          <p style="margin:4px 0 0; font-size:14px; color:#4b5563">Analyze audiobook files for ACX technical requirements compliance</p>
+        </div>
+      </div>
+
+      <main style="max-width:1280px; margin:0 auto; padding:24px; display:flex; flex-direction:column; gap:24px">
+        <div style="display:grid; grid-template-columns:repeat(12,1fr); gap:24px">
+
+          <div style="grid-column:span 7">
+            <div style="background:#fff; border-radius:12px; border:1px solid #e5e7eb; padding:24px; box-shadow:0 1px 2px rgba(0,0,0,0.05)">
+              <h2 style="margin:0 0 16px; font-size:18px; font-weight:600; color:#111827">Upload Audio Files</h2>
+              <div style="border:2px dashed #d1d5db; border-radius:8px; padding:32px; text-align:center">
+                <div style="display:flex; flex-direction:column; align-items:center; cursor:pointer">
+                  <div style="color:#9ca3af; margin-bottom:12px"><i data-lucide="upload" style="width:48px;height:48px"></i></div>
+                  <p style="margin:0 0 4px; color:#374151; font-weight:500">Click to upload or drag and drop</p>
+                  <p style="margin:0; font-size:14px; color:#6b7280">MP3, WAV, FLAC, or other audio formats (multiple files supported)</p>
+                </div>
+              </div>
+
+              <div style="margin-top:16px; display:flex; flex-direction:column; gap:8px">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:12px; background:#f9fafb; border-radius:8px">
+                  <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:0">
+                    <span style="color:#3bb4ff; flex-shrink:0; display:flex"><i data-lucide="file-audio" style="width:20px;height:20px"></i></span>
+                    <span style="font-size:14px; font-weight:500; color:#111827">chapter-01.mp3</span>
+                    <span style="font-size:12px; color:#6b7280">(38.14 MB)</span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px">
+                    <span style="font-size:12px; font-weight:500; color:#16a34a">✓ Pass</span>
+                    <button style="padding:4px; background:transparent; border:none; color:#6b7280; cursor:pointer; display:flex"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button>
+                  </div>
+                </div>
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:12px; background:#f9fafb; border-radius:8px">
+                  <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:0">
+                    <span style="color:#3bb4ff; flex-shrink:0; display:flex"><i data-lucide="file-audio" style="width:20px;height:20px"></i></span>
+                    <span style="font-size:14px; font-weight:500; color:#111827">chapter-02.mp3</span>
+                    <span style="font-size:12px; color:#6b7280">(41.02 MB)</span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px">
+                    <span style="font-size:12px; font-weight:500; color:#dc2626">✗ Fail</span>
+                    <button style="padding:4px; background:transparent; border:none; color:#6b7280; cursor:pointer; display:flex"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex; gap:8px; margin-top:16px">
+                <button style="flex:1; padding:12px; border:none; border-radius:8px; background:#3bb4ff; color:#fff; font-weight:600; font-size:16px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); cursor:pointer">Analyze All Files</button>
+                <button style="padding:12px 16px; border:none; border-radius:8px; background:#16a34a; color:#fff; font-weight:600; font-size:16px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); display:flex; align-items:center; gap:8px; cursor:pointer"><i data-lucide="download" style="width:20px;height:20px"></i>Export CSV</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="grid-column:span 5; display:flex; flex-direction:column; gap:24px">
+            <div style="background:#fff; border-radius:12px; border:1px solid #e5e7eb; padding:24px; box-shadow:0 1px 2px rgba(0,0,0,0.05)">
+              <h3 style="margin:0 0 16px; font-size:18px; font-weight:600; color:#111827">ACX Technical Requirements</h3>
+              <div style="display:flex; flex-direction:column; gap:12px; font-size:14px">
+                <sc-for list="{{ acxReqs }}" as="r" hint-placeholder-count="4">
+                  <div style="display:flex; align-items:flex-start; gap:8px">
+                    <span style="color:#16a34a; flex-shrink:0; margin-top:2px; display:flex"><i data-lucide="check-circle" style="width:16px;height:16px"></i></span>
+                    <div>
+                      <p style="margin:0; color:#374151; font-weight:500">{{ r.title }}</p>
+                      <p style="margin:0; color:#6b7280; font-size:12px">{{ r.sub }}</p>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background:#ecfeff; border-radius:12px; border:1px solid #a5f3fc; padding:24px">
+              <h3 style="margin:0 0 12px; font-size:16px; font-weight:600; color:#164e63">Resources</h3>
+              <div style="display:flex; flex-direction:column; gap:8px">
+                <a href="#" style="display:flex; align-items:center; gap:8px; font-size:14px; color:#0085d8"><i data-lucide="external-link" style="width:16px;height:16px"></i>Official ACX Audio Requirements</a>
+                <a href="#" style="display:flex; align-items:center; gap:8px; font-size:14px; color:#0085d8"><i data-lucide="external-link" style="width:16px;height:16px"></i>Understanding the ACX requirements for audio</a>
+                <a href="#" style="display:flex; align-items:center; gap:8px; font-size:14px; color:#0085d8"><i data-lucide="external-link" style="width:16px;height:16px"></i>The ACX Producer&apos;s Checklist</a>
+                <a href="#" style="display:flex; align-items:center; gap:8px; font-size:14px; color:#0085d8"><i data-lucide="external-link" style="width:16px;height:16px"></i>ACX Audio Lab</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#fff; border-radius:12px; border:1px solid #e5e7eb; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,0.05)">
+          <div style="padding:32px">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px">
+              <h2 style="margin:0; font-size:24px; font-weight:700; color:#111827">Compliance Results</h2>
+              <div style="font-size:14px; color:#4b5563">2 files analyzed</div>
+            </div>
+
+            <table style="width:100%; font-size:14px; border-collapse:collapse">
+              <thead>
+                <tr style="border-bottom:2px solid #e5e7eb">
+                  <th style="text-align:left; padding:12px; font-weight:600; color:#374151">Filename</th>
+                  <th style="padding:12px; font-weight:600; color:#374151">Status</th>
+                  <th style="padding:12px; font-weight:600; color:#374151">Format</th>
+                  <th style="padding:12px; font-weight:600; color:#374151">Sample Rate</th>
+                  <th style="padding:12px; font-weight:600; color:#374151">RMS (LUFS)</th>
+                  <th style="padding:12px; font-weight:600; color:#374151">Peak</th>
+                  <th style="padding:12px; font-weight:600; color:#374151">Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid #f3f4f6">
+                  <td style="padding:16px 12px">
+                    <div style="font-weight:500; color:#111827">chapter-01.mp3</div>
+                    <div style="font-size:12px; color:#6b7280; margin-top:2px">38.14 MB • mono</div>
+                  </td>
+                  <td style="padding:16px 12px; text-align:center"><span style="display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px; font-size:12px; font-weight:600; background:#dcfce7; color:#15803d"><i data-lucide="check-circle" style="width:14px;height:14px"></i>PASS</span></td>
+                  <td style="padding:16px 12px; text-align:center"><div style="display:flex; flex-direction:column; align-items:center; gap:4px"><span style="color:#16a34a; display:flex"><i data-lucide="check-circle" style="width:20px;height:20px"></i></span><span style="font-size:12px; color:#4b5563">192kbps</span></div></td>
+                  <td style="padding:16px 12px; text-align:center"><div style="display:flex; flex-direction:column; align-items:center; gap:4px"><span style="color:#16a34a; display:flex"><i data-lucide="check-circle" style="width:20px;height:20px"></i></span><span style="font-size:12px; color:#4b5563">44.1kHz</span></div></td>
+                  <td style="padding:16px 12px; text-align:center"><div style="display:flex; flex-direction:column; align-items:center; gap:4px"><span style="color:#16a34a; display:flex"><i data-lucide="check-circle" style="width:20px;height:20px"></i></span><span style="font-size:12px; font-weight:500; color:#16a34a">-20.1 dB</span></div></td>
+                  <td style="padding:16px 12px; text-align:center"><div style="display:flex; flex-direction:column; align-items:center; gap:4px"><span style="color:#16a34a; display:flex"><i data-lucide="check-circle" style="width:20px;height:20px"></i></span><span style="font-size:12px; font-weight:500; color:#16a34a">-3.4 dB</span></div></td>
+                  <td style="padding:16px 12px; text-align:center"><div style="font-size:14px; color:#374151; font-weight:500">42m 18s</div><div style="font-size:12px; color:#6b7280; margin-top:2px">0.6s / 1.2s</div></td>
+                </tr>
+                <tr style="border-bottom:1px solid #f3f4f6">
+                  <td style="padding:16px 12px">
+                    <div style="font-weight:500; color:#111827">chapter-02.mp3</div>
+                    <div style="font-size:12px; color:#6b7280; margin-top:2px">41.02 MB • mono</div>
+                  </td>
+                  <td style="padding:16px 12px; text-align:center"><span style="display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px; font-size:12px; font-weight:600; background:#fee2e2; color:#b91c1c"><i data-lucide="x-circle" style="width:14px;height:14px"></i>FAIL</span></td>
+                  <td style="padding:16px 12px; text-align:center"><div style="display:flex; flex-direction:column; align-items:center; gap:4px"><span style="color:#16a34a; display:flex"><i data-lucide="check-circle" style="width:20px;height:20px"></i></span><span style="font-size:12px; color:#4b5563">256kbps</span></div></td>
+                  <td style="padding:16px 12px; text-align:center"><div style="display:flex; flex-direction:column; align-items:center; gap:4px"><span style="color:#16a34a; display:flex"><i data-lucide="check-circle" style="width:20px;height:20px"></i></span><span style="font-size:12px; color:#4b5563">44.1kHz</span></div></td>
+                  <td style="padding:16px 12px; text-align:center"><div style="display:flex; flex-direction:column; align-items:center; gap:4px"><span style="color:#dc2626; display:flex"><i data-lucide="x-circle" style="width:20px;height:20px"></i></span><span style="font-size:12px; font-weight:500; color:#dc2626">-16.8 dB</span></div></td>
+                  <td style="padding:16px 12px; text-align:center"><div style="display:flex; flex-direction:column; align-items:center; gap:4px"><span style="color:#dc2626; display:flex"><i data-lucide="x-circle" style="width:20px;height:20px"></i></span><span style="font-size:12px; font-weight:500; color:#dc2626">-1.9 dB</span></div></td>
+                  <td style="padding:16px 12px; text-align:center"><div style="font-size:14px; color:#374151; font-weight:500">45m 03s</div><div style="font-size:12px; color:#6b7280; margin-top:2px">0.2s / 0.4s</div></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top:24px; padding:16px; background:#fffbeb; border-radius:8px; border:1px solid #fde68a">
+              <div style="display:flex; align-items:flex-start; gap:8px">
+                <span style="color:#d97706; flex-shrink:0; margin-top:2px; display:flex"><i data-lucide="alert-circle" style="width:20px;height:20px"></i></span>
+                <div>
+                  <h3 style="margin:0 0 4px; font-size:14px; font-weight:600; color:#78350f">Analysis Only</h3>
+                  <p style="margin:0; font-size:12px; color:#92400e">This tool provides compliance checking only. It does not modify your audio files. If your file fails compliance, you will need to re-master it using audio editing software.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer style="width:100%; margin-top:16px; padding:20px 24px; border-top:1px solid #e5e7eb; box-sizing:border-box">
+        <div style="max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#9ca3af">
+          <div style="display:flex; align-items:center; gap:12px">
+            <a href="#" style="color:#9ca3af">VOTrainer</a><span style="color:#d1d5db">·</span><a href="#" style="color:#9ca3af">Trevor O&apos;Hare</a><span style="color:#d1d5db">·</span><a href="#" style="color:#9ca3af">RealVOTalent</a>
+          </div>
+          <div style="display:flex; align-items:center; gap:16px">
+            <a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="message-circle" style="width:14px;height:14px"></i>Discord</a><span style="color:#d1d5db">·</span><a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="github" style="width:14px;height:14px"></i>Source</a><span style="color:#d1d5db">·</span><a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="heart" style="width:14px;height:14px"></i>Support</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ═══ TELEPROMPTER SETUP ═══ -->
+  <div style="display:flex; flex-direction:column; gap:10px">
+    <div style="font:600 12px/1 ui-monospace,Menlo,monospace; letter-spacing:0.08em; color:#64748b">components/teleprompter/TeleprompterContainer.tsx — TELEPROMPTER SETUP</div>
+    <div data-screen-label="Teleprompter setup" style="width:1280px; background:#f9fafb; border:1px solid #cbd5e1; overflow:hidden">
+
+      <nav style="width:100%; border-bottom:1px solid #e5e7eb; background:rgba(255,255,255,0.9); padding:12px 24px; box-sizing:border-box">
+        <div style="max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between">
+          <a href="#" style="font-size:20px; font-weight:600; color:#111827; letter-spacing:-0.025em">VO Tools</a>
+          <div style="display:flex; align-items:center; gap:8px">
+            <button style="padding:8px; border:none; border-radius:8px; background:#f3f4f6; color:#6b7280; display:flex; cursor:pointer"><i data-lucide="moon" style="width:18px;height:18px"></i></button>
+            <a href="#" style="display:flex; align-items:center; gap:6px; padding:8px 12px; border-radius:8px; font-weight:500; font-size:14px; border:1px solid #e5e7eb; background:#fff; color:#4b5563"><i data-lucide="message-circle" style="width:16px;height:16px"></i><span>Discord</span></a>
+            <a href="#" style="display:flex; align-items:center; gap:6px; padding:8px 12px; border-radius:8px; font-weight:500; font-size:14px; background:#0085d8; color:#fff"><i data-lucide="heart" style="width:16px;height:16px;fill:currentColor"></i><span>Support</span></a>
+          </div>
+        </div>
+      </nav>
+
+      <div style="width:100%; border-bottom:1px solid #e5e7eb; background:#fff; padding:16px 24px; box-sizing:border-box">
+        <div style="max-width:1280px; margin:0 auto">
+          <h1 style="margin:0; font-size:24px; font-weight:700; color:#111827; letter-spacing:-0.025em">Teleprompter</h1>
+          <p style="margin:4px 0 0; font-size:14px; color:#4b5563">Professional teleprompter with auto-scroll, speed control, and studio-ready features</p>
+        </div>
+      </div>
+
+      <main style="max-width:1280px; margin:0 auto; padding:16px 24px">
+        <div style="max-width:896px; margin:0 auto; display:flex; flex-direction:column; gap:24px">
+
+          <div style="display:flex; flex-direction:column; gap:8px">
+            <div style="background:#fff; border-radius:16px; border:1px solid #e5e7eb; display:flex; flex-direction:column; height:256px; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,0.05)">
+              <div style="padding:12px 20px; border-bottom:1px solid #f3f4f6; display:flex; align-items:center; justify-content:space-between; background:rgba(249,250,251,0.5)">
+                <div style="display:flex; align-items:center; gap:8px; color:#6b7280">
+                  <i data-lucide="type" style="width:14px;height:14px"></i>
+                  <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em">Script Text</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px">
+                  <div style="font:400 12px ui-monospace,Menlo,monospace; color:#9ca3af">248 chars</div>
+                  <div style="display:flex; align-items:center; gap:4px; background:#f3f4f6; border-radius:8px; padding:2px">
+                    <button style="padding:4px 8px; border:none; border-radius:4px; font-size:12px; font-weight:500; background:#fff; color:#111827; box-shadow:0 1px 2px rgba(0,0,0,0.05); cursor:pointer"><i data-lucide="type" style="width:12px;height:12px;display:inline"></i><span style="margin-left:4px">Edit</span></button>
+                    <button style="padding:4px 8px; border:none; border-radius:4px; font-size:12px; font-weight:500; background:transparent; color:#4b5563; cursor:pointer"><i data-lucide="book-open" style="width:12px;height:12px;display:inline"></i><span style="margin-left:4px">Pronunciation</span></button>
+                  </div>
+                </div>
+              </div>
+              <div style="flex:1; padding:24px; color:#374151; font-size:18px; line-height:1.625; white-space:pre-wrap">Thanks for joining us today. Over the next few minutes we'll walk through what changed, why it matters, and what happens next.</div>
+            </div>
+            <div style="font-size:14px; color:#6b7280; padding:0 4px">42 words • Estimated 17 seconds</div>
+          </div>
+
+          <div style="background:#fff; border-radius:12px; border:1px solid #e5e7eb; padding:24px; box-shadow:0 1px 2px rgba(0,0,0,0.05)">
+            <label style="display:block; font-size:14px; font-weight:500; color:#374151; margin-bottom:8px">Reading Speed (WPM)</label>
+            <div style="display:flex; align-items:center; gap:16px">
+              <input type="range" min="75" max="200" value="150" style="flex:1; accent-color:#3bb4ff">
+              <input type="number" value="150" style="width:80px; padding:8px 12px; border-radius:8px; border:1px solid #d1d5db; background:#fff; color:#111827; text-align:center; box-sizing:border-box">
+            </div>
+            <div style="margin-top:8px; font-size:14px; color:#6b7280">This determines the base scrolling speed. You can adjust it in real-time during playback.</div>
+          </div>
+
+          <div style="background:linear-gradient(to bottom right,#ecfeff,#f9fafb); border-radius:12px; padding:24px; border:1px solid #a5f3fc">
+            <div style="display:flex; align-items:flex-start; gap:16px">
+              <div style="flex-shrink:0">
+                <div style="background:#fff; padding:12px; border-radius:8px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1)">
+                  <div style="width:120px; height:120px; background:repeating-linear-gradient(45deg,#e5e7eb 0 6px,#f3f4f6 6px 12px); display:flex; align-items:center; justify-content:center; text-align:center; font:500 9px ui-monospace,Menlo,monospace; color:#6b7280">QR code<br>(remote URL)</div>
+                </div>
+              </div>
+              <div style="flex:1">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px">
+                  <span style="color:#3bb4ff; display:flex"><i data-lucide="smartphone" style="width:20px;height:20px"></i></span>
+                  <h3 style="margin:0; font-size:14px; font-weight:600; color:#164e63">Phone Remote Control</h3>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px; font-size:14px">
+                  <div style="display:flex; align-items:center; gap:8px">
+                    <span style="color:#155e75">Room Code:</span>
+                    <code style="padding:4px 8px; background:#fff; border-radius:2px; font:700 13px ui-monospace,Menlo,monospace; color:#164e63; border:1px solid #67e8f9">4F2A9C</code>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px">
+                    <span style="color:#6b7280; display:flex"><i data-lucide="wifi-off" style="width:16px;height:16px"></i></span>
+                    <span style="color:#4b5563">Waiting for phone...</span>
+                  </div>
+                  <p style="margin:4px 0 0; color:#0085d8; font-size:12px">Scan the QR code with your phone to use it as a wireless remote control</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button style="width:100%; padding:16px; border:none; border-radius:12px; background:#3bb4ff; color:#fff; font-weight:600; font-size:18px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); cursor:pointer">Start Teleprompter</button>
+
+          <div style="background:#ecfeff; border-radius:12px; padding:24px; border:1px solid #a5f3fc">
+            <h3 style="margin:0 0 12px; font-size:14px; font-weight:600; color:#164e63">Keyboard Controls</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:14px; color:#155e75">
+              <div><kbd style="padding:4px 8px; background:#fff; border-radius:2px; border:1px solid #67e8f9; font:400 12px ui-monospace,Menlo,monospace">Space</kbd> Play / Pause</div>
+              <div><kbd style="padding:4px 8px; background:#fff; border-radius:2px; border:1px solid #67e8f9; font:400 12px ui-monospace,Menlo,monospace">↑ ↓</kbd> Adjust Speed</div>
+              <div><kbd style="padding:4px 8px; background:#fff; border-radius:2px; border:1px solid #67e8f9; font:400 12px ui-monospace,Menlo,monospace">Home</kbd> Reset to Start</div>
+              <div><kbd style="padding:4px 8px; background:#fff; border-radius:2px; border:1px solid #67e8f9; font:400 12px ui-monospace,Menlo,monospace">Esc</kbd> Exit Fullscreen</div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer style="width:100%; margin-top:16px; padding:20px 24px; border-top:1px solid #e5e7eb; box-sizing:border-box">
+        <div style="max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; font-size:12px; color:#9ca3af">
+          <div style="display:flex; align-items:center; gap:12px">
+            <a href="#" style="color:#9ca3af">VOTrainer</a><span style="color:#d1d5db">·</span><a href="#" style="color:#9ca3af">Trevor O&apos;Hare</a><span style="color:#d1d5db">·</span><a href="#" style="color:#9ca3af">RealVOTalent</a>
+          </div>
+          <div style="display:flex; align-items:center; gap:16px">
+            <a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="message-circle" style="width:14px;height:14px"></i>Discord</a><span style="color:#d1d5db">·</span><a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="github" style="width:14px;height:14px"></i>Source</a><span style="color:#d1d5db">·</span><a href="#" style="color:#9ca3af; display:flex; align-items:center; gap:6px"><i data-lucide="heart" style="width:14px;height:14px"></i>Support</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ═══ TELEPROMPTER FULLSCREEN + REMOTE ═══ -->
+  <div style="display:flex; gap:40px; align-items:flex-start">
+    <div style="display:flex; flex-direction:column; gap:10px">
+      <div style="font:600 12px/1 ui-monospace,Menlo,monospace; letter-spacing:0.08em; color:#64748b">TeleprompterDisplay.tsx — FULLSCREEN</div>
+      <div data-screen-label="Teleprompter fullscreen" style="width:860px; height:540px; background:#000; border:1px solid #cbd5e1; position:relative; overflow:hidden">
+        <div style="position:absolute; top:0; left:0; right:0; padding:16px; background:linear-gradient(to bottom,rgba(0,0,0,0.9),transparent)">
+          <div style="max-width:1024px; margin:0 auto; display:flex; align-items:center; justify-content:space-between">
+            <div style="display:flex; align-items:center; gap:24px; color:#fff; font-size:14px">
+              <div><span style="color:#9ca3af">Elapsed:</span> <span style="font:600 14px ui-monospace,Menlo,monospace; color:#fff">0:12</span></div>
+              <div><span style="color:#9ca3af">Remaining:</span> <span style="font:600 14px ui-monospace,Menlo,monospace; color:#fff">0:05</span></div>
+              <div><span style="color:#9ca3af">Speed:</span> <span style="font:600 14px ui-monospace,Menlo,monospace; color:#fff">1.0x</span></div>
+              <div><span style="color:#9ca3af">Text:</span> <span style="font:600 14px ui-monospace,Menlo,monospace; color:#fff">Medium</span></div>
+            </div>
+            <button style="padding:8px; border:none; border-radius:8px; background:rgba(255,255,255,0.1); color:#fff; display:flex; cursor:pointer"><i data-lucide="x" style="width:20px;height:20px"></i></button>
+          </div>
+        </div>
+
+        <div style="height:100%; display:flex; align-items:center; justify-content:center; padding:0 32px">
+          <p style="margin:0; max-width:768px; text-align:center; font-size:48px; font-weight:600; line-height:1.625; color:#fff">Thanks for joining us today.</p>
+        </div>
+
+        <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(to top,#000 0%,#000 50%,rgba(0,0,0,0.9) 70%,rgba(0,0,0,0.5) 85%,transparent 100%); padding:24px">
+          <div style="max-width:1024px; margin:0 auto">
+            <div style="display:flex; align-items:center; justify-content:center; gap:12px">
+              <button style="padding:12px; border:none; border-radius:8px; background:rgba(255,255,255,0.1); color:#fff; display:flex; cursor:pointer"><i data-lucide="rotate-ccw" style="width:20px;height:20px"></i></button>
+              <button style="padding:12px; border:none; border-radius:8px; background:rgba(255,255,255,0.1); color:#fff; display:flex; cursor:pointer"><i data-lucide="flip-horizontal-2" style="width:20px;height:20px"></i></button>
+              <div style="display:flex; align-items:center; gap:8px">
+                <button style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; border:none; border-radius:8px; background:rgba(255,255,255,0.1); color:#fff; font-weight:500; cursor:pointer">−</button>
+                <button style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; border:none; border-radius:8px; background:rgba(255,255,255,0.1); color:#fff; font-weight:500; cursor:pointer">+</button>
+              </div>
+              <button style="width:56px; height:56px; display:flex; align-items:center; justify-content:center; border:none; border-radius:999px; background:#3bb4ff; color:#fff; box-shadow:0 10px 15px -3px rgba(0,0,0,0.3); cursor:pointer"><i data-lucide="pause" style="width:28px;height:28px;fill:currentColor"></i></button>
+              <div style="display:flex; align-items:center; gap:8px">
+                <button style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; border:none; border-radius:8px; background:rgba(255,255,255,0.1); color:#fff; cursor:pointer"><i data-lucide="type" style="width:16px;height:16px"></i></button>
+                <button style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; border:none; border-radius:8px; background:rgba(255,255,255,0.1); color:#fff; cursor:pointer"><i data-lucide="type" style="width:16px;height:16px"></i></button>
+              </div>
+            </div>
+            <div style="margin-top:12px; text-align:center; color:#9ca3af; font-size:14px; white-space:nowrap">
+              <span style="display:inline-block; margin:0 8px">Space: Play/Pause</span>
+              <span style="display:inline-block; margin:0 8px">↑↓: Speed</span>
+              <span style="display:inline-block; margin:0 8px">+−: Text</span>
+              <span style="display:inline-block; margin:0 8px">M: Mirror</span>
+              <span style="display:inline-block; margin:0 8px">Home: Reset</span>
+              <span style="display:inline-block; margin:0 8px">Esc: Exit</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:10px">
+      <div style="font:600 12px/1 ui-monospace,Menlo,monospace; letter-spacing:0.08em; color:#64748b">app/remote/page.tsx — PHONE REMOTE</div>
+      <div data-screen-label="Phone remote" style="width:390px; height:720px; background:#0f172a; border:1px solid #cbd5e1; display:flex; flex-direction:column; color:#fff; overflow:hidden">
+        <div style="background:#1e293b; border-bottom:1px solid #334155; padding:8px 12px">
+          <div style="display:flex; align-items:center; justify-content:space-between">
+            <div>
+              <h1 style="margin:0; font-size:16px; font-weight:700">Teleprompter Remote</h1>
+              <p style="margin:0; font-size:12px; color:#94a3b8">Room: 4F2A9C</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:4px; color:#4ade80; font-size:12px"><i data-lucide="wifi" style="width:14px;height:14px"></i><span>Connected</span></div>
+          </div>
+        </div>
+
+        <div style="flex:1; display:flex; flex-direction:column; padding:12px; gap:12px">
+          <div style="background:#1e293b; border-radius:8px; padding:12px">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px">
+              <span style="font-size:12px; color:#94a3b8">Progress</span>
+              <span style="font:400 12px ui-monospace,Menlo,monospace; color:#cbd5e1">38%</span>
+            </div>
+            <div style="width:100%; height:6px; background:#334155; border-radius:999px; overflow:hidden">
+              <div style="height:100%; width:38%; background:#3b82f6"></div>
+            </div>
+          </div>
+
+          <button style="width:100%; height:96px; border:none; border-radius:12px; font-weight:700; font-size:20px; color:#fff; background:linear-gradient(to bottom right,#dc2626,#b91c1c); box-shadow:0 10px 15px -3px rgba(239,68,68,0.3); cursor:pointer">
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px">
+              <i data-lucide="pause" style="width:40px;height:40px;fill:currentColor"></i>
+              <span>PAUSE</span>
+            </div>
+          </button>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+            <div style="background:#1e293b; border-radius:8px; padding:10px">
+              <div style="text-align:center; margin-bottom:8px">
+                <div style="font-size:12px; color:#94a3b8">Speed</div>
+                <div style="font:700 20px ui-monospace,Menlo,monospace; color:#60a5fa">1.2x</div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:6px">
+                <button style="width:100%; height:40px; background:#334155; border:none; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:4px; color:#fff; cursor:pointer"><i data-lucide="chevron-up" style="width:20px;height:20px"></i><span style="font-size:12px; font-weight:600">UP</span></button>
+                <button style="width:100%; height:40px; background:#334155; border:none; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:4px; color:#fff; cursor:pointer"><i data-lucide="chevron-down" style="width:20px;height:20px"></i><span style="font-size:12px; font-weight:600">DOWN</span></button>
+              </div>
+            </div>
+            <div style="background:#1e293b; border-radius:8px; padding:10px">
+              <div style="text-align:center; margin-bottom:8px">
+                <div style="font-size:12px; color:#94a3b8">Text Size</div>
+                <div style="font:700 20px ui-monospace,Menlo,monospace; color:#c084fc">M</div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:6px">
+                <button style="width:100%; height:40px; background:#334155; border:none; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:4px; color:#fff; cursor:pointer"><i data-lucide="type" style="width:20px;height:20px"></i><span style="font-size:12px; font-weight:600">UP</span></button>
+                <button style="width:100%; height:40px; background:#334155; border:none; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:4px; color:#fff; cursor:pointer"><i data-lucide="type" style="width:16px;height:16px"></i><span style="font-size:12px; font-weight:600">DOWN</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+            <button style="height:48px; border:none; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:6px; background:#334155; color:#fff; cursor:pointer"><i data-lucide="flip-horizontal-2" style="width:20px;height:20px"></i><span style="font-weight:600; font-size:14px">MIRROR OFF</span></button>
+            <button style="height:48px; border:none; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:6px; background:#334155; color:#fff; cursor:pointer"><i data-lucide="rotate-ccw" style="width:20px;height:20px"></i><span style="font-weight:600; font-size:14px">RESTART</span></button>
+          </div>
+        </div>
+
+        <div style="background:#1e293b; border-top:1px solid #334155; padding:8px 12px; text-align:center">
+          <p style="margin:0; font-size:12px; color:#64748b">VO Tools • Teleprompter Remote</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() { this.icons(); }
+  componentDidUpdate() { this.icons(); }
+  icons() {
+    const run = () => window.lucide && window.lucide.createIcons();
+    run();
+    setTimeout(run, 300);
+    setTimeout(run, 1200);
+  }
+  renderVals() {
+    return {
+      tools: [
+        { icon: 'calculator', title: 'Script Analysis', description: 'Analyze scripts for word count, timing, and pricing. Quickly estimate project scope and calculate rates.', features: ['Word & character count', 'Timing calculation', 'Pricing calculator', 'Script comparison'] },
+        { icon: 'audio-waveform', title: 'Telephony Converter', description: 'Convert audio files to telephony-compatible formats for IVR systems, VoIP, and phone systems.', features: ['Multiple formats', 'Batch conversion', 'Volume control', 'Bandpass filter'] },
+        { icon: 'scroll-text', title: 'Teleprompter', description: 'Professional teleprompter with auto-scrolling, speed control, and phone remote for studio sessions.', features: ['Fullscreen mode', 'Speed control', 'Phone remote', 'Mirror mode'] },
+        { icon: 'check-circle-2', title: 'ACX Compliance', description: 'Analyze audiobook files for ACX technical requirements. Check format, loudness, and noise floor.', features: ['Format & bitrate', 'LUFS analysis', 'Batch processing', 'CSV export'] }
+      ],
+      formats: [
+        { label: 'µ-law WAV (8Khz, Mono, CCITT µ-law)', checked: false },
+        { label: 'A-law WAV (8Khz, Mono, CCITT A-law)', checked: false },
+        { label: 'Low Definition 8-bit WAV (8Khz, Mono, 8-Bit PCM)', checked: false },
+        { label: 'Standard Definition 16-bit WAV (8Khz, Mono, 16-Bit PCM)', checked: true },
+        { label: 'High Definition WAV (16Khz, Mono, 16-Bit PCM)', checked: false },
+        { label: 'Asterisk G.722 (16Khz, Mono, G.722)', checked: false },
+        { label: 'Asterisk RAW (8Khz, Mono, RAW)', checked: false }
+      ],
+      acxReqs: [
+        { title: 'MP3 Format', sub: '192 kbps or higher, Constant Bit Rate (CBR)' },
+        { title: '44.1 kHz Sample Rate', sub: 'CD quality audio sample rate' },
+        { title: 'RMS: -23dB to -18dB', sub: 'Average loudness (typically -20dB)' },
+        { title: 'Peak: ≤ -3dB', sub: 'Maximum loudness level' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

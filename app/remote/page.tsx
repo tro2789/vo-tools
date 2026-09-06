@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
+import { useEffect, useState, useCallback, useRef, Suspense, FormEvent, CSSProperties, ReactNode } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { io, Socket } from 'socket.io-client';
 import { Play, Pause, RotateCcw, ChevronUp, ChevronDown, Wifi, WifiOff, Type, FlipHorizontal2 } from 'lucide-react';
@@ -13,10 +13,49 @@ interface TeleprompterState {
   isMirrored: boolean;
 }
 
+const TEXT_SIZE_LABELS = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'];
+
+const sectionLabel: CSSProperties = {
+  font: '400 10px Inter, sans-serif',
+  letterSpacing: '0.12em',
+  color: '#8A8D93',
+};
+
+const controlButtonLabel: CSSProperties = {
+  font: '600 11px Inter, sans-serif',
+  letterSpacing: '0.1em',
+};
+
+function ControlButton({
+  onClick,
+  disabled,
+  icon,
+  label,
+}: {
+  onClick: () => void;
+  disabled?: boolean;
+  icon: ReactNode;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className="flex-1 h-14 flex items-center justify-center gap-1.5 border border-[#333] bg-transparent text-white disabled:opacity-40 disabled:cursor-not-allowed active:bg-[#1A1A1A]"
+    >
+      {icon}
+      <span style={controlButtonLabel}>{label}</span>
+    </button>
+  );
+}
+
 function RemoteControl() {
   const searchParams = useSearchParams();
-  const roomCode = searchParams.get('room');
-  
+  const paramRoomCode = searchParams.get('room');
+
+  const [roomCode, setRoomCode] = useState(paramRoomCode ?? '');
+  const [roomInput, setRoomInput] = useState('');
   const [connected, setConnected] = useState(false);
   const [joined, setJoined] = useState(false);
   const [state, setState] = useState<TeleprompterState>({
@@ -31,7 +70,6 @@ function RemoteControl() {
 
   useEffect(() => {
     if (!roomCode) {
-      setError('No room code provided');
       return;
     }
 
@@ -100,197 +138,152 @@ function RemoteControl() {
   const handleTextSizeSmaller = () => sendCommand('textSmaller');
   const handleToggleMirror = () => sendCommand('toggleMirror');
 
+  const handleJoinSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const trimmed = roomInput.trim().toUpperCase();
+    if (trimmed) {
+      setRoomCode(trimmed);
+    }
+  };
+
+  // Room-entry state: no room code yet, let the user type one in.
   if (!roomCode) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-400 mb-2">Invalid Link</h1>
-          <p className="text-slate-400">No room code provided in URL</p>
+      <div className="min-h-dvh bg-[#0A0A0A] text-white flex flex-col items-center justify-center p-6" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <div className="w-full max-w-xs flex flex-col gap-6">
+          <div className="text-center">
+            <div style={{ font: '700 11px Inter, sans-serif', letterSpacing: '0.16em', color: '#fff' }}>
+              VO TOOLS · REMOTE
+            </div>
+            <div style={{ font: '400 11px Inter, sans-serif', color: '#8A8D93', marginTop: 6 }}>
+              Enter the room code shown on the teleprompter
+            </div>
+          </div>
+          <form onSubmit={handleJoinSubmit} className="flex flex-col gap-3">
+            <label htmlFor="room-code-input" className="sr-only">
+              Room code
+            </label>
+            <input
+              id="room-code-input"
+              type="text"
+              value={roomInput}
+              onChange={(e) => setRoomInput(e.target.value)}
+              placeholder="ROOM CODE"
+              autoCapitalize="characters"
+              autoComplete="off"
+              autoCorrect="off"
+              spellCheck={false}
+              className="h-14 w-full px-4 bg-[#131313] border border-[#333] text-white text-center placeholder:text-[#5F6167] focus:outline-none"
+              style={{ font: '600 14px Inter, sans-serif', letterSpacing: '0.08em', textTransform: 'uppercase' }}
+            />
+            <button
+              type="submit"
+              disabled={!roomInput.trim()}
+              className="h-14 w-full bg-white text-[#0A0A0A] disabled:opacity-40 disabled:cursor-not-allowed active:bg-[#E4E4E4]"
+              style={{ font: '600 13px Inter, sans-serif', letterSpacing: '0.1em' }}
+            >
+              JOIN ROOM
+            </button>
+          </form>
         </div>
       </div>
     );
   }
 
+  const isLinked = connected && joined;
+  const statusLabel = isLinked ? 'LINKED' : connected ? 'WAITING' : 'OFFLINE';
+  const progressPct = Math.round(state.progress * 100);
+  const textSizeLabel = TEXT_SIZE_LABELS[state.textSize - 1] || 'M';
+
   return (
-    <div className="min-h-screen bg-slate-900 text-white flex flex-col select-none touch-manipulation">
+    <div className="min-h-dvh bg-[#0A0A0A] text-white flex flex-col select-none touch-manipulation" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Prevent zoom on mobile */}
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-      
+
       {/* Header */}
-      <div className="bg-slate-800 border-b border-slate-700 px-3 py-2">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-base font-bold">Teleprompter Remote</h1>
-            <p className="text-xs text-slate-400">Room: {roomCode}</p>
+      <div style={{ padding: '14px 16px', borderBottom: '1px solid #262626' }} className="flex items-center justify-between">
+        <div>
+          <div style={{ font: '700 11px Inter, sans-serif', letterSpacing: '0.16em', color: '#fff' }}>
+            VO TOOLS · REMOTE
           </div>
-          <div className="flex items-center gap-1.5">
-            {connected && joined ? (
-              <div className="flex items-center gap-1 text-green-400 text-xs">
-                <Wifi className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Connected</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1 text-red-400 text-xs">
-                <WifiOff className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Disconnected</span>
-              </div>
-            )}
+          <div style={{ font: '400 11px Inter, sans-serif', color: '#8A8D93', marginTop: 3 }}>
+            ROOM {roomCode}
           </div>
+        </div>
+        <div className="flex items-center gap-1.5" style={{ font: '400 11px Inter, sans-serif', color: '#fff' }}>
+          {isLinked ? <Wifi size={13} /> : <WifiOff size={13} />}
+          <span>{statusLabel}</span>
         </div>
       </div>
 
-      {/* Error Message */}
+      {/* Error message */}
       {error && (
-        <div className="bg-red-900/50 border-b border-red-700 px-3 py-2">
-          <p className="text-red-200 text-xs">{error}</p>
+        <div style={{ padding: '10px 16px', borderBottom: '1px solid #262626', background: '#3A1512' }}>
+          <p style={{ font: '400 11px Inter, sans-serif', color: '#E5867F' }}>{error}</p>
         </div>
       )}
 
       {/* Main Controls */}
-      <div className="flex-1 flex flex-col p-3 gap-3 overflow-y-auto">
-        
-        {/* Progress Bar */}
-        <div className="bg-slate-800 rounded-lg p-3">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs text-slate-400">Progress</span>
-            <span className="text-xs font-mono text-slate-300">
-              {Math.round(state.progress * 100)}%
-            </span>
+      <div className="flex-1 flex flex-col overflow-y-auto" style={{ padding: 16, gap: 16 }}>
+        {/* Progress */}
+        <div>
+          <div className="flex items-baseline justify-between" style={{ marginBottom: 8 }}>
+            <span style={sectionLabel}>PROGRESS</span>
+            <span style={{ font: '600 12px Inter, sans-serif', color: '#fff' }}>{progressPct}%</span>
           </div>
-          <div className="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-blue-500 transition-all duration-300"
-              style={{ width: `${state.progress * 100}%` }}
-            />
+          <div style={{ height: 4, background: '#262626' }}>
+            <div style={{ width: `${progressPct}%`, height: 4, background: '#fff' }} />
           </div>
         </div>
 
-        {/* Play/Pause Button */}
+        {/* Play/Pause */}
         <button
+          type="button"
           onClick={handlePlayPause}
           disabled={!joined}
-          className={`w-full h-24 rounded-xl font-bold text-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
-            state.isPlaying
-              ? 'bg-linear-to-br from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-lg shadow-red-500/30'
-              : 'bg-linear-to-br from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg shadow-green-500/30'
-          }`}
+          className="w-full flex flex-col items-center justify-center gap-2 bg-white text-[#0A0A0A] disabled:opacity-40 disabled:cursor-not-allowed active:bg-[#E4E4E4]"
+          style={{ height: 120, border: 'none' }}
         >
-          <div className="flex flex-col items-center justify-center gap-1">
-            {state.isPlaying ? (
-              <>
-                <Pause className="w-10 h-10" fill="currentColor" />
-                <span>PAUSE</span>
-              </>
-            ) : (
-              <>
-                <Play className="w-10 h-10" fill="currentColor" />
-                <span>PLAY</span>
-              </>
-            )}
-          </div>
+          {state.isPlaying ? <Pause size={36} fill="currentColor" /> : <Play size={36} fill="currentColor" />}
+          <span style={{ font: '600 13px Inter, sans-serif', letterSpacing: '0.16em' }}>
+            {state.isPlaying ? 'PAUSE' : 'PLAY'}
+          </span>
         </button>
 
-        {/* Speed and Text Size Controls - Side by Side */}
-        <div className="grid grid-cols-2 gap-3">
-          {/* Speed Control */}
-          <div className="bg-slate-800 rounded-lg p-2.5">
-            <div className="text-center mb-2">
-              <div className="text-xs text-slate-400">Speed</div>
-              <div className="text-xl font-bold font-mono text-blue-400">
-                {state.speed.toFixed(1)}x
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <button
-                onClick={handleFaster}
-                disabled={!joined}
-                className="w-full h-10 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center justify-center gap-1 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronUp className="w-5 h-5" />
-                <span className="text-xs font-semibold">UP</span>
-              </button>
-              <button
-                onClick={handleSlower}
-                disabled={!joined}
-                className="w-full h-10 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center justify-center gap-1 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronDown className="w-5 h-5" />
-                <span className="text-xs font-semibold">DOWN</span>
-              </button>
-            </div>
+        {/* Speed */}
+        <div>
+          <div className="flex items-baseline justify-between" style={{ marginBottom: 8 }}>
+            <span style={sectionLabel}>SPEED</span>
+            <span style={{ font: '600 20px Inter, sans-serif', color: '#fff' }}>{state.speed.toFixed(1)}×</span>
           </div>
-
-          {/* Text Size Control */}
-          <div className="bg-slate-800 rounded-lg p-2.5">
-            <div className="text-center mb-2">
-              <div className="text-xs text-slate-400">Text Size</div>
-              <div className="text-xl font-bold font-mono text-purple-400">
-                {['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'][state.textSize - 1] || 'M'}
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <button
-                onClick={handleTextSizeBigger}
-                disabled={!joined}
-                className="w-full h-10 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center justify-center gap-1 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Type className="w-5 h-5" />
-                <span className="text-xs font-semibold">UP</span>
-              </button>
-              <button
-                onClick={handleTextSizeSmaller}
-                disabled={!joined}
-                className="w-full h-10 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center justify-center gap-1 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Type className="w-4 h-4" />
-                <span className="text-xs font-semibold">DOWN</span>
-              </button>
-            </div>
+          <div className="flex" style={{ gap: 8 }}>
+            <ControlButton onClick={handleSlower} disabled={!joined} icon={<ChevronDown size={18} />} label="SLOWER" />
+            <ControlButton onClick={handleFaster} disabled={!joined} icon={<ChevronUp size={18} />} label="FASTER" />
           </div>
         </div>
 
-        {/* Mirror and Restart - Side by Side */}
-        <div className="grid grid-cols-2 gap-3">
-          <button
+        {/* Text size */}
+        <div>
+          <div className="flex items-baseline justify-between" style={{ marginBottom: 8 }}>
+            <span style={sectionLabel}>TEXT SIZE</span>
+            <span style={{ font: '600 20px Inter, sans-serif', color: '#fff' }}>{textSizeLabel}</span>
+          </div>
+          <div className="flex" style={{ gap: 8 }}>
+            <ControlButton onClick={handleTextSizeSmaller} disabled={!joined} icon={<Type size={14} />} label="SMALLER" />
+            <ControlButton onClick={handleTextSizeBigger} disabled={!joined} icon={<Type size={20} />} label="BIGGER" />
+          </div>
+        </div>
+
+        {/* Mirror + Restart, pinned to bottom */}
+        <div className="flex mt-auto" style={{ gap: 8 }}>
+          <ControlButton
             onClick={handleToggleMirror}
             disabled={!joined}
-            className={`h-12 rounded-lg flex items-center justify-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
-              state.isMirrored
-                ? 'bg-linear-to-br from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-md shadow-purple-500/30'
-                : 'bg-slate-700 hover:bg-slate-600'
-            }`}
-          >
-            <FlipHorizontal2 className="w-5 h-5" />
-            <span className="font-semibold text-sm">
-              MIRROR {state.isMirrored ? 'ON' : 'OFF'}
-            </span>
-          </button>
-          
-          <button
-            onClick={handleRestart}
-            disabled={!joined}
-            className="h-12 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center justify-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <RotateCcw className="w-5 h-5" />
-            <span className="font-semibold text-sm">RESTART</span>
-          </button>
+            icon={<FlipHorizontal2 size={18} />}
+            label={`MIRROR ${state.isMirrored ? 'ON' : 'OFF'}`}
+          />
+          <ControlButton onClick={handleRestart} disabled={!joined} icon={<RotateCcw size={18} />} label="RESTART" />
         </div>
-
-        {/* Connection Instructions */}
-        {!joined && !error && (
-          <div className="bg-blue-900/30 border border-blue-700/50 rounded-lg p-2.5 text-center">
-            <p className="text-blue-200 text-xs">
-              Connecting to desktop teleprompter...
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Footer */}
-      <div className="bg-slate-800 border-t border-slate-700 px-3 py-2 text-center">
-        <p className="text-xs text-slate-500">
-          VO Tools • Teleprompter Remote
-        </p>
       </div>
     </div>
   );
@@ -299,8 +292,8 @@ function RemoteControl() {
 export default function RemotePage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-white text-lg">Loading...</div>
+      <div className="min-h-dvh bg-[#0A0A0A] flex items-center justify-center">
+        <div className="text-white text-sm" style={{ font: '400 13px Inter, sans-serif' }}>Loading...</div>
       </div>
     }>
       <RemoteControl />

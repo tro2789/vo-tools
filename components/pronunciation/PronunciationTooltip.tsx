@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import { Copy, Volume2 } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { Copy } from 'lucide-react';
+import { IconButton } from '@/components/shell';
 
 interface PronunciationTooltipProps {
   word: string;
@@ -11,27 +12,17 @@ interface PronunciationTooltipProps {
 }
 
 /**
- * PronunciationTooltip Component
- *
- * Displays a subtle, professional tooltip showing the phonetic pronunciation
- * of a word when clicked. Designed for voice actors to quickly check pronunciations.
- *
- * Features:
- * - Positioned near the clicked word
- * - Shows word and ARPABET pronunciation
- * - Copy to clipboard functionality
- * - Keyboard accessible (Escape to close)
- * - Auto-positions to stay within viewport
+ * Popover showing the ARPABET notation for a clicked word.
+ * Closes on Escape or an outside click; the copy button puts the notation on the clipboard.
  */
-export const PronunciationTooltip: React.FC<PronunciationTooltipProps> = ({
+export const PronunciationTooltip = ({
   word,
   pronunciation,
   position,
-  onClose
-}) => {
+  onClose,
+}: PronunciationTooltipProps) => {
   const tooltipRef = useRef<HTMLDivElement>(null);
 
-  // Handle click outside to close
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (tooltipRef.current && !tooltipRef.current.contains(event.target as Node)) {
@@ -40,89 +31,66 @@ export const PronunciationTooltip: React.FC<PronunciationTooltipProps> = ({
     };
 
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
+      if (event.key === 'Escape') onClose();
     };
 
-    // Add slight delay to prevent immediate close from the click that opened it
-    setTimeout(() => {
+    // Slight delay so the click that opened the popover does not close it.
+    const timer = setTimeout(() => {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('keydown', handleEscape);
     }, 100);
 
     return () => {
+      clearTimeout(timer);
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
   }, [onClose]);
 
-  // Auto-position tooltip to stay within viewport
+  // Keep the popover inside the viewport.
   useEffect(() => {
-    if (tooltipRef.current) {
-      const tooltip = tooltipRef.current;
-      const rect = tooltip.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-
-      // Adjust horizontal position if tooltip goes off-screen
-      if (rect.right > viewportWidth) {
-        tooltip.style.left = `${position.x - rect.width}px`;
-      }
-
-      // Adjust vertical position if tooltip goes off-screen
-      if (rect.bottom > viewportHeight) {
-        tooltip.style.top = `${position.y - rect.height - 10}px`;
-      }
+    const tooltip = tooltipRef.current;
+    if (!tooltip) return;
+    const rect = tooltip.getBoundingClientRect();
+    if (rect.right > window.innerWidth) {
+      tooltip.style.left = `${Math.max(8, position.x - rect.width)}px`;
+    }
+    if (rect.bottom > window.innerHeight) {
+      tooltip.style.top = `${Math.max(8, position.y - rect.height - 10)}px`;
     }
   }, [position]);
 
-  // Copy pronunciation to clipboard
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(pronunciation);
-      // Could add a brief "Copied!" indicator here if desired
-    } catch (err) {
-      console.error('Failed to copy pronunciation:', err);
+    } catch {
+      // Clipboard unavailable — the notation is still readable on screen.
     }
   };
 
   return (
     <div
       ref={tooltipRef}
-      className="fixed z-50 bg-white dark:bg-gray-800/60 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-3 min-w-[200px] max-w-[300px]"
-      style={{
-        left: `${position.x}px`,
-        top: `${position.y + 20}px`,
-      }}
-      role="tooltip"
+      className="fixed z-50 w-[250px] border border-ink bg-panel shadow-[0_8px_24px_rgba(19,19,19,0.14)]"
+      style={{ left: `${position.x}px`, top: `${position.y + 8}px` }}
+      role="dialog"
       aria-label={`Pronunciation for ${word}`}
     >
-      {/* Word */}
-      <div className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
-        {word}
-      </div>
-
-      {/* Pronunciation in ARPABET */}
-      <div className="flex items-center justify-between gap-2">
-        <div className="font-mono text-sm text-gray-600 dark:text-gray-300 flex-1">
-          {pronunciation}
-        </div>
-
-        {/* Copy button */}
-        <button
+      <div className="flex items-baseline justify-between gap-2 border-b border-line px-3 py-[10px]">
+        <span className="text-[13px] font-semibold text-ink">{word}</span>
+        <IconButton
+          icon={Copy}
+          label="Copy pronunciation"
+          iconSize={13}
+          className="h-5 w-5 self-center"
           onClick={handleCopy}
-          className="p-1.5 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-          title="Copy pronunciation"
-          aria-label="Copy pronunciation to clipboard"
-        >
-          <Copy size={14} className="text-gray-500 dark:text-gray-400" />
-        </button>
+        />
       </div>
-
-      {/* Format label */}
-      <div className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-        ARPABET • North American English
+      <div className="px-3 py-[10px]">
+        <div className="text-[14px] font-medium tracking-[0.04em] text-ink">{pronunciation}</div>
+        <div className="mt-[6px] text-[10px] tracking-[0.1em] text-muted">
+          ARPABET · NORTH AMERICAN ENGLISH
+        </div>
       </div>
     </div>
   );

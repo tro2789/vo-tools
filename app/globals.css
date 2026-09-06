@@ -2,45 +2,82 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ── Design tokens ──────────────────────────────────────────────────────── */
+
+:root {
+  --page: #f2f3f5;
+  --panel: #ffffff;
+  --subtle: #fafbfc;
+  --line: #e4e6e9;
+  --line-strong: #c9ccd1;
+  --line-faint: #f2f3f5;
+  --ink: #131313;
+  --body: #333438;
+  --muted: #6e7076;
+  --disabled: #8a8d93;
+  --button: #262626;
+  --bar-bg: #131313;
+  --bar-text: #b9bcc2;
+  --bar-bright: #e4e6e9;
+  --bar-line: #3a3a3a;
+  --bar-muted: #9a9ca2;
+  --ok: #167a4b;
+  --ok-bg: #e8f2ec;
+  --bad: #b3261e;
+  --bad-bg: #fbeae8;
+  --stage: #0a0a0a;
+}
+
+.dark {
+  --page: #0a0a0a;
+  --panel: #131313;
+  --subtle: #171717;
+  --line: #262626;
+  --line-strong: #3a3a3a;
+  --line-faint: #1f1f1f;
+  --ink: #f2f3f5;
+  --body: #d4d6da;
+  --muted: #8a8d93;
+  --disabled: #5f6167;
+  --button: #e4e6e9;
+  --bar-bg: #000000;
+  --bar-text: #8a8d93;
+  --bar-bright: #d4d6da;
+  --bar-line: #2a2a2a;
+  --bar-muted: #9a9ca2;
+  --ok: #167a4b;
+  --ok-bg: #12301f;
+  --bad: #b3261e;
+  --bad-bg: #3a1512;
+  --stage: #0a0a0a;
+}
+
 @theme {
   --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-
-  --color-cyan-50: #ecfeff;
-  --color-cyan-100: #cffafe;
-  --color-cyan-200: #a5f3fc;
-  --color-cyan-300: #67e8f9;
-  --color-cyan-400: #9dd9ff;
-  --color-cyan-500: #3bb4ff;
-  --color-cyan-600: #0085d8;
-  --color-cyan-700: #0070b8;
-  --color-cyan-800: #005c99;
-  --color-cyan-900: #004d80;
-  --color-cyan-950: #003355;
-
-  --animate-fade-in-up: fade-in-up 0.5s ease-out both;
-  --animate-fade-in: fade-in 0.4s ease-out both;
-  --animate-slide-up: slide-up 0.4s ease-out both;
 }
 
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slide-up {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+@theme inline {
+  --color-page: var(--page);
+  --color-panel: var(--panel);
+  --color-subtle: var(--subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-line-faint: var(--line-faint);
+  --color-ink: var(--ink);
+  --color-body: var(--body);
+  --color-muted: var(--muted);
+  --color-disabled: var(--disabled);
+  --color-button: var(--button);
+  --color-bar: var(--bar-bg);
+  --color-bar-text: var(--bar-text);
+  --color-bar-bright: var(--bar-bright);
+  --color-bar-line: var(--bar-line);
+  --color-bar-muted: var(--bar-muted);
+  --color-ok: var(--ok);
+  --color-ok-bg: var(--ok-bg);
+  --color-bad: var(--bad);
+  --color-bad-bg: var(--bad-bg);
+  --color-stage: var(--stage);
 }
 
 /*
@@ -54,7 +91,22 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--line, currentcolor);
+  }
+
+  body {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: 2px;
+  }
+
+  input[type='range'],
+  input[type='checkbox'],
+  input[type='radio'] {
+    accent-color: var(--button);
   }
 }
 

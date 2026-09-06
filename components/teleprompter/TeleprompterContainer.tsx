@@ -1,13 +1,23 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
-import { Smartphone, Wifi, WifiOff } from 'lucide-react';
+import React, { useState, useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
+import { FileText, FlipHorizontal2, Play, RotateCcw, Wifi, WifiOff } from 'lucide-react';
 import { QRCodeCanvas } from '@/components/QRCode';
 import { TeleprompterDisplay } from './TeleprompterDisplay';
 import { ScriptEditorWithPronunciation } from '@/components/editor/ScriptEditorWithPronunciation';
+import {
+  Button,
+  DocumentBar,
+  Kbd,
+  RailSection,
+  SavedIndicator,
+  StatusBar,
+  Workspace,
+} from '@/components/shell';
 import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { useScriptAnalysis } from '@/hooks/useScriptAnalysis';
 import { useRemoteControl } from '@/hooks/useRemoteControl';
+import { useScriptDocument } from '@/hooks/useScriptDocument';
 import { DEFAULT_EXPANSION_OPTIONS } from '@/utils/expansionOptions';
 
 interface TeleprompterContainerProps {
@@ -16,38 +26,116 @@ interface TeleprompterContainerProps {
 }
 
 const DEFAULT_WPM = 150;
+const MIN_WPM = 75;
+const MAX_WPM = 200;
+const SETTINGS_KEY = 'vo-tools-teleprompter';
+
+const KEYBOARD_ROWS: Array<[string, string]> = [
+  ['Play / pause', 'SPACE'],
+  ['Adjust speed', '↑ ↓'],
+  ['Text size', '+ −'],
+  ['Mirror', 'M'],
+  ['Reset to start', 'HOME'],
+  ['Exit fullscreen', 'ESC'],
+];
+
+/** Seconds as m:ss. */
+const formatClock = (seconds: number): string => {
+  const total = Math.max(0, Math.round(seconds));
+  const mins = Math.floor(total / 60);
+  const secs = total % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
+
+/**
+ * Persisted teleprompter settings (`{ wpm }`), read through `useSyncExternalStore`
+ * so the value survives reloads without tripping a hydration mismatch.
+ */
+const wpmListeners = new Set<() => void>();
+let cachedWpmRaw: string | null = null;
+let cachedWpm: number | null = null;
+
+function readStoredWpm(): number | null {
+  let raw: string | null = null;
+  try {
+    raw = window.localStorage.getItem(SETTINGS_KEY);
+  } catch {
+    return null;
+  }
+  if (raw === cachedWpmRaw) return cachedWpm;
+  cachedWpmRaw = raw;
+  cachedWpm = null;
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as { wpm?: unknown };
+      if (typeof parsed.wpm === 'number' && Number.isFinite(parsed.wpm)) {
+        cachedWpm = Math.min(MAX_WPM, Math.max(MIN_WPM, Math.round(parsed.wpm)));
+      }
+    } catch {
+      // Corrupt entry — fall back to the default.
+    }
+  }
+  return cachedWpm;
+}
+
+function subscribeWpm(listener: () => void) {
+  wpmListeners.add(listener);
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === null || event.key === SETTINGS_KEY) {
+      wpmListeners.forEach((fn) => fn());
+    }
+  };
+  window.addEventListener('storage', onStorage);
+  return () => {
+    wpmListeners.delete(listener);
+    window.removeEventListener('storage', onStorage);
+  };
+}
+
+function getServerWpm(): number | null {
+  return null;
+}
 
 export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
   initialScript = '',
   initialWpm = DEFAULT_WPM,
 }) => {
-  // Check sessionStorage for script from Script Analysis tool
-  const [script, setScript] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const storedScript = sessionStorage.getItem('teleprompter-script');
-      if (storedScript) {
-        sessionStorage.removeItem('teleprompter-script');
-        return storedScript;
-      }
-    }
-    return initialScript;
-  });
-
-  const [wpm, setWpm] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const storedWpm = sessionStorage.getItem('teleprompter-wpm');
-      if (storedWpm) {
-        sessionStorage.removeItem('teleprompter-wpm');
-        return parseInt(storedWpm, 10);
-      }
-    }
-    return initialWpm;
-  });
+  const { text, setText, title, setTitle } = useScriptDocument();
 
   const [isFullscreen, setIsFullscreen] = useState(false);
+  // Raw text while the WPM field is being typed into, so partial values stay editable.
+  const [wpmDraft, setWpmDraft] = useState<string | null>(null);
+  const seededRef = useRef(false);
+
+  // `initialWpm` is the fallback until a value has been stored.
+  const storedWpm = useSyncExternalStore(subscribeWpm, readStoredWpm, getServerWpm);
+  const wpm = storedWpm ?? initialWpm;
+
+  const setWpm = useCallback((next: number) => {
+    if (!Number.isFinite(next)) return;
+    const clamped = Math.min(MAX_WPM, Math.max(MIN_WPM, Math.round(next)));
+    try {
+      window.localStorage.setItem(SETTINGS_KEY, JSON.stringify({ wpm: clamped }));
+    } catch {
+      // Storage unavailable — keep the in-memory value.
+      cachedWpmRaw = null;
+      cachedWpm = clamped;
+    }
+    wpmListeners.forEach((fn) => fn());
+  }, []);
+
+  // `initialScript` is a fallback: it only seeds an empty shared document.
+  useEffect(() => {
+    if (seededRef.current) return;
+    seededRef.current = true;
+    if (initialScript && !text) {
+      setText(initialScript);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialScript]);
 
   // Analyze script to get word count for timing
-  const { wordCount } = useScriptAnalysis(script, wpm, DEFAULT_EXPANSION_OPTIONS);
+  const { wordCount } = useScriptAnalysis(text, wpm, DEFAULT_EXPANSION_OPTIONS);
 
   // Exit fullscreen
   const handleExit = useCallback(() => {
@@ -135,16 +223,22 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
 
   // Start teleprompter (enter fullscreen mode)
   const handleStart = () => {
-    if (script.trim()) {
+    if (text.trim()) {
       teleprompter.reset();
       setIsFullscreen(true);
     }
   };
 
-  if (isFullscreen && script) {
+  // Reset playback state and the reading speed — the document is left alone.
+  const handleResetSettings = () => {
+    teleprompter.reset();
+    setWpm(DEFAULT_WPM);
+  };
+
+  if (isFullscreen && text) {
     return (
       <TeleprompterDisplay
-        script={script}
+        script={text}
         isPlaying={teleprompter.isPlaying}
         scrollPosition={teleprompter.scrollPosition}
         speedMultiplier={teleprompter.speedMultiplier}
@@ -162,174 +256,195 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
     );
   }
 
+  const estimatedRun = formatClock(wordCount === 0 ? 0 : (wordCount / (wpm || DEFAULT_WPM)) * 60);
+
   return (
-    <div className="min-h-screen w-full bg-gray-50 dark:bg-[#000d15] transition-colors duration-300">
+    <div className="flex min-h-[calc(100vh-44px)] flex-col">
+      <DocumentBar
+        icon={FileText}
+        title={
+          <input
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            placeholder="Untitled script"
+            aria-label="Script title"
+            className="w-[200px] max-w-full border-none bg-transparent text-[15px] font-semibold text-ink outline-none placeholder:text-disabled sm:w-[280px]"
+          />
+        }
+        meta={<SavedIndicator state={text ? 'saved' : 'empty'} />}
+        actions={
+          <>
+            <Button
+              tone="muted"
+              icon={FlipHorizontal2}
+              onClick={teleprompter.toggleMirror}
+              aria-pressed={teleprompter.isMirrored}
+            >
+              {teleprompter.isMirrored ? 'Mirror on' : 'Mirror off'}
+            </Button>
+            <Button tone="muted" icon={RotateCcw} onClick={handleResetSettings}>
+              Reset
+            </Button>
+          </>
+        }
+      />
 
-      {/* Page Header - Secondary controls specific to Teleprompter */}
-      <div className="w-full border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-[#072030]/80 px-4 md:px-6 py-4">
-        <div className="max-w-7xl mx-auto">
-          <div>
-            <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
-              Teleprompter
-            </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              Professional teleprompter with auto-scroll, speed control, and studio-ready features
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <main className="w-full max-w-7xl mx-auto px-4 md:px-6 py-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Setup Interface */}
-          <div className="space-y-6">
-          {/* Script Input */}
-          <div className="space-y-2">
-            <ScriptEditorWithPronunciation
-              value={script}
-              onChange={setScript}
-              placeholder="Paste your script here..."
-              label="Script Text"
-              height="h-64"
-              showPronunciationToggle={true}
-            />
-            <div className="text-sm text-gray-500 dark:text-gray-400 px-1">
-              {wordCount} words • Estimated {Math.ceil((wordCount / wpm) * 60)} seconds
-            </div>
-          </div>
-
-          {/* Settings */}
-          <div className="bg-white dark:bg-gray-800/60 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700 p-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Reading Speed (WPM)
-            </label>
-            <div className="flex items-center gap-4">
-              <input
-                type="range"
-                min="75"
-                max="200"
-                value={wpm}
-                onChange={(e) => setWpm(Number(e.target.value))}
-                className="flex-1"
-              />
-              <input
-                type="number"
-                min="75"
-                max="200"
-                value={wpm}
-                onChange={(e) => setWpm(Number(e.target.value))}
-                className="w-20 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#072030] text-gray-900 dark:text-white text-center"
-              />
-            </div>
-            <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              This determines the base scrolling speed. You can adjust it in real-time during playback.
-            </div>
-          </div>
-
-          {/* Remote Control Panel */}
-          {remote.remoteUrl && (
-            <div className="bg-linear-to-br from-cyan-50 to-gray-50 dark:from-cyan-950/20 dark:to-gray-900/20 rounded-xl p-6 border border-cyan-200 dark:border-cyan-800">
-              <div className="flex items-start gap-4">
-                <div className="shrink-0">
-                  <div className="bg-white dark:bg-gray-800/60 p-3 rounded-lg shadow-md">
-                    <QRCodeCanvas
-                      value={remote.remoteUrl}
-                      size={120}
-                      level="M"
-                      includeMargin={false}
-                    />
+      <Workspace
+        mainClassName="min-h-[200px] lg:min-h-[640px]"
+        main={
+          <ScriptEditorWithPronunciation
+            value={text}
+            onChange={setText}
+            placeholder="Paste your script here..."
+            label="Script Text"
+            height="flex-1 min-h-[200px] lg:min-h-[640px]"
+            showPronunciationToggle={true}
+          />
+        }
+        rail={
+          <>
+            <RailSection pad={16}>
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+                    Scroll speed
                   </div>
+                  <div className="mt-[6px] text-[40px]/[1] font-semibold text-ink">{wpm}</div>
                 </div>
-
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Smartphone className="w-5 h-5 text-cyan-500 dark:text-cyan-500" />
-                    <h3 className="text-sm font-semibold text-cyan-900 dark:text-cyan-100">
-                      Phone Remote Control
-                    </h3>
+                <div className="text-right">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+                    Est. run
                   </div>
-
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="text-cyan-800 dark:text-cyan-200">
-                        Room Code:
-                      </span>
-                      <code className="px-2 py-1 bg-white dark:bg-gray-700 rounded-sm font-mono font-bold text-cyan-900 dark:text-cyan-100 border border-cyan-300 dark:border-cyan-600">
-                        {remote.roomCode}
-                      </code>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {remote.phoneConnected ? (
-                        <>
-                          <Wifi className="w-4 h-4 text-green-600 dark:text-green-400" />
-                          <span className="text-green-700 dark:text-green-300 font-medium">
-                            Phone Connected
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <WifiOff className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                          <span className="text-gray-600 dark:text-gray-400">
-                            Waiting for phone...
-                          </span>
-                        </>
-                      )}
-                    </div>
-
-                    <p className="text-cyan-600 dark:text-cyan-300 text-xs pt-1">
-                      Scan the QR code with your phone to use it as a wireless remote control
-                    </p>
+                  <div className="mt-[6px] text-[40px]/[1] font-semibold text-ink">
+                    {estimatedRun}
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+              <div className="mt-3 flex items-center gap-[10px]">
+                <input
+                  type="range"
+                  min={MIN_WPM}
+                  max={MAX_WPM}
+                  value={wpm}
+                  aria-label="Reading speed in words per minute"
+                  onChange={(event) => setWpm(Number(event.target.value))}
+                  className="h-1 min-w-0 flex-1"
+                />
+                <input
+                  type="number"
+                  min={MIN_WPM}
+                  max={MAX_WPM}
+                  value={wpmDraft ?? wpm}
+                  aria-label="Words per minute"
+                  onChange={(event) => {
+                    setWpmDraft(event.target.value);
+                    const next = Number(event.target.value);
+                    if (Number.isFinite(next) && next >= MIN_WPM && next <= MAX_WPM) {
+                      setWpm(next);
+                    }
+                  }}
+                  onBlur={(event) => {
+                    setWpmDraft(null);
+                    setWpm(Number(event.target.value));
+                  }}
+                  className="h-[26px] w-[52px] border border-line-strong bg-panel px-[6px] text-right text-[12px] text-ink outline-none"
+                />
+                <span className="text-[10px] text-muted">WPM</span>
+              </div>
+              <div className="mt-[6px] flex justify-between text-[10px] text-muted">
+                <span>{MIN_WPM}</span>
+                <span>{MAX_WPM}</span>
+              </div>
+            </RailSection>
 
-          {/* Start Button */}
-          <button
-            onClick={handleStart}
-            disabled={!script.trim()}
-            className="w-full py-4 rounded-xl bg-linear-to-r from-cyan-500 to-cyan-500 text-white font-semibold text-lg shadow-lg hover:from-cyan-500 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-cyan-500 disabled:hover:to-cyan-500"
-          >
-            Start Teleprompter
-          </button>
+            <RailSection pad={16} label="Phone remote">
+              <div className="flex items-start gap-[14px]">
+                <div
+                  className="flex h-[96px] w-[96px] shrink-0 items-center justify-center border border-line text-center text-[9px] text-muted"
+                  style={
+                    remote.remoteUrl
+                      ? undefined
+                      : {
+                          background:
+                            'repeating-linear-gradient(45deg, var(--line) 0 5px, var(--subtle) 5px 10px)',
+                        }
+                  }
+                >
+                  {remote.remoteUrl ? (
+                    <QRCodeCanvas value={remote.remoteUrl} size={96} level="M" includeMargin={false} />
+                  ) : (
+                    <>
+                      QR
+                      <br />
+                      CODE
+                    </>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[11px] text-muted">ROOM</div>
+                  <div className="text-[18px] font-semibold tracking-[0.08em] text-ink">
+                    {remote.roomCode ?? '———'}
+                  </div>
+                  <div className="mt-2 flex items-center gap-[6px] text-[11px] text-muted">
+                    {remote.phoneConnected ? (
+                      <>
+                        <Wifi width={13} height={13} aria-hidden="true" />
+                        PHONE LINKED
+                      </>
+                    ) : (
+                      <>
+                        <WifiOff width={13} height={13} aria-hidden="true" />
+                        WAITING FOR PHONE
+                      </>
+                    )}
+                  </div>
+                  <p className="mt-2 text-[11px]/[1.5] text-muted">
+                    Scan to control play, speed, text size and mirror from your phone.
+                  </p>
+                </div>
+              </div>
+            </RailSection>
 
-          {/* Instructions */}
-          <div className="bg-cyan-50 dark:bg-cyan-900/20 rounded-xl p-6 border border-cyan-200 dark:border-cyan-800">
-            <h3 className="text-sm font-semibold text-cyan-900 dark:text-cyan-100 mb-3">
-              Keyboard Controls
-            </h3>
-            <div className="grid grid-cols-2 gap-3 text-sm text-cyan-800 dark:text-cyan-200">
-              <div>
-                <kbd className="px-2 py-1 bg-white dark:bg-gray-700 rounded-sm border border-cyan-300 dark:border-cyan-600 font-mono text-xs">
-                  Space
-                </kbd>{' '}
-                Play / Pause
+            <RailSection pad={16} label="Keyboard">
+              <div className="flex flex-col gap-[6px]">
+                {KEYBOARD_ROWS.map(([label, key]) => (
+                  <div key={label} className="flex items-center justify-between gap-3">
+                    <span className="text-[12px] text-body">{label}</span>
+                    <Kbd>{key}</Kbd>
+                  </div>
+                ))}
               </div>
-              <div>
-                <kbd className="px-2 py-1 bg-white dark:bg-gray-700 rounded-sm border border-cyan-300 dark:border-cyan-600 font-mono text-xs">
-                  ↑ ↓
-                </kbd>{' '}
-                Adjust Speed
-              </div>
-              <div>
-                <kbd className="px-2 py-1 bg-white dark:bg-gray-700 rounded-sm border border-cyan-300 dark:border-cyan-600 font-mono text-xs">
-                  Home
-                </kbd>{' '}
-                Reset to Start
-              </div>
-              <div>
-                <kbd className="px-2 py-1 bg-white dark:bg-gray-700 rounded-sm border border-cyan-300 dark:border-cyan-600 font-mono text-xs">
-                  Esc
-                </kbd>{' '}
-                Exit Fullscreen
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      </main>
+            </RailSection>
+
+            <RailSection pad={16} last className="mt-auto">
+              <Button
+                variant="primary"
+                size={40}
+                icon={Play}
+                iconFilled
+                className="w-full"
+                onClick={handleStart}
+                disabled={!text.trim()}
+              >
+                Start teleprompter
+              </Button>
+            </RailSection>
+          </>
+        }
+      />
+
+      <StatusBar
+        left={[
+          `${wordCount} WORDS`,
+          `EST ${estimatedRun}`,
+          `${wpm} WPM`,
+          `MIRROR ${teleprompter.isMirrored ? 'ON' : 'OFF'}`,
+        ]}
+        right={[
+          `ROOM ${remote.roomCode ?? '—'}`,
+          `REMOTE ${remote.phoneConnected ? 'LINKED' : 'WAITING'}`,
+        ]}
+      />
     </div>
   );
 };

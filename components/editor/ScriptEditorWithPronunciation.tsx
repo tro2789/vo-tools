@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Type, BookOpen } from 'lucide-react';
+import { useState, type ReactNode } from 'react';
 import { ScriptEditor } from './ScriptEditor';
 import { ScriptTextDisplay } from '../pronunciation/ScriptTextDisplay';
+
+export type EditorViewMode = 'edit' | 'pronunciation';
 
 interface ScriptEditorWithPronunciationProps {
   value: string;
@@ -12,115 +13,125 @@ interface ScriptEditorWithPronunciationProps {
   label?: string;
   height?: string;
   showPronunciationToggle?: boolean;
+  /** Show the "N CHARS" meta while editing. Defaults to true. */
+  charsMeta?: boolean;
+  /** Rendered under the editor body, inside the cell (first-run actions). */
+  bottomSlot?: ReactNode;
+  /** Controlled tab. Falls back to internal state when omitted. */
+  viewMode?: EditorViewMode;
+  onViewModeChange?: (mode: EditorViewMode) => void;
+  onLookup?: (word: string, pronunciation: string) => void;
+  className?: string;
 }
 
+const HINT =
+  'WORDS FOUND IN THE DICTIONARY UNDERLINE ON HOVER · ESC CLOSES · COPY BUTTON PUTS THE NOTATION ON YOUR CLIPBOARD';
+
 /**
- * ScriptEditorWithPronunciation Component
- *
- * Wraps the standard ScriptEditor with an optional pronunciation view mode.
- * Allows users to toggle between editing mode and pronunciation lookup mode.
- *
- * Features:
- * - Edit mode: Standard textarea for script input
- * - Pronunciation mode: Clickable words for pronunciation lookup
- * - Seamless toggle between modes
- * - Same styling and layout as ScriptEditor
- *
- * Usage:
- * - Set showPronunciationToggle to true to enable the toggle button
- * - Default mode is edit mode
+ * The workspace main cell: an Edit / Pronunciation tab strip over either the
+ * borderless textarea or the clickable pronunciation view.
  */
-export const ScriptEditorWithPronunciation: React.FC<ScriptEditorWithPronunciationProps> = ({
+export const ScriptEditorWithPronunciation = ({
   value,
   onChange,
-  placeholder = "Paste your script here...",
-  label = "Script Input",
-  height = "h-[50vh] lg:h-[80vh]",
-  showPronunciationToggle = true
-}) => {
-  const [viewMode, setViewMode] = useState<'edit' | 'pronunciation'>('edit');
+  placeholder = 'Paste your script here...',
+  label = 'Script',
+  height = 'flex-1 min-h-[200px]',
+  showPronunciationToggle = true,
+  charsMeta = true,
+  bottomSlot,
+  viewMode,
+  onViewModeChange,
+  onLookup,
+  className = '',
+}: ScriptEditorWithPronunciationProps) => {
+  const [internalMode, setInternalMode] = useState<EditorViewMode>('edit');
+  const mode = viewMode ?? internalMode;
+  const hasText = value.trim().length > 0;
+  const pronunciationEnabled = showPronunciationToggle && hasText;
+  const activeMode: EditorViewMode = pronunciationEnabled ? mode : 'edit';
 
-  // Only show pronunciation mode if there's text and toggle is enabled
-  const canShowPronunciation = showPronunciationToggle && value.trim().length > 0;
+  const setMode = (next: EditorViewMode) => {
+    setInternalMode(next);
+    onViewModeChange?.(next);
+  };
+
+  if (!showPronunciationToggle) {
+    return (
+      <ScriptEditor
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        label={label}
+        height={height}
+        charsMeta={charsMeta}
+        bottomSlot={bottomSlot}
+        className={className}
+      />
+    );
+  }
+
+  const tabs = (
+    <div className="flex gap-[2px]">
+      <button
+        type="button"
+        onClick={() => setMode('edit')}
+        aria-pressed={activeMode === 'edit'}
+        className={`h-8 px-[10px] text-[11px] ${
+          activeMode === 'edit'
+            ? 'font-medium text-ink shadow-[inset_0_-2px_0_var(--button)]'
+            : 'text-muted'
+        }`}
+      >
+        Edit
+      </button>
+      <button
+        type="button"
+        onClick={() => setMode('pronunciation')}
+        disabled={!pronunciationEnabled}
+        aria-pressed={activeMode === 'pronunciation'}
+        className={`h-8 px-[10px] text-[11px] disabled:cursor-not-allowed disabled:text-disabled ${
+          activeMode === 'pronunciation'
+            ? 'font-medium text-ink shadow-[inset_0_-2px_0_var(--button)]'
+            : 'text-muted'
+        }`}
+      >
+        Pronunciation
+      </button>
+    </div>
+  );
+
+  if (activeMode === 'edit') {
+    return (
+      <ScriptEditor
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        label={label}
+        height={height}
+        charsMeta={charsMeta}
+        headerLeft={tabs}
+        bottomSlot={bottomSlot}
+        className={className}
+        textareaLabel={label}
+      />
+    );
+  }
 
   return (
-    <div className={`bg-white dark:bg-[#000d15] rounded-2xl shadow-xs border border-gray-200 dark:border-gray-700/50 flex flex-col ${height} overflow-hidden transition-all ${viewMode === 'edit' ? 'focus-within:ring-2 focus-within:ring-cyan-500/20 focus-within:border-cyan-500/50' : ''}`}>
-      {/* Toolbar */}
-      <div className="px-5 py-3 border-b border-gray-100 dark:border-gray-700/50 flex items-center justify-between bg-gray-50/50 dark:bg-[#072030]/50">
-        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-          {viewMode === 'edit' ? <Type size={14} /> : <BookOpen size={14} />}
-          <span className="text-xs font-bold uppercase tracking-wider">
-            {viewMode === 'edit' ? label : 'Pronunciation View'}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3">
-          {/* Character count */}
-          <div className="text-xs font-mono text-gray-400">
-            {value.length} chars
-          </div>
-
-          {/* Mode toggle */}
-          {canShowPronunciation && (
-            <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800/60 rounded-lg p-0.5">
-              <button
-                onClick={() => setViewMode('edit')}
-                className={`px-2 py-1 rounded text-xs font-medium transition-all ${
-                  viewMode === 'edit'
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-xs'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
-                title="Edit mode"
-              >
-                <Type size={12} className="inline" />
-                <span className="ml-1 hidden sm:inline">Edit</span>
-              </button>
-              <button
-                onClick={() => setViewMode('pronunciation')}
-                className={`px-2 py-1 rounded text-xs font-medium transition-all ${
-                  viewMode === 'pronunciation'
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-xs'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
-                title="Pronunciation lookup mode - click words to see pronunciations"
-              >
-                <BookOpen size={12} className="inline" />
-                <span className="ml-1 hidden sm:inline">Pronunciation</span>
-              </button>
-            </div>
-          )}
-        </div>
+    <div className={`flex min-w-0 flex-col bg-panel ${height} ${className}`}>
+      <div className="flex h-8 shrink-0 items-center justify-between gap-3 border-b border-line px-[14px]">
+        {tabs}
+        <span className="text-[11px] text-muted uppercase">CLICK A WORD</span>
       </div>
 
-      {/* Content area */}
-      {viewMode === 'edit' ? (
-        <textarea
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          className="flex-1 w-full p-6 resize-none bg-transparent border-none focus:ring-0 text-gray-700 dark:text-gray-300 text-lg leading-relaxed placeholder:text-gray-300 dark:placeholder:text-gray-700"
-          spellCheck={false}
-        />
-      ) : (
-        <div className="flex-1 w-full p-6 overflow-y-auto">
-          {value.trim() ? (
-            <ScriptTextDisplay text={value} />
-          ) : (
-            <div className="text-gray-400 dark:text-gray-600 text-center mt-8">
-              Enter some script text to see pronunciation lookup
-            </div>
-          )}
-        </div>
-      )}
+      <div className="min-h-0 flex-1 overflow-y-auto px-7 py-6">
+        <ScriptTextDisplay text={value} onLookup={onLookup} />
+      </div>
 
-      {/* Help text when in pronunciation mode */}
-      {viewMode === 'pronunciation' && value.trim() && (
-        <div className="px-5 py-2 border-t border-gray-100 dark:border-gray-700/50 bg-cyan-50/50 dark:bg-cyan-900/10">
-          <p className="text-xs text-cyan-600 dark:text-cyan-400">
-            Click any word to see its pronunciation in ARPABET notation
-          </p>
-        </div>
-      )}
+      <div className="flex min-h-[30px] shrink-0 items-center border-t border-line bg-subtle px-[14px] py-1 text-[11px] text-muted">
+        {HINT}
+      </div>
     </div>
   );
 };
