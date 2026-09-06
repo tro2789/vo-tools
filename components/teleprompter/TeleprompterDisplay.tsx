@@ -166,7 +166,7 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
         style={{
           scrollBehavior: 'auto',
           transform: isMirrored ? 'scaleX(-1)' : 'none',
-          opacity: countdown !== null ? 0.3 : 1,
+          opacity: countdown !== null ? 0.5 : 1,
         }}
       >
         {/* Top padding for viewport centering */}
@@ -196,12 +196,11 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
 
       {/* Pre-roll countdown overlay */}
       {countdown !== null && (
-        <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center gap-3">
+        <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center gap-3 bg-[#0A0A0A]/70 backdrop-blur-lg">
           <span className="text-[11px] tracking-[0.16em] text-[#8A8D93]">GET READY</span>
           <span className="text-[160px] leading-none font-semibold text-white tabular-nums">
             {countdown}
           </span>
-          <span className="text-[10px] tracking-[0.08em] text-[#8A8D93]">SPACE CANCELS</span>
         </div>
       )}
 
