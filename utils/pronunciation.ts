@@ -1,10 +1,11 @@
 /**
  * Pronunciation Utility
- * 
+ *
  * Provides phonetic pronunciation lookup using the CMU Pronouncing Dictionary.
  * Returns ARPABET phoneme sequences for English words.
- * 
+ *
  * ARPABET is the standard phonetic notation used by voice actors and linguists.
+ * Stress digits (0/1/2) are kept, matching the dictionary's own notation.
  * Example: "hello" -> "HH AH0 L OW1"
  */
 
@@ -28,15 +29,12 @@ function cleanWordForLookup(word: string): string {
 
 /**
  * Formats ARPABET pronunciation for display
- * - Removes stress markers (0, 1, 2) for cleaner display
- * - Converts to lowercase for readability
+ * - Standard ARPABET notation, unchanged apart from trimming and
+ *   collapsing whitespace: uppercase phonemes with stress digits (0/1/2),
+ *   separated by single spaces (e.g. "W AO1 R AH0 N T IY0").
  */
 function formatArpabet(arpabet: string): string {
-  return arpabet
-    .replace(/[0-2]/g, '') // Remove stress markers
-    .toLowerCase()
-    .split(' ')
-    .join('-'); // Use hyphens for better readability
+  return arpabet.trim().replace(/\s+/g, ' ');
 }
 
 /**
@@ -82,14 +80,15 @@ function lookupPronunciation(word: string): string | null {
 
 /**
  * Gets pronunciation for a word or phrase
- * 
+ *
  * @param text - Word or short phrase to get pronunciation for
  * @returns Pronunciation object with the original text and ARPABET phonemes
- * 
+ *
  * Examples:
- * - "hello" -> { text: "hello", pronunciation: "hh-ah-l-ow" }
- * - "world" -> { text: "world", pronunciation: "w-er-l-d" }
+ * - "hello" -> { text: "hello", pronunciation: "HH AH0 L OW1" }
+ * - "world" -> { text: "world", pronunciation: "W ER1 L D" }
  * - "unknown" -> { text: "unknown", pronunciation: null }
+ * - "hello world" -> { text: "hello world", pronunciation: "HH AH0 L OW1 · W ER1 L D" }
  */
 export function getPronunciation(text: string): {
   text: string;
@@ -118,7 +117,7 @@ export function getPronunciation(text: string): {
 
     return {
       text: trimmed,
-      pronunciation: pronunciations.join(' '),
+      pronunciation: pronunciations.join(' · '),
       isMultiWord: true
     };
   }

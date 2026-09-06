@@ -208,7 +208,7 @@ environment:
 3. **Test** at http://localhost:3011
 4. **Check logs**: `docker logs -f vo-tools-dev`
 5. **Verify** both features work:
-   - Script Analysis: http://localhost:3011/script-analysis
+   - Script Analysis: http://localhost:3011/ (the home page)
    - Telephony Converter: http://localhost:3011/telephony-converter
 
 ### Before Merging to Main
@@ -291,7 +291,7 @@ vo-tools/
 ├── INTEGRATION.md              # Architecture documentation
 └── app/
     ├── page.tsx                # Homepage
-    ├── script-analysis/        # Script Analysis tool
+    ├── page.tsx                # Script Analysis workspace (home)
     ├── telephony-converter/    # Telephony Converter tool
     └── api/                    # Next.js API routes
 ```

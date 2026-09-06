@@ -18,6 +18,8 @@ interface TeleprompterState {
   isPlaying: boolean;
   speed: number;
   progress: number; // 0-1
+  elapsedSeconds: number;
+  remainingSeconds: number;
   textSize: number;
   isMirrored: boolean;
 }

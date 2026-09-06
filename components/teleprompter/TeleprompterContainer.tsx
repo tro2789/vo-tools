@@ -206,6 +206,8 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
         isPlaying: teleprompter.isPlaying,
         speed: teleprompter.speedMultiplier,
         progress: Math.min(progress, 1),
+        elapsedSeconds: teleprompter.elapsedTime,
+        remainingSeconds: Math.max(teleprompter.estimatedTotalTime - teleprompter.elapsedTime, 0),
         textSize: teleprompter.textSize,
         isMirrored: teleprompter.isMirrored,
       });

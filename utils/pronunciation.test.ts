@@ -21,11 +21,11 @@ describe('getPronunciation', () => {
     expect(result.pronunciation).toBeNull();
   });
 
-  it('looks up a known common word and returns hyphenated ARPABET without stress markers', () => {
+  it('looks up a known common word and returns uppercase ARPABET with stress markers', () => {
     const result = getPronunciation('hello');
-    expect(result.pronunciation).not.toBeNull();
-    expect(result.pronunciation).not.toMatch(/[0-2]/);
-    expect(result.pronunciation).toContain('-');
+    expect(result.pronunciation).toBe('HH AH0 L OW1');
+    expect(result.pronunciation).toMatch(/[0-2]/);
+    expect(result.pronunciation).toMatch(/^[A-Z0-9 ]+$/);
     expect(result.isMultiWord).toBe(false);
   });
 
@@ -40,12 +40,11 @@ describe('getPronunciation', () => {
     expect(result.pronunciation).toBeNull();
   });
 
-  it('detects multi-word phrases and joins per-word pronunciations with a space', () => {
+  it('detects multi-word phrases and joins per-word pronunciations with " · "', () => {
     const result = getPronunciation('hello world');
     expect(result.isMultiWord).toBe(true);
-    if (result.pronunciation) {
-      expect(result.pronunciation.split(' ')).toHaveLength(2);
-    }
+    expect(result.pronunciation).toBe('HH AH0 L OW1 · W ER1 L D');
+    expect(result.pronunciation?.split(' · ')).toHaveLength(2);
   });
 
   it('trims surrounding whitespace from the input text', () => {
@@ -55,18 +54,19 @@ describe('getPronunciation', () => {
 
   it('falls back to stripping a possessive "\'s" suffix when the possessive form is not itself in the dictionary', () => {
     // "wizard's" has no direct CMU dictionary entry, so lookupPronunciation
-    // falls back to "wizard" + a trailing Z sound.
+    // falls back to "wizard" + a trailing Z sound appended with a space.
     const base = getPronunciation('wizard');
     const possessive = getPronunciation("wizard's");
-    expect(base.pronunciation).not.toBeNull();
-    expect(possessive.pronunciation).toBe(`${base.pronunciation}-z`);
+    expect(base.pronunciation).toBe('W IH1 Z ER0 D');
+    expect(possessive.pronunciation).toBe(`${base.pronunciation} Z`);
   });
 
   it('uses the dictionary\'s own possessive entry directly when one exists', () => {
     // "cat's" IS in the CMU dictionary directly (K AE1 T S), so the fallback
-    // Z-suffix logic never runs for it.
+    // Z-suffix logic never runs for it — the trailing S is already part of
+    // the dictionary's own phoneme sequence.
     const result = getPronunciation("cat's");
-    expect(result.pronunciation).toBe('k-ae-t-s');
+    expect(result.pronunciation).toBe('K AE1 T S');
   });
 });
 

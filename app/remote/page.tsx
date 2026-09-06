@@ -9,11 +9,21 @@ interface TeleprompterState {
   isPlaying: boolean;
   speed: number;
   progress: number;
+  elapsedSeconds: number;
+  remainingSeconds: number;
   textSize: number;
   isMirrored: boolean;
 }
 
 const TEXT_SIZE_LABELS = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'];
+
+/** Seconds as m:ss. */
+const formatClock = (seconds: number): string => {
+  const total = Math.max(0, Math.round(seconds));
+  const mins = Math.floor(total / 60);
+  const secs = total % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
 
 const sectionLabel: CSSProperties = {
   font: '400 10px Inter, sans-serif',
@@ -62,6 +72,8 @@ function RemoteControl() {
     isPlaying: false,
     speed: 1.0,
     progress: 0,
+    elapsedSeconds: 0,
+    remainingSeconds: 0,
     textSize: 3,
     isMirrored: false,
   });
@@ -233,6 +245,10 @@ function RemoteControl() {
           </div>
           <div style={{ height: 4, background: '#262626' }}>
             <div style={{ width: `${progressPct}%`, height: 4, background: '#fff' }} />
+          </div>
+          <div className="flex items-baseline justify-between" style={{ marginTop: 8, font: '400 11px Inter, sans-serif', color: '#8A8D93' }}>
+            <span>{formatClock(state.elapsedSeconds)} ELAPSED</span>
+            <span>{formatClock(state.remainingSeconds)} LEFT</span>
           </div>
         </div>
 

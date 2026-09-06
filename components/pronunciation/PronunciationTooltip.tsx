@@ -87,7 +87,7 @@ export const PronunciationTooltip = ({
         />
       </div>
       <div className="px-3 py-[10px]">
-        <div className="text-[14px] font-medium tracking-[0.04em] text-ink">{pronunciation}</div>
+        <div className="break-words text-[14px] font-medium tracking-[0.04em] text-ink">{pronunciation}</div>
         <div className="mt-[6px] text-[10px] tracking-[0.1em] text-muted">
           ARPABET · NORTH AMERICAN ENGLISH
         </div>

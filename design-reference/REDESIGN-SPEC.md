@@ -8,11 +8,10 @@ The design offers three Turn 1 directions (1a, 1b, 1c). **We implement 1b, the u
 
 | Screen id | Label in file | Route | Owner task |
 |---|---|---|---|
-| 2a | Landing | `/` | shell |
-| 1b | Workspace · Analysis (single mode, edit tab) | `/script-analysis` | analysis |
-| 3a | Analysis · Compare mode | `/script-analysis` | analysis |
-| 3b | Analysis · Pronunciation view | `/script-analysis` | analysis |
-| 3c | Analysis · First run (empty) | `/script-analysis` | analysis |
+| 1b | Workspace · Analysis (single mode, edit tab) | `/` (was `/script-analysis`, now a 308 redirect) | analysis |
+| 3a | Analysis · Compare mode | `/` (was `/script-analysis`, now a 308 redirect) | analysis |
+| 3b | Analysis · Pronunciation view | `/` (was `/script-analysis`, now a 308 redirect) | analysis |
+| 3c | Analysis · First run (empty) | `/` (was `/script-analysis`, now a 308 redirect) | analysis |
 | 2c | Teleprompter setup tab | `/teleprompter` | teleprompter |
 | 2f | Teleprompter fullscreen | `/teleprompter` (fullscreen state) | teleprompter |
 | 2g | Phone remote | `/remote` | remote |
@@ -21,7 +20,7 @@ The design offers three Turn 1 directions (1a, 1b, 1c). **We implement 1b, the u
 | 2e | ACX tab (results) | `/acx-check` | acx |
 | 3e | ACX empty | `/acx-check` | acx |
 
-Routes do not change. Tab order in the top bar: Analysis, Teleprompter, Convert, ACX.
+Routes: the Analysis workspace lives at `/` (landing page dropped 2026-09-06). Tab order in the top bar: Analysis, Teleprompter, Convert, ACX.
 
 ## Tokens (light theme, from the file)
 

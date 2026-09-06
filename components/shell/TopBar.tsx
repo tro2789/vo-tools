@@ -6,7 +6,7 @@ import { Heart, MessageCircle } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 const TABS = [
-  { label: 'Analysis', href: '/script-analysis' },
+  { label: 'Analysis', href: '/' },
   { label: 'Teleprompter', href: '/teleprompter' },
   { label: 'Convert', href: '/telephony-converter' },
   { label: 'ACX', href: '/acx-check' },
@@ -20,37 +20,6 @@ export function TopBar() {
 
   if (pathname === '/remote') {
     return null;
-  }
-
-  if (pathname === '/') {
-    return (
-      <header className="flex h-12 items-center justify-between gap-4 border-b border-line bg-panel px-5">
-        <Link href="/" className="text-[13px] font-bold tracking-[0.16em] text-ink">
-          VO TOOLS
-        </Link>
-        <div className="flex items-center gap-2">
-          <ThemeToggle variant="light" />
-          <a
-            href={DISCORD_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex h-[28px] items-center gap-[6px] border border-line-strong px-[10px] text-[12px] font-medium text-body"
-          >
-            <MessageCircle width={13} height={13} aria-hidden="true" />
-            <span className="hidden sm:inline">Discord</span>
-          </a>
-          <a
-            href={SUPPORT_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex h-[28px] items-center gap-[6px] bg-button px-3 text-[12px] font-medium text-panel"
-          >
-            <Heart width={13} height={13} className="fill-current" aria-hidden="true" />
-            <span className="hidden sm:inline">Support</span>
-          </a>
-        </div>
-      </header>
-    );
   }
 
   return (
@@ -67,7 +36,10 @@ export function TopBar() {
           className="scrollbar-hide flex min-w-0 items-center gap-1 overflow-x-auto"
         >
           {TABS.map((tab) => {
-            const active = pathname === tab.href || pathname.startsWith(`${tab.href}/`);
+            const active =
+              tab.href === '/'
+                ? pathname === '/'
+                : pathname === tab.href || pathname.startsWith(`${tab.href}/`);
             return (
               <Link
                 key={tab.href}

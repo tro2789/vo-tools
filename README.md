@@ -123,9 +123,8 @@ voiceover-tools.com {
 ```
 vo-tools/
 ├── app/                       # Next.js App Router pages
-│   ├── page.tsx               # Landing page
 │   ├── acx-check/             # ACX compliance checker
-│   ├── script-analysis/       # Script analysis tool
+│   ├── page.tsx               # Script analysis workspace (home)
 │   ├── teleprompter/          # Teleprompter tool
 │   ├── telephony-converter/   # Audio converter tool
 │   ├── remote/                # Mobile remote control

@@ -34,21 +34,25 @@ Monochrome, flat, dense — no accent colour and no border radius. The design co
   `DocumentBar`, `SavedIndicator`, `Workspace`, `StatusBar`, `RailSection`, `SectionLabel`,
   `Segmented`, `Button`, `IconButton`, `Chip`, `Kbd`, `DropZone`, `Pill`. Build pages from these
   rather than re-creating bars and rails ad hoc. `TopBar` is rendered once from `app/layout.tsx`
-  (landing variant on `/`, dark workspace variant elsewhere, hidden on `/remote`).
+  (dark workspace bar on every route, hidden on `/remote`). Its Analysis tab points at `/`.
 - **Shared script document**: `hooks/useScriptDocument.ts` holds the one script that Analysis and
   Teleprompter share — localStorage key `vo-tools-script-doc`, `{ title, text, updatedAt }`, via
   `useSyncExternalStore` plus the `storage` event. `readScriptDocument()` is the non-React
   accessor.
-- `components/Footer.tsx` is used by the landing page only.
+- **Hydration**: components whose initial state comes from `localStorage`/`sessionStorage` must not
+  read storage while rendering. Gate them with `useHydrated()` (`hooks/useHydrated.ts`) and render a
+  static shell frame until it returns `true` — this is what `components/ScriptWorkspace.tsx` does for
+  `ScriptCalculator`, whose `useLocalStorage('vo-tools-state')` initialiser would otherwise make the
+  first client render disagree with the server HTML.
 
 ## Project Structure
 
 ```
 app/                    # Next.js App Router pages
-  page.tsx              # Landing (hero + tool list)
+  page.tsx              # Home = Script Analysis workspace (word count, timing, pricing).
+                        #   `/script-analysis` 308-redirects here via next.config.mjs.
   globals.css           # Tailwind v4 config + design tokens
   sitemap.ts            # Auto-generated sitemap.xml (all public pages)
-  script-analysis/      # Script word count, timing, pricing
   telephony-converter/  # Audio format conversion for IVR/VoIP
   teleprompter/         # Auto-scrolling teleprompter with phone remote
   acx-check/            # ACX audiobook compliance checker
@@ -62,7 +66,7 @@ components/             # React components
                         #   StatusBar, RailSection, SectionLabel, Segmented,
                         #   Button, IconButton, Chip, Kbd, DropZone, Pill,
                         #   SavedIndicator) — barrel export in index.ts
-  Footer.tsx            # Landing-page footer
+  ScriptWorkspace.tsx   # Hydration gate around ScriptCalculator (static shell first)
   ThemeToggle.tsx       # Dark/light toggle (variant: 'bar' | 'light')
   ScriptCalculator.tsx  # Main script analysis component
   acx/                  # ACX checker components
@@ -81,6 +85,7 @@ lib/                    # Utilities
   types/                # TypeScript type definitions
 hooks/                  # React hooks
   useScriptDocument.ts  # Shared script document (localStorage, cross-tab)
+  useHydrated.ts        # false until hydration finishes (useSyncExternalStore)
 design-reference/       # Redesign spec + Claude Design HTML exports
 server.mjs              # Custom server (Next.js + Socket.IO, single port)
 ```
