@@ -102,6 +102,58 @@ export async function convertAudioFiles(
 }
 
 /**
+ * Render a browser-playable preview of a single file's conversion result.
+ * Returns a WAV blob decoded from the converted audio, so it carries the
+ * target codec's artefacts while staying playable in an <audio> element.
+ */
+export async function previewAudioFile(
+  file: File,
+  options: ConversionOptions
+): Promise<Blob> {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('format', options.format)
+  formData.append('volume', options.volume)
+  if (options.optimize) {
+    formData.append('optimize', 'yes')
+  }
+  formData.append('preview', 'yes')
+
+  try {
+    const response = await fetch(`${API_URL}/api/convert`, {
+      method: 'POST',
+      body: formData,
+    })
+
+    if (!response.ok) {
+      const contentType = response.headers.get('content-type')
+      if (contentType && contentType.includes('application/json')) {
+        const errorData: ErrorResponse = await response.json()
+        throw new ConverterAPIError(
+          errorData.error,
+          response.status,
+          errorData.retry_after
+        )
+      }
+
+      const text = await response.text()
+      throw new ConverterAPIError(text || 'Preview failed', response.status)
+    }
+
+    return await response.blob()
+  } catch (error) {
+    if (error instanceof ConverterAPIError) {
+      throw error
+    }
+
+    throw new ConverterAPIError(
+      error instanceof Error ? error.message : 'An unexpected error occurred',
+      0
+    )
+  }
+}
+
+/**
  * Download a blob as a file
  */
 export function downloadBlob(blob: Blob, filename: string): void {

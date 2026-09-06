@@ -1,4 +1,4 @@
-import { ffmpegConvert, isValidAudio } from './ffmpeg';
+import { ffmpegConvert } from './ffmpeg';
 import path from 'path';
 
 // Format -> FFmpeg codec arguments (from app.py FORMATS)
@@ -93,4 +93,45 @@ export async function convertFile(
     ...formatArgs,
     outputPath,
   ]);
+}
+
+/**
+ * Input flags FFmpeg needs to read a converted file back.
+ *
+ * Only headerless targets need them: `sln` is raw 8 kHz mono s16le with no
+ * container, so FFmpeg cannot infer the format from the file itself.
+ */
+export function previewInputArgs(targetFormat: string): string[] {
+  return targetFormat === 'sln' ? ['-f', 's16le', '-ar', '8000', '-ac', '1'] : [];
+}
+
+/**
+ * Render a browser-playable preview of what a conversion sounds like.
+ *
+ * Two passes: the normal conversion chain first, so the target codec's
+ * artefacts end up in the audio, then a decode of that result back to a
+ * 16-bit PCM WAV at the converted file's own sample rate. Returns the path
+ * of the preview WAV, which lives inside `outputDir`.
+ */
+export async function renderPreview(
+  inputPath: string,
+  outputDir: string,
+  targetFormat: string,
+  filters: string[]
+): Promise<string> {
+  const ext = EXTENSIONS[targetFormat] || '.wav';
+  const convertedPath = path.join(outputDir, `preview_source${ext}`);
+  await convertFile(inputPath, convertedPath, targetFormat, filters);
+
+  const previewPath = path.join(outputDir, 'preview.wav');
+  await ffmpegConvert([
+    '-y',
+    ...previewInputArgs(targetFormat),
+    '-i', convertedPath,
+    '-c:a', 'pcm_s16le',
+    '-f', 'wav',
+    previewPath,
+  ]);
+
+  return previewPath;
 }

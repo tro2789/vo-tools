@@ -1,14 +1,34 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+// `lib/audio/ffmpeg.ts` promisifies `child_process.execFile`; mirror Node's
+// custom promisify shape so the wrappers resolve without spawning FFmpeg.
+const { execFileImpl } = vi.hoisted(() => ({ execFileImpl: vi.fn() }));
+
+vi.mock('child_process', () => {
+  const PROMISIFY_CUSTOM = Symbol.for('nodejs.util.promisify.custom');
+  const execFile = (...args: unknown[]) => execFileImpl(...args);
+  (execFile as unknown as Record<symbol, unknown>)[PROMISIFY_CUSTOM] = (...args: unknown[]) =>
+    execFileImpl(...args);
+  return { execFile };
+});
+
 import {
   isAllowedFile,
   isValidFormat,
   isValidVolume,
   sanitizeFilename,
   buildAudioFilters,
+  previewInputArgs,
+  renderPreview,
   FORMATS,
   EXTENSIONS,
   SUFFIXES,
 } from './convert';
+
+beforeEach(() => {
+  execFileImpl.mockReset();
+  execFileImpl.mockResolvedValue({ stdout: '', stderr: '' });
+});
 
 describe('isAllowedFile', () => {
   it('allows a file with a default-allowed extension', () => {
@@ -144,5 +164,61 @@ describe('format/extension/suffix maps stay in sync', () => {
     for (const format of Object.keys(FORMATS)) {
       expect(SUFFIXES[format]).toBeDefined();
     }
+  });
+});
+
+describe('previewInputArgs', () => {
+  it('describes the raw stream for the headerless sln format', () => {
+    expect(previewInputArgs('sln')).toEqual(['-f', 's16le', '-ar', '8000', '-ac', '1']);
+  });
+
+  it('returns no input flags for container formats', () => {
+    expect(previewInputArgs('ulaw')).toEqual([]);
+    expect(previewInputArgs('g722')).toEqual([]);
+  });
+});
+
+describe('renderPreview', () => {
+  it('converts to the target format, then decodes that output to a 16-bit PCM WAV', async () => {
+    const previewPath = await renderPreview('/tmp/job/in.wav', '/tmp/job', 'ulaw', [
+      'volume=5dB',
+    ]);
+
+    expect(previewPath).toBe('/tmp/job/preview.wav');
+    expect(execFileImpl).toHaveBeenCalledTimes(2);
+
+    expect(execFileImpl.mock.calls[0][1]).toEqual([
+      '-y', '-i', '/tmp/job/in.wav',
+      '-af', 'volume=5dB',
+      '-ar', '8000', '-ac', '1', '-c:a', 'pcm_mulaw',
+      '/tmp/job/preview_source.wav',
+    ]);
+
+    expect(execFileImpl.mock.calls[1][1]).toEqual([
+      '-y',
+      '-i', '/tmp/job/preview_source.wav',
+      '-c:a', 'pcm_s16le',
+      '-f', 'wav',
+      '/tmp/job/preview.wav',
+    ]);
+  });
+
+  it('passes the raw input format flags on the second pass for sln', async () => {
+    await renderPreview('/tmp/job/in.wav', '/tmp/job', 'sln', []);
+
+    expect(execFileImpl.mock.calls[0][1]).toEqual([
+      '-y', '-i', '/tmp/job/in.wav',
+      '-ar', '8000', '-ac', '1', '-c:a', 'pcm_s16le', '-f', 's16le',
+      '/tmp/job/preview_source.sln',
+    ]);
+
+    expect(execFileImpl.mock.calls[1][1]).toEqual([
+      '-y',
+      '-f', 's16le', '-ar', '8000', '-ac', '1',
+      '-i', '/tmp/job/preview_source.sln',
+      '-c:a', 'pcm_s16le',
+      '-f', 'wav',
+      '/tmp/job/preview.wav',
+    ]);
   });
 });

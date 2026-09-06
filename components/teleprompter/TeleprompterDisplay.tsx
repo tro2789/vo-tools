@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import { Play, Pause, X, RotateCcw, Type, FlipHorizontal2 } from 'lucide-react';
+import { Play, Pause, Square, X, RotateCcw, Type, FlipHorizontal2 } from 'lucide-react';
 
 interface TeleprompterDisplayProps {
   script: string;
@@ -12,6 +12,8 @@ interface TeleprompterDisplayProps {
   isMirrored: boolean;
   elapsedTime: number;
   estimatedTotalTime: number;
+  /** Whole seconds remaining in the pre-roll countdown, or null when not counting down. */
+  countdown: number | null;
   onTogglePlayPause: () => void;
   onAdjustSpeed: (delta: number) => void;
   onAdjustTextSize: (delta: number) => void;
@@ -65,6 +67,7 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
   isMirrored,
   elapsedTime,
   estimatedTotalTime,
+  countdown,
   onTogglePlayPause,
   onAdjustSpeed,
   onAdjustTextSize,
@@ -159,10 +162,11 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
       {/* Scrolling script content */}
       <div
         ref={contentRef}
-        className="scrollbar-hide flex-1 overflow-y-auto"
+        className="scrollbar-hide flex-1 overflow-y-auto transition-opacity duration-300"
         style={{
           scrollBehavior: 'auto',
           transform: isMirrored ? 'scaleX(-1)' : 'none',
+          opacity: countdown !== null ? 0.3 : 1,
         }}
       >
         {/* Top padding for viewport centering */}
@@ -189,6 +193,17 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
         {/* Bottom padding */}
         <div className="h-[55vh]"></div>
       </div>
+
+      {/* Pre-roll countdown overlay */}
+      {countdown !== null && (
+        <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center gap-3">
+          <span className="text-[11px] tracking-[0.16em] text-[#8A8D93]">GET READY</span>
+          <span className="text-[160px] leading-none font-semibold text-white tabular-nums">
+            {countdown}
+          </span>
+          <span className="text-[10px] tracking-[0.08em] text-[#8A8D93]">SPACE CANCELS</span>
+        </div>
+      )}
 
       {/* Bottom control bar */}
       <div
@@ -252,11 +267,13 @@ export const TeleprompterDisplay: React.FC<TeleprompterDisplayProps> = ({
           <button
             type="button"
             onClick={onTogglePlayPause}
-            aria-label={isPlaying ? 'Pause' : 'Play'}
-            title="Play/Pause (Space)"
+            aria-label={countdown !== null ? 'Cancel countdown' : isPlaying ? 'Pause' : 'Play'}
+            title={countdown !== null ? 'Cancel countdown (Space)' : 'Play/Pause (Space)'}
             className="flex h-14 w-14 shrink-0 items-center justify-center border-none bg-white text-stage"
           >
-            {isPlaying ? (
+            {countdown !== null ? (
+              <Square width={22} height={22} className="fill-current" aria-hidden="true" />
+            ) : isPlaying ? (
               <Pause width={22} height={22} className="fill-current" aria-hidden="true" />
             ) : (
               <Play width={22} height={22} className="fill-current" aria-hidden="true" />

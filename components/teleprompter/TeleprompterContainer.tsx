@@ -11,6 +11,8 @@ import {
   Kbd,
   RailSection,
   SavedIndicator,
+  SectionLabel,
+  Segmented,
   StatusBar,
   Workspace,
 } from '@/components/shell';
@@ -30,6 +32,15 @@ const MIN_WPM = 75;
 const MAX_WPM = 200;
 const SETTINGS_KEY = 'vo-tools-teleprompter';
 
+type CountdownSeconds = 0 | 3 | 5 | 10;
+const DEFAULT_COUNTDOWN_SECONDS: CountdownSeconds = 3;
+const COUNTDOWN_OPTIONS: Array<{ value: CountdownSeconds; label: string }> = [
+  { value: 0, label: 'Off' },
+  { value: 3, label: '3s' },
+  { value: 5, label: '5s' },
+  { value: 10, label: '10s' },
+];
+
 const KEYBOARD_ROWS: Array<[string, string]> = [
   ['Play / pause', 'SPACE'],
   ['Adjust speed', '↑ ↓'],
@@ -48,12 +59,43 @@ const formatClock = (seconds: number): string => {
 };
 
 /**
- * Persisted teleprompter settings (`{ wpm }`), read through `useSyncExternalStore`
- * so the value survives reloads without tripping a hydration mismatch.
+ * Persisted teleprompter settings (`{ wpm, countdownSeconds }`), read through
+ * `useSyncExternalStore` so the values survive reloads without tripping a hydration
+ * mismatch.
  */
-const wpmListeners = new Set<() => void>();
-let cachedWpmRaw: string | null = null;
+interface StoredSettings {
+  wpm?: number;
+  countdownSeconds?: CountdownSeconds;
+}
+
+const settingsListeners = new Set<() => void>();
+let cachedSettingsRaw: string | null = null;
 let cachedWpm: number | null = null;
+let cachedCountdownSeconds: CountdownSeconds | null = null;
+
+function parseStoredSettings(raw: string | null): void {
+  cachedSettingsRaw = raw;
+  cachedWpm = null;
+  cachedCountdownSeconds = null;
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as { wpm?: unknown; countdownSeconds?: unknown };
+      if (typeof parsed.wpm === 'number' && Number.isFinite(parsed.wpm)) {
+        cachedWpm = Math.min(MAX_WPM, Math.max(MIN_WPM, Math.round(parsed.wpm)));
+      }
+      if (
+        parsed.countdownSeconds === 0 ||
+        parsed.countdownSeconds === 3 ||
+        parsed.countdownSeconds === 5 ||
+        parsed.countdownSeconds === 10
+      ) {
+        cachedCountdownSeconds = parsed.countdownSeconds;
+      }
+    } catch {
+      // Corrupt entry — fall back to the default.
+    }
+  }
+}
 
 function readStoredWpm(): number | null {
   let raw: string | null = null;
@@ -62,38 +104,65 @@ function readStoredWpm(): number | null {
   } catch {
     return null;
   }
-  if (raw === cachedWpmRaw) return cachedWpm;
-  cachedWpmRaw = raw;
-  cachedWpm = null;
-  if (raw) {
-    try {
-      const parsed = JSON.parse(raw) as { wpm?: unknown };
-      if (typeof parsed.wpm === 'number' && Number.isFinite(parsed.wpm)) {
-        cachedWpm = Math.min(MAX_WPM, Math.max(MIN_WPM, Math.round(parsed.wpm)));
-      }
-    } catch {
-      // Corrupt entry — fall back to the default.
-    }
-  }
+  if (raw !== cachedSettingsRaw) parseStoredSettings(raw);
   return cachedWpm;
 }
 
-function subscribeWpm(listener: () => void) {
-  wpmListeners.add(listener);
+function readStoredCountdownSeconds(): CountdownSeconds | null {
+  let raw: string | null = null;
+  try {
+    raw = window.localStorage.getItem(SETTINGS_KEY);
+  } catch {
+    return null;
+  }
+  if (raw !== cachedSettingsRaw) parseStoredSettings(raw);
+  return cachedCountdownSeconds;
+}
+
+function subscribeSettings(listener: () => void) {
+  settingsListeners.add(listener);
   const onStorage = (event: StorageEvent) => {
     if (event.key === null || event.key === SETTINGS_KEY) {
-      wpmListeners.forEach((fn) => fn());
+      settingsListeners.forEach((fn) => fn());
     }
   };
   window.addEventListener('storage', onStorage);
   return () => {
-    wpmListeners.delete(listener);
+    settingsListeners.delete(listener);
     window.removeEventListener('storage', onStorage);
   };
 }
 
-function getServerWpm(): number | null {
+function getServerSettingsSnapshot(): null {
   return null;
+}
+
+/** Merges `partial` into the persisted settings object and notifies subscribers. */
+function persistSettings(partial: StoredSettings): void {
+  let raw: string | null = null;
+  try {
+    raw = window.localStorage.getItem(SETTINGS_KEY);
+  } catch {
+    raw = null;
+  }
+  let current: StoredSettings = {};
+  if (raw) {
+    try {
+      current = JSON.parse(raw) as StoredSettings;
+    } catch {
+      current = {};
+    }
+  }
+  const next: StoredSettings = { ...current, ...partial };
+  try {
+    window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
+  } catch {
+    // Storage unavailable — keep the in-memory value for what changed.
+    cachedSettingsRaw = null;
+    if (partial.wpm !== undefined) cachedWpm = partial.wpm;
+    if (partial.countdownSeconds !== undefined) cachedCountdownSeconds = partial.countdownSeconds;
+  }
+  settingsListeners.forEach((fn) => fn());
 }
 
 export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
@@ -108,20 +177,24 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
   const seededRef = useRef(false);
 
   // `initialWpm` is the fallback until a value has been stored.
-  const storedWpm = useSyncExternalStore(subscribeWpm, readStoredWpm, getServerWpm);
+  const storedWpm = useSyncExternalStore(subscribeSettings, readStoredWpm, getServerSettingsSnapshot);
   const wpm = storedWpm ?? initialWpm;
+
+  const storedCountdownSeconds = useSyncExternalStore(
+    subscribeSettings,
+    readStoredCountdownSeconds,
+    getServerSettingsSnapshot
+  );
+  const countdownSeconds = storedCountdownSeconds ?? DEFAULT_COUNTDOWN_SECONDS;
 
   const setWpm = useCallback((next: number) => {
     if (!Number.isFinite(next)) return;
     const clamped = Math.min(MAX_WPM, Math.max(MIN_WPM, Math.round(next)));
-    try {
-      window.localStorage.setItem(SETTINGS_KEY, JSON.stringify({ wpm: clamped }));
-    } catch {
-      // Storage unavailable — keep the in-memory value.
-      cachedWpmRaw = null;
-      cachedWpm = clamped;
-    }
-    wpmListeners.forEach((fn) => fn());
+    persistSettings({ wpm: clamped });
+  }, []);
+
+  const setCountdownSeconds = useCallback((next: CountdownSeconds) => {
+    persistSettings({ countdownSeconds: next });
   }, []);
 
   // `initialScript` is a fallback: it only seeds an empty shared document.
@@ -137,8 +210,13 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
   // Analyze script to get word count for timing
   const { wordCount } = useScriptAnalysis(text, wpm, DEFAULT_EXPANSION_OPTIONS);
 
-  // Exit fullscreen
+  // Holds the latest teleprompter instance so `handleExit` (passed into the hook as
+  // `onExit`, before the hook itself returns) can still cancel an in-progress countdown.
+  const teleprompterRef = useRef<ReturnType<typeof useTeleprompter> | null>(null);
+
+  // Exit fullscreen — also cancels a countdown so it can't finish silently in the background.
   const handleExit = useCallback(() => {
+    teleprompterRef.current?.cancelCountdown();
     setIsFullscreen(false);
   }, []);
 
@@ -146,7 +224,12 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
   const teleprompter = useTeleprompter({
     wpm,
     totalWords: wordCount,
+    countdownSeconds,
     onExit: handleExit,
+  });
+
+  useEffect(() => {
+    teleprompterRef.current = teleprompter;
   });
 
   // Handle remote commands
@@ -156,7 +239,12 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
         if (!teleprompter.isPlaying) teleprompter.togglePlayPause();
         break;
       case 'pause':
-        if (teleprompter.isPlaying) teleprompter.togglePlayPause();
+        // Pausing while a countdown is running cancels it; otherwise pause playback.
+        if (teleprompter.countdown !== null) {
+          teleprompter.cancelCountdown();
+        } else if (teleprompter.isPlaying) {
+          teleprompter.togglePlayPause();
+        }
         break;
       case 'toggle':
         teleprompter.togglePlayPause();
@@ -223,11 +311,12 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
     teleprompter.isMirrored,
   ]);
 
-  // Start teleprompter (enter fullscreen mode)
+  // Start teleprompter (enter fullscreen mode, then run the pre-roll countdown)
   const handleStart = () => {
     if (text.trim()) {
       teleprompter.reset();
       setIsFullscreen(true);
+      teleprompter.startWithCountdown(countdownSeconds);
     }
   };
 
@@ -248,6 +337,7 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
         isMirrored={teleprompter.isMirrored}
         elapsedTime={teleprompter.elapsedTime}
         estimatedTotalTime={teleprompter.estimatedTotalTime}
+        countdown={teleprompter.countdown}
         onTogglePlayPause={teleprompter.togglePlayPause}
         onAdjustSpeed={teleprompter.adjustSpeed}
         onAdjustTextSize={teleprompter.adjustTextSize}
@@ -357,6 +447,19 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
                 <span>{MIN_WPM}</span>
                 <span>{MAX_WPM}</span>
               </div>
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                <SectionLabel>Countdown</SectionLabel>
+                <Segmented
+                  size={26}
+                  label="Pre-roll countdown"
+                  value={String(countdownSeconds)}
+                  onChange={(value) => setCountdownSeconds(Number(value) as CountdownSeconds)}
+                  options={COUNTDOWN_OPTIONS.map((option) => ({
+                    value: String(option.value),
+                    label: option.label,
+                  }))}
+                />
+              </div>
             </RailSection>
 
             <RailSection pad={16} label="Phone remote">
@@ -441,6 +544,7 @@ export const TeleprompterContainer: React.FC<TeleprompterContainerProps> = ({
           `EST ${estimatedRun}`,
           `${wpm} WPM`,
           `MIRROR ${teleprompter.isMirrored ? 'ON' : 'OFF'}`,
+          `COUNTDOWN ${countdownSeconds > 0 ? `${countdownSeconds}S` : 'OFF'}`,
         ]}
         right={[
           `ROOM ${remote.roomCode ?? '—'}`,

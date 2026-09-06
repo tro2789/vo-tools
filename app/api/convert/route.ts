@@ -12,6 +12,7 @@ import {
   sanitizeFilename,
   buildAudioFilters,
   convertFile,
+  renderPreview,
   EXTENSIONS,
   SUFFIXES,
   VolumeLevel,
@@ -42,6 +43,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
+    const isPreview = formData.get('preview') === 'yes';
+    if (isPreview && files.length !== 1) {
+      return NextResponse.json(
+        { error: 'Preview requires exactly one file' },
+        { status: 400 }
+      );
+    }
+
     const targetFormat = (formData.get('format') as string) || 'ulaw';
     if (!isValidFormat(targetFormat)) {
       return NextResponse.json({ error: `Invalid format: ${targetFormat}` }, { status: 400 });
@@ -57,6 +66,47 @@ export async function POST(request: NextRequest) {
     const audioFilters = buildAudioFilters(volume as VolumeLevel, formData.get('optimize') === 'yes');
     const ext = EXTENSIONS[targetFormat] || '.wav';
     const suffix = SUFFIXES[targetFormat] || '_converted';
+
+    if (isPreview) {
+      const file = files[0];
+      if (!isAllowedFile(file.name)) {
+        await rm(jobDir, { recursive: true, force: true });
+        return NextResponse.json({ error: 'Invalid file type' }, { status: 422 });
+      }
+
+      const safeName = sanitizeFilename(file.name);
+      if (!safeName) {
+        await rm(jobDir, { recursive: true, force: true });
+        return NextResponse.json({ error: 'Invalid filename' }, { status: 422 });
+      }
+
+      const inputPath = path.join(jobDir, safeName);
+      const buffer = Buffer.from(await file.arrayBuffer());
+      await writeFile(inputPath, buffer);
+
+      if (!(await isValidAudio(inputPath))) {
+        await rm(jobDir, { recursive: true, force: true });
+        return NextResponse.json({ error: 'Not a valid audio file' }, { status: 422 });
+      }
+
+      let previewPath: string;
+      try {
+        previewPath = await renderPreview(inputPath, jobDir, targetFormat, audioFilters);
+      } catch (e) {
+        await rm(jobDir, { recursive: true, force: true });
+        const msg = e instanceof Error ? e.message : 'Preview rendering failed';
+        return NextResponse.json({ error: `Failed to render preview: ${msg}` }, { status: 422 });
+      }
+
+      const previewBuffer = await readFile(previewPath);
+      await rm(jobDir, { recursive: true, force: true });
+      return new NextResponse(previewBuffer, {
+        headers: {
+          'Content-Type': 'audio/wav',
+          'Content-Disposition': 'inline; filename="preview.wav"',
+        },
+      });
+    }
 
     const convertedFiles: string[] = [];
     const errors: string[] = [];

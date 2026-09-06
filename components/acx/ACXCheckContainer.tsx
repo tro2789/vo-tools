@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CheckCircle2, Download, ExternalLink, Trash2, Upload, XCircle } from 'lucide-react';
+import { Check, CheckCircle2, Copy, Download, ExternalLink, Trash2, Upload, XCircle } from 'lucide-react';
 import { ACXResult } from '@/lib/types/acx';
+import { buildAcxAdvice, type AcxAdvice } from '@/lib/audio/acx-advice';
 import { Button, DocumentBar, DropZone, IconButton, Pill, RailSection, StatusBar, Workspace } from '@/components/shell';
 
 interface FileWithResult {
@@ -94,8 +95,20 @@ function getFailingChecks(result: ACXResult): FailingCheck[] {
   return checks;
 }
 
+function buildCopyText(fileName: string, checks: FailingCheck[], advice: AcxAdvice[]): string {
+  const lines = [
+    fileName,
+    ...checks.map((c) => `${c.label} ${c.value} (limit ${c.limit})`),
+    '',
+    'How to fix:',
+    ...advice.map((a) => `- ${a.title}: ${a.detail}`),
+  ];
+  return lines.join('\n');
+}
+
 export const ACXCheckContainer: React.FC = () => {
   const [files, setFiles] = useState<FileWithResult[]>([]);
+  const [copiedFileIndex, setCopiedFileIndex] = useState<number | null>(null);
 
   const addFiles = (newFiles: File[]) => {
     const audioFiles = newFiles.filter((file) => file.type.startsWith('audio/'));
@@ -203,6 +216,23 @@ export const ACXCheckContainer: React.FC = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleCopyAdvice = async (
+    originalIndex: number,
+    fileName: string,
+    checks: FailingCheck[],
+    advice: AcxAdvice[]
+  ) => {
+    try {
+      await navigator.clipboard.writeText(buildCopyText(fileName, checks, advice));
+      setCopiedFileIndex(originalIndex);
+      setTimeout(() => {
+        setCopiedFileIndex((prev) => (prev === originalIndex ? null : prev));
+      }, 1500);
+    } catch {
+      // Clipboard access can fail (permissions, insecure context) — nothing to recover here.
+    }
   };
 
   const hasAnalyzable = files.some((f) => !f.result && !f.analyzing);
@@ -373,20 +403,44 @@ export const ACXCheckContainer: React.FC = () => {
               {failingFiles.map((fileObj, index) => {
                 const checks = getFailingChecks(fileObj.result!);
                 if (checks.length === 0) return null;
+                const advice = buildAcxAdvice(fileObj.result!);
+                const originalIndex = files.indexOf(fileObj);
+                const justCopied = copiedFileIndex === originalIndex;
                 return (
                   <div
                     key={`fail-${index}`}
                     className="mt-3 flex items-start gap-2 border border-line bg-subtle px-3 py-[10px]"
                   >
                     <XCircle width={14} height={14} className="mt-[2px] shrink-0 text-bad" aria-hidden="true" />
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <div className="text-[12px] font-medium text-ink">
                         {fileObj.file.name} — {checks.length} measurement{checks.length !== 1 ? 's' : ''} out of range
                       </div>
                       <div className="mt-[2px] text-[11px] text-muted uppercase">
                         {checks.map((c) => `${c.label} ${c.value} (LIMIT ${c.limit})`).join(' · ')}
                       </div>
+                      {advice.length > 0 ? (
+                        <div className="mt-2">
+                          <div className="text-[10px] font-semibold tracking-[0.14em] text-muted uppercase">
+                            How to fix
+                          </div>
+                          <div className="mt-1 divide-y divide-line-faint">
+                            {advice.map((a) => (
+                              <div key={a.check} className="pt-[6px] first:pt-0">
+                                <div className="text-[12px] font-medium text-ink">{a.title}</div>
+                                <div className="text-[11px] leading-[1.5] text-body">{a.detail}</div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : null}
                     </div>
+                    <IconButton
+                      icon={justCopied ? Check : Copy}
+                      label={`Copy fix suggestions for ${fileObj.file.name}`}
+                      onClick={() => handleCopyAdvice(originalIndex, fileObj.file.name, checks, advice)}
+                      className="ml-auto shrink-0"
+                    />
                   </div>
                 );
               })}
