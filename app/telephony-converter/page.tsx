@@ -267,7 +267,7 @@ export default function TelephonyConverterPage() {
   const hasFiles = files.length > 0
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-page">
+    <div className="flex min-h-[calc(100vh-44px)] w-full flex-col bg-page">
       <DocumentBar
         icon={AudioWaveform}
         title={<span className="text-[15px] font-semibold text-ink">Conversion queue</span>}
