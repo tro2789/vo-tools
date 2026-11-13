@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
+    labels:
+      - "dockhand.update=false"  # exclude from Dockhand auto-update sweep; the Docker Hub :latest is older than local builds
     ports:
       - "3010:3000"  # Next.js + Socket.IO (single port)
     environment:

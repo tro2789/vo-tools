@@ -114,7 +114,7 @@ node server.mjs         # Production server (after build)
 - **Domain**: `voiceover-tools.com` via direct static-IP ingress (CF proxied A → `149.154.41.49` → Caddy edge LXC `192.168.0.254` → NPM → `http://192.168.0.83:3010`). Migrated 2026-08-19 — the domain had been missed in the 2026-08-03 Phase 3 cutover and rode the standby tunnel until then. Origin CA cert in `~/Repos/docs/edge-proxy/certs/`, zone SSL `strict`. `www` 301s to the apex at the Cloudflare edge.
 - **Git**: `https://gitea.tohareprod.com/tro2789/vo-tools` — push to `main`
 - Dockerfile: multi-stage (node:22-alpine build, node:22-alpine + ffmpeg runtime)
-- Compose: `docker-compose.yml` builds locally, maps `3010:3000`, `restart: unless-stopped`
+- Compose: `docker-compose.yml` builds locally, maps `3010:3000`, `restart: unless-stopped`. The `dockhand.update=false` label must stay: the same image name exists on Docker Hub, and the Hub copy is only as new as the last manual `docker push tro2789/vo-tools:latest` (last pushed 2026-09-18). Without the label, Dockhand's 5 AM sweep pulls the Hub copy over a newer local build (happened 2026-09-07 with a March image).
 - Deploy workflow: commit → push → `docker compose up -d --build` on the home box (no CI/CD)
 
 ## Testing (added 2026-08-23, extended 2026-09-06)
