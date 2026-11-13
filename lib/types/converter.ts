@@ -22,6 +22,13 @@ export interface ConversionOptions {
   optimize: boolean
 }
 
+/** A batch conversion: every file is converted to every format listed. */
+export interface BatchConversionOptions {
+  formats: Format[]
+  volume: VolumeLevel
+  optimize: boolean
+}
+
 export interface FormatOption {
   value: Format
   label: string

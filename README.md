@@ -25,18 +25,14 @@ Live at [voiceover-tools.com](https://voiceover-tools.com)
 
 ### Telephony Converter
 - Convert audio files to telephony-compatible formats (u-law, A-law, PCM, G.722)
-- Batch file conversion with progress tracking
+- Batch file conversion: pick one or more output formats, get every file in each format
+- Output names end in the format, e.g. `Take1_ulaw.wav`, `Take1_alaw.wav`
 - Volume normalization (quiet, lower, medium, high, max)
 - Phone-optimized audio filtering (300-3400Hz bandpass)
 
-### ACX Compliance Checker
-- Automated ACX audiobook technical requirements validation
-- MP3 format and bitrate verification (192+ kbps CBR)
-- Sample rate checking (44.1 kHz)
-- Integrated loudness measurement (-23dB to -18dB LUFS)
-- Peak amplitude analysis (no higher than -3dB)
-- Leading/trailing silence measurement
-- Detailed compliance report
+### Spec Check
+The ACX checker was retired on 2026-11-13. `/acx-check` redirects to
+[Spec Check](https://www.trevorohare.com/spec-check), which checks a mix against ACX and other delivery specs.
 
 ## Quick Start
 
@@ -76,7 +72,7 @@ npm run dev
 
 Access at http://localhost:3000
 
-> **Note:** Audio conversion and ACX checking require FFmpeg installed on your system (`apt install ffmpeg` / `brew install ffmpeg`).
+> **Note:** Audio conversion requires FFmpeg installed on your system (`apt install ffmpeg` / `brew install ffmpeg`).
 
 ## Production Deployment with Reverse Proxy
 
@@ -123,19 +119,17 @@ voiceover-tools.com {
 ```
 vo-tools/
 ├── app/                       # Next.js App Router pages
-│   ├── acx-check/             # ACX compliance checker
 │   ├── page.tsx               # Script analysis workspace (home)
 │   ├── teleprompter/          # Teleprompter tool
 │   ├── telephony-converter/   # Audio converter tool
 │   ├── remote/                # Mobile remote control
-│   └── api/                   # API routes (convert, acx-check, health)
+│   └── api/                   # API routes (convert, health)
 ├── components/                # React components
 ├── hooks/                     # Custom React hooks
 ├── lib/                       # Utilities
 │   ├── audio/                 # Audio processing (FFmpeg wrappers)
 │   │   ├── ffmpeg.ts          # FFmpeg/FFprobe utilities (uses execFile, safe from injection)
-│   │   ├── convert.ts         # Format conversion logic
-│   │   └── acx-analyzer.ts    # ACX compliance analysis
+│   │   └── convert.ts         # Format conversion logic
 │   └── types/                 # TypeScript type definitions
 ├── server.mjs                 # Custom server (Next.js + Socket.IO)
 ├── Dockerfile                 # Production container

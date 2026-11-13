@@ -21,6 +21,15 @@ import {
 const UPLOAD_FOLDER = process.env.UPLOAD_FOLDER || '/tmp/uploads';
 const MAX_CONTENT_LENGTH = parseInt(process.env.MAX_CONTENT_LENGTH || String(50 * 1024 * 1024), 10);
 
+/**
+ * Content-Disposition for a download. The plain `filename` is an ASCII
+ * fallback (header values must be ASCII); `filename*` carries the real name.
+ */
+function attachmentDisposition(filename: string): string {
+  const ascii = filename.replace(/[^\x20-\x7e]/g, '_').replace(/["\\]/g, '_');
+  return `attachment; filename="${ascii}"; filename*=UTF-8''${encodeURIComponent(filename)}`;
+}
+
 export async function POST(request: NextRequest) {
   const jobId = randomUUID();
   const jobDir = path.join(UPLOAD_FOLDER, jobId);
@@ -51,10 +60,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const targetFormat = (formData.get('format') as string) || 'ulaw';
-    if (!isValidFormat(targetFormat)) {
-      return NextResponse.json({ error: `Invalid format: ${targetFormat}` }, { status: 400 });
+    // One or more `format` fields; each file is converted to every format.
+    const requested = formData.getAll('format').map(String).filter(Boolean);
+    const targetFormats = [...new Set(requested.length ? requested : ['ulaw'])];
+    const invalid = targetFormats.find((f) => !isValidFormat(f));
+    if (invalid) {
+      return NextResponse.json({ error: `Invalid format: ${invalid}` }, { status: 400 });
     }
+    if (isPreview && targetFormats.length !== 1) {
+      return NextResponse.json(
+        { error: 'Preview requires exactly one format' },
+        { status: 400 }
+      );
+    }
+    const targetFormat = targetFormats[0];
 
     const volume = (formData.get('volume') as string) || 'medium';
     if (!isValidVolume(volume)) {
@@ -64,8 +83,6 @@ export async function POST(request: NextRequest) {
     await mkdir(jobDir, { recursive: true });
 
     const audioFilters = buildAudioFilters(volume as VolumeLevel, formData.get('optimize') === 'yes');
-    const ext = EXTENSIONS[targetFormat] || '.wav';
-    const suffix = SUFFIXES[targetFormat] || '_converted';
 
     if (isPreview) {
       const file = files[0];
@@ -109,6 +126,7 @@ export async function POST(request: NextRequest) {
     }
 
     const convertedFiles: string[] = [];
+    const convertedInputs: string[] = [];
     const errors: string[] = [];
 
     for (const file of files) {
@@ -141,20 +159,23 @@ export async function POST(request: NextRequest) {
         continue;
       }
 
-      // Convert
+      // Convert to every requested format
       const originalName = path.parse(safeName).name;
-      const outputFilename = `${originalName}${suffix}${ext}`;
-      const outputPath = path.join(jobDir, outputFilename);
+      convertedInputs.push(originalName);
+      for (const targetFormat of targetFormats) {
+        const ext = EXTENSIONS[targetFormat] || '.wav';
+        const suffix = SUFFIXES[targetFormat] || `_${targetFormat}`;
+        const outputPath = path.join(jobDir, `${originalName}${suffix}${ext}`);
 
-      try {
-        await convertFile(inputPath, outputPath, targetFormat, audioFilters);
-        convertedFiles.push(outputPath);
-        await rm(inputPath, { force: true });
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : 'Audio conversion failed';
-        errors.push(`Failed to convert ${file.name}: ${msg}`);
-        await rm(inputPath, { force: true });
+        try {
+          await convertFile(inputPath, outputPath, targetFormat, audioFilters);
+          convertedFiles.push(outputPath);
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : 'Audio conversion failed';
+          errors.push(`Failed to convert ${file.name} to ${targetFormat}: ${msg}`);
+        }
       }
+      await rm(inputPath, { force: true });
     }
 
     if (!convertedFiles.length) {
@@ -173,13 +194,17 @@ export async function POST(request: NextRequest) {
       return new NextResponse(fileBuffer, {
         headers: {
           'Content-Type': 'application/octet-stream',
-          'Content-Disposition': `attachment; filename="${filename}"`,
+          'Content-Disposition': attachmentDisposition(filename),
         },
       });
     }
 
     // Multiple files - zip them
-    const zipFilename = `batch_converted_${jobId.slice(0, 8)}.zip`;
+    // One input in several formats: name the ZIP after that file.
+    const zipFilename =
+      convertedInputs.length === 1
+        ? `${convertedInputs[0]}.zip`
+        : `batch_converted_${jobId.slice(0, 8)}.zip`;
     const zipPath = path.join(jobDir, zipFilename);
 
     await new Promise<void>((resolve, reject) => {
@@ -199,7 +224,7 @@ export async function POST(request: NextRequest) {
     return new NextResponse(zipBuffer, {
       headers: {
         'Content-Type': 'application/zip',
-        'Content-Disposition': `attachment; filename="${zipFilename}"`,
+        'Content-Disposition': attachmentDisposition(zipFilename),
       },
     });
   } catch (error) {

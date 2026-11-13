@@ -3,15 +3,17 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Heart, Menu, MessageCircle, X } from 'lucide-react';
+import { ArrowUpRight, Heart, Menu, MessageCircle, X } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 const TABS = [
   { label: 'Analysis', href: '/' },
   { label: 'Teleprompter', href: '/teleprompter' },
   { label: 'Convert', href: '/telephony-converter' },
-  { label: 'ACX', href: '/acx-check' },
 ] as const;
+
+// Loudness and delivery-spec checks live in Spec Check (replaced the ACX tab 2026-11-13).
+const SPEC_CHECK_URL = 'https://www.trevorohare.com/spec-check';
 
 const DISCORD_URL = 'https://discord.gg/gYg69PbHfR';
 const SUPPORT_URL = 'https://buy.stripe.com/cNi9ATc9WgzM906g7Zbwk02';
@@ -106,6 +108,15 @@ export function TopBar() {
               </Link>
             );
           })}
+          <a
+            href={SPEC_CHECK_URL}
+            target="_blank"
+            rel="noopener"
+            className="flex h-11 shrink-0 items-center gap-1 px-3 text-[12px] whitespace-nowrap text-bar-text"
+          >
+            Spec Check
+            <ArrowUpRight width={12} height={12} aria-hidden="true" />
+          </a>
         </nav>
       </div>
       <div className="flex shrink-0 items-center gap-2">
@@ -152,6 +163,16 @@ export function TopBar() {
               </Link>
             );
           })}
+          <a
+            href={SPEC_CHECK_URL}
+            target="_blank"
+            rel="noopener"
+            onClick={() => setOpen(false)}
+            className="flex h-11 items-center gap-1 pl-4 text-[12px] text-bar-text"
+          >
+            Spec Check
+            <ArrowUpRight width={12} height={12} aria-hidden="true" />
+          </a>
         </div>
       ) : null}
     </header>

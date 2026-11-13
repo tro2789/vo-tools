@@ -53,13 +53,13 @@ app/                    # Next.js App Router pages
                         #   `/script-analysis` 308-redirects here via next.config.mjs.
   globals.css           # Tailwind v4 config + design tokens
   sitemap.ts            # Auto-generated sitemap.xml (all public pages)
-  telephony-converter/  # Audio format conversion for IVR/VoIP (+ per-file preview player)
+  telephony-converter/  # Audio format conversion for IVR/VoIP: check one or more output formats,
+                        #   outputs named <file>_<format> (e.g. _ulaw); per-file preview plays the first checked format
   teleprompter/         # Auto-scrolling teleprompter with phone remote + pre-roll countdown (0/3/5/10s)
-  acx-check/            # ACX audiobook compliance checker
   remote/               # Phone remote control for teleprompter
   api/                  # API routes
-    convert/            # Audio format conversion (direct FFmpeg); preview=yes renders one file to playable PCM WAV
-    acx-check/          # ACX compliance analysis (direct FFmpeg)
+    convert/            # Audio format conversion (direct FFmpeg); repeat `format` for several outputs
+                        #   (one output = file, more = ZIP); preview=yes renders one file in one format to PCM WAV
     health/             # Health check endpoint
 components/             # React components
   shell/                # Design-system shell (TopBar, DocumentBar, Workspace,
@@ -69,7 +69,6 @@ components/             # React components
   ScriptWorkspace.tsx   # Hydration gate around ScriptCalculator (static shell first)
   ThemeToggle.tsx       # Dark/light toggle (variant: 'bar' | 'light')
   ScriptCalculator.tsx  # Main script analysis component
-  acx/                  # ACX checker components
   teleprompter/         # Teleprompter components
   editor/               # Script editor components
   analysis/             # MetricsBlock, SpeedControl, format.ts (m:ss clock)
@@ -80,13 +79,14 @@ components/             # React components
 lib/                    # Utilities
   audio/                # Audio processing modules
     ffmpeg.ts           # FFmpeg/FFprobe wrappers (uses execFile, safe from injection)
-    convert.ts          # Audio conversion logic (format maps, filters)
-    acx-analyzer.ts     # ACX compliance analysis
+    convert.ts          # Audio conversion logic (format maps, filename suffixes, filters)
   types/                # TypeScript type definitions
 hooks/                  # React hooks
   useScriptDocument.ts  # Shared script document (localStorage, cross-tab)
   useHydrated.ts        # false until hydration finishes (useSyncExternalStore)
 design-reference/       # Redesign spec + Claude Design HTML exports
+next.config.mjs         # Redirects: /script-analysis → /, /acx-check → trevorohare.com/spec-check
+                        #   (ACX checker retired 2026-11-13; TopBar links out to Spec Check instead)
 proxy.ts                # www→apex redirect for pages only; /api excluded so uploads >10 MB are not truncated
 server.mjs              # Custom server (Next.js + Socket.IO, single port)
 ```
@@ -119,7 +119,7 @@ node server.mjs         # Production server (after build)
 
 ## Testing (added 2026-08-23, extended 2026-09-06)
 
-Vitest, node environment. `npm test` runs 10 files / 155 tests over `utils/*` (text analysis, pause detection, pricing, comparison, pronunciation), `lib/audio/*` (ffmpeg parsing with `execFile` mocked, conversion + preview argument lists, ACX analyzer, ACX fix advice in `acx-advice.ts`) and `app/api/convert/route.test.ts` (preview request validation). Config: `vitest.config.mts`. Known quirk pinned by tests: `calculateSpokenWordCount` collapses contractions and hyphenated numbers into one token. Not covered: `pdfGenerator.ts`, `lib/api/converter.ts`, the ACX API route handler.
+Vitest, node environment. `npm test` runs 8 files / 135 tests over `utils/*` (text analysis, pause detection, pricing, comparison, pronunciation), `lib/audio/*` (ffmpeg parsing with `execFile` mocked, conversion + preview argument lists) and `app/api/convert/route.test.ts` (preview and format validation, plus two real-FFmpeg multi-format tests that skip when `ffmpeg` is not installed). Config: `vitest.config.mts`. Known quirk pinned by tests: `calculateSpokenWordCount` collapses contractions and hyphenated numbers into one token. Not covered: `pdfGenerator.ts`, `lib/api/converter.ts`, the convert page UI.
 CI: `.gitea/workflows/ci.yml` runs `npm ci` and the checks above on every push (Node 24, added 2026-08-23). Lint is not in CI because of 9 pre-existing ESLint errors in untouched files.
 
 <!-- BEGIN:nextjs-agent-rules -->

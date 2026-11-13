@@ -1,4 +1,9 @@
-import type { ConversionOptions, ErrorResponse, HealthCheckResponse } from '../types/converter'
+import type {
+  BatchConversionOptions,
+  ConversionOptions,
+  ErrorResponse,
+  HealthCheckResponse,
+} from '../types/converter'
 
 // Use same-origin API routes
 const API_URL = ''
@@ -41,12 +46,13 @@ export async function checkHealth(): Promise<HealthCheckResponse> {
 }
 
 /**
- * Convert audio files
+ * Convert audio files to one or more formats. Returns the download and the
+ * file name the server chose (e.g. `Take1_ulaw.wav`, or a ZIP of several).
  */
 export async function convertAudioFiles(
   files: FileList,
-  options: ConversionOptions
-): Promise<Blob> {
+  options: BatchConversionOptions
+): Promise<{ blob: Blob; filename: string }> {
   const formData = new FormData()
   
   // Add all files
@@ -55,7 +61,7 @@ export async function convertAudioFiles(
   })
   
   // Add conversion options
-  formData.append('format', options.format)
+  options.formats.forEach(format => formData.append('format', format))
   formData.append('volume', options.volume)
   if (options.optimize) {
     formData.append('optimize', 'yes')
@@ -87,7 +93,8 @@ export async function convertAudioFiles(
       )
     }
 
-    return await response.blob()
+    const filename = getDownloadFilename(response, 'converted_audio.zip')
+    return { blob: await response.blob(), filename }
   } catch (error) {
     if (error instanceof ConverterAPIError) {
       throw error
@@ -179,6 +186,14 @@ export function getDownloadFilename(
     return defaultName
   }
   
-  const filenameMatch = contentDisposition.match(/filename="?(.+)"?/)
-  return filenameMatch ? filenameMatch[1] : defaultName
+  const encoded = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i)
+  if (encoded) {
+    try {
+      return decodeURIComponent(encoded[1])
+    } catch {
+      // fall through to the plain filename
+    }
+  }
+  const plain = contentDisposition.match(/filename="([^"]+)"/)
+  return plain ? plain[1] : defaultName
 }

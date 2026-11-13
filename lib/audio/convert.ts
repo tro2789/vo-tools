@@ -17,9 +17,10 @@ export const EXTENSIONS: Record<string, string> = {
   pcm16hd: '.wav', g722: '.g722', sln: '.sln',
 };
 
+// Appended to the input's base name, so each output says which format it is.
 export const SUFFIXES: Record<string, string> = {
   ulaw: '_ulaw', alaw: '_alaw', pcm16: '_pcm16', g722: '_g722',
-  pcm8: '_8bit', pcm16hd: '_hd', sln: '_raw',
+  pcm8: '_pcm8', pcm16hd: '_pcm16hd', sln: '_sln',
 };
 
 const ALLOWED_EXTENSIONS = new Set(

@@ -82,7 +82,7 @@ function filesToFileList(files: File[]): FileList {
 
 export default function TelephonyConverterPage() {
   const [files, setFiles] = useState<File[]>([])
-  const [format, setFormat] = useState<Format>('pcm16')
+  const [formats, setFormats] = useState<Format[]>(['pcm16'])
   const [volume, setVolume] = useState<VolumeLevel>('medium')
   const [optimize, setOptimize] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -117,9 +117,17 @@ export default function TelephonyConverterPage() {
   }, [])
 
   const totalBytes = files.reduce((sum, f) => sum + f.size, 0)
-  const selectedFormat = FORMATS.find((f) => f.value === format) ?? FORMATS[0]
+  // Checked formats in rail order. The row preview plays the first of them.
+  const selectedFormats = FORMATS.filter((f) => formats.includes(f.value))
+  const previewFormat = selectedFormats[0] ?? null
   const selectedVolume = VOLUME_LEVELS.find((v) => v.value === volume) ?? VOLUME_LEVELS[2]
-  const meta = FORMAT_META[format]
+  const meta = previewFormat ? FORMAT_META[previewFormat.value] : null
+  const formatSummary =
+    selectedFormats.length === 0
+      ? 'NO FORMAT'
+      : selectedFormats.length === 1 && meta
+        ? `${meta.code} · ${meta.statusRate}`
+        : `${selectedFormats.length} FORMATS`
 
   const stopPlayback = () => {
     audioRef.current?.pause()
@@ -139,9 +147,10 @@ export default function TelephonyConverterPage() {
     previewCache.current.clear()
   }
 
-  const changeFormat = (value: Format) => {
+  const toggleFormat = (value: Format, checked: boolean) => {
     discardPreviews()
-    setFormat(value)
+    setError(null)
+    setFormats((prev) => (checked ? [...prev, value] : prev.filter((f) => f !== value)))
   }
 
   const changeVolume = (value: VolumeLevel) => {
@@ -164,7 +173,12 @@ export default function TelephonyConverterPage() {
     if (renderingKey) return
 
     stopPlayback()
+    if (!previewFormat) {
+      setError('Select at least one output format')
+      return
+    }
     setError(null)
+    const format = previewFormat.value
 
     const cacheKey = `${rowKey}::${format}::${volume}::${optimize}`
     let url = previewCache.current.get(cacheKey)
@@ -213,13 +227,17 @@ export default function TelephonyConverterPage() {
       setError('Please select at least one file')
       return
     }
+    if (selectedFormats.length === 0) {
+      setError('Select at least one output format')
+      return
+    }
 
     setIsLoading(true)
     setError(null)
 
     try {
-      const blob = await convertAudioFiles(filesToFileList(files), {
-        format,
+      const { blob, filename } = await convertAudioFiles(filesToFileList(files), {
+        formats: selectedFormats.map((f) => f.value),
         volume,
         optimize,
       })
@@ -227,12 +245,6 @@ export default function TelephonyConverterPage() {
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-
-      const filename =
-        files.length === 1
-          ? `${files[0].name.split('.')[0]}_converted.wav`
-          : 'batch_converted.zip'
-
       a.download = filename
       document.body.appendChild(a)
       a.click()
@@ -342,7 +354,7 @@ export default function TelephonyConverterPage() {
                 <Volume2 width={14} height={14} className="shrink-0 text-muted" aria-hidden="true" />
                 <span className="truncate text-[13px] text-ink">{preview.name}</span>
                 <span className="shrink-0 text-[10px] text-muted uppercase">
-                  {selectedFormat.label.toUpperCase()} · {meta.statusRate} ·{' '}
+                  {previewFormat?.label.toUpperCase()} · {meta?.statusRate} ·{' '}
                   {selectedVolume.label.toUpperCase()} · BANDPASS {optimize ? 'ON' : 'OFF'}
                 </span>
                 <audio
@@ -369,9 +381,12 @@ export default function TelephonyConverterPage() {
                 <span className="text-[12px] text-body">
                   Output:{' '}
                   <span className="text-[11px]">
-                    {selectedFormat.label.toUpperCase()} · {meta.infoRate} · {selectedVolume.label.toUpperCase()}
+                    {selectedFormats.length
+                      ? selectedFormats.map((f) => f.label.toUpperCase()).join(' + ')
+                      : 'NO FORMAT SELECTED'}{' '}
+                    · {selectedVolume.label.toUpperCase()}
                   </span>
-                  . A single file downloads as WAV; several download as a ZIP.
+                  . One output downloads as a file; several download as a ZIP.
                 </span>
               </div>
             ) : (
@@ -389,10 +404,10 @@ export default function TelephonyConverterPage() {
         }
         rail={
           <>
-            <RailSection label="OUTPUT FORMAT">
+            <RailSection label="OUTPUT FORMATS">
               <div className="flex flex-col">
                 {FORMATS.map((option, index) => {
-                  const selected = option.value === format
+                  const selected = formats.includes(option.value)
                   return (
                     <label
                       key={option.value}
@@ -401,11 +416,13 @@ export default function TelephonyConverterPage() {
                       } ${selected ? 'bg-page' : ''}`}
                     >
                       <input
-                        type="radio"
+                        type="checkbox"
                         name="format"
                         value={option.value}
                         checked={selected}
-                        onChange={() => changeFormat(option.value)}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          toggleFormat(option.value, e.target.checked)
+                        }
                         className="h-[13px] w-[13px] m-0"
                       />
                       <span
@@ -467,7 +484,7 @@ export default function TelephonyConverterPage() {
                 variant="primary"
                 size={40}
                 icon={Download}
-                disabled={!hasFiles || isLoading}
+                disabled={!hasFiles || selectedFormats.length === 0 || isLoading}
                 onClick={handleSubmit}
                 className="w-full"
               >
@@ -484,7 +501,7 @@ export default function TelephonyConverterPage() {
         left={[
           `${files.length} FILE${files.length === 1 ? '' : 'S'}`,
           formatTotalSize(totalBytes),
-          `${meta.code} · ${meta.statusRate}`,
+          formatSummary,
           selectedVolume.label.toUpperCase(),
         ]}
         right={[`BANDPASS ${optimize ? 'ON' : 'OFF'}`, error
