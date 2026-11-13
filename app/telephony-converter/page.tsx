@@ -490,7 +490,9 @@ export default function TelephonyConverterPage() {
               >
                 {isLoading
                   ? 'Converting…'
-                  : `Convert ${files.length || 1} file${(files.length || 1) === 1 ? '' : 's'}`}
+                  : hasFiles
+                    ? `Convert ${files.length} file${files.length === 1 ? '' : 's'}`
+                    : 'Convert'}
               </Button>
             </RailSection>
           </>
